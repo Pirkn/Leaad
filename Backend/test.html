@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Auth Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .auth-section, .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+        }
+
+        .auth-section h2, .test-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="email"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Supabase Auth Test</h1>
+        
+        <div id="statusDiv" class="status info">
+            Initializing Supabase...
+        </div>
+
+        <!-- Authentication Section -->
+        <div class="auth-section">
+            <h2>Authentication</h2>
+            
+            <div id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                
+                <button class="btn" onclick="signIn()">Sign In</button>
+                <button class="btn btn-secondary" onclick="signUp()">Sign Up</button>
+            </div>
+
+            <div id="userInfo" class="user-info hidden">
+                <h3>👤 User Information</h3>
+                <p id="userDetails"></p>
+                <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
+            </div>
+        </div>
+
+        <!-- API Testing Section -->
+        <div class="test-section">
+            <h2>API Testing</h2>
+            
+            <div>
+                <button class="btn" onclick="testHealthRoute()">Test Health Route</button>
+                <button class="btn" onclick="testProtectedRoute()">Test Protected Route</button>
+            </div>
+            
+            <div id="apiResult" class="result hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // Replace these with your actual Supabase URL and anon key
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        
+        // Flask app URL
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        
+        let supabase;
+        let currentUser = null;
+        let accessToken = null;
+
+        // Initialize Supabase client
+        function initSupabase() {
+            if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY_HERE') {
+                showStatus('Please update SUPABASE_URL and SUPABASE_ANON_KEY in the HTML file', 'error');
+                return;
+            }
+
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Check if user is already logged in
+            checkAuthStatus();
+            
+            // Listen for auth changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                console.log('Auth state changed:', event, session);
+                if (session) {
+                    currentUser = session.user;
+                    accessToken = session.access_token;
+                    showUserInfo();
+                    showStatus('Successfully authenticated!', 'success');
+                } else {
+                    currentUser = null;
+                    accessToken = null;
+                    showLoginForm();
+                    showStatus('Please sign in to continue', 'info');
+                }
+            });
+        }
+
+        // Check current auth status
+        async function checkAuthStatus() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    currentUser = session.user;
+                    accessToken = session.access_token;
+                    showUserInfo();
+                    showStatus('Welcome back!', 'success');
+                } else {
+                    showLoginForm();
+                    showStatus('Please sign in to continue', 'info');
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+                showStatus('Error checking authentication status', 'error');
+            }
+        }
+
+        // Sign in
+        async function signIn() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showStatus('Please enter both email and password', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Signing in...', 'info');
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    showStatus(`Sign in failed: ${error.message}`, 'error');
+                } else {
+                    showStatus('Sign in successful!', 'success');
+                    // Clear form
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                }
+            } catch (error) {
+                console.error('Sign in error:', error);
+                showStatus('An error occurred during sign in', 'error');
+            }
+        }
+
+        // Sign up
+        async function signUp() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showStatus('Please enter both email and password', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Creating account...', 'info');
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    showStatus(`Sign up failed: ${error.message}`, 'error');
+                } else {
+                    showStatus('Account created! Please check your email for verification.', 'success');
+                    // Clear form
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                }
+            } catch (error) {
+                console.error('Sign up error:', error);
+                showStatus('An error occurred during sign up', 'error');
+            }
+        }
+
+        // Sign out
+        async function signOut() {
+            try {
+                showStatus('Signing out...', 'info');
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    showStatus(`Sign out failed: ${error.message}`, 'error');
+                } else {
+                    showStatus('Signed out successfully', 'success');
+                }
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showStatus('An error occurred during sign out', 'error');
+            }
+        }
+
+        // Test health route (public)
+        async function testHealthRoute() {
+            try {
+                showApiResult('Testing health route...');
+                
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                
+                showApiResult(`Health Route Response (${response.status}):\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                showApiResult(`Health Route Error:\n${error.message}`);
+            }
+        }
+
+        // Test protected route (requires authentication)
+        async function testProtectedRoute() {
+            if (!accessToken) {
+                showApiResult('Error: You must be signed in to test the protected route');
+                return;
+            }
+
+            try {
+                showApiResult('Testing protected route...');
+                
+                const response = await fetch(`${API_BASE_URL}/protected`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                showApiResult(`Protected Route Response (${response.status}):\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                showApiResult(`Protected Route Error:\n${error.message}`);
+            }
+        }
+
+        // UI helper functions
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusDiv');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+        }
+
+        function showUserInfo() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('userInfo').classList.remove('hidden');
+            
+            const userDetails = document.getElementById('userDetails');
+            userDetails.innerHTML = `
+                <strong>Email:</strong> ${currentUser.email}<br>
+                <strong>User ID:</strong> ${currentUser.id}<br>
+                <strong>Last Sign In:</strong> ${new Date(currentUser.last_sign_in_at).toLocaleString()}
+            `;
+        }
+
+        function showApiResult(result) {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.textContent = result;
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            initSupabase();
+        };
+    </script>
+</body>
+</html>
