@@ -51,7 +51,8 @@ def create_app():
         return jsonify({'status': 'healthy'})
 
     # Register your blueprints here
-    
+    from src.routes.route import blp
+    api.register_blueprint(blp)
 
     return app
 

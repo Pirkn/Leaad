@@ -10,7 +10,8 @@ class PromptGenerator:
         current_user_prompt = user_prompt
         
         # ===== Create System Prompt =====
-        system_prompt = """You are a helpful assistant. You are given a user prompt and you need to respond to the user's prompt."""
+        with open('Backend/src/config/prompt2.txt', 'r') as file:
+            system_prompt = file.read()
 
         # ===== Create Messages =====
         messages = [
