@@ -17,8 +17,7 @@ class Model:
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
         )
 
-    def gemini_chat_completion(self, messages):
-        
+    def gemini_chat_completion(self, messages): 
         # ===== Generate Response =====
         response = self.gemini_client.chat.completions.create(
             model="gemini-2.5-flash",

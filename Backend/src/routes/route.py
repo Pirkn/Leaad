@@ -40,6 +40,13 @@ class GenerateRedditPost(MethodView):
 
         return jsonify({'response': response})
 
+@blp.route('/get-viral-posts')
+class GetViralPosts(MethodView):
+    def get(self):
+        # Reads viral_posts.json file
+        with open('Backend/src/data/viral_posts.json', 'r', encoding='utf-8') as file:
+            viral_posts = json.load(file)
+            return jsonify(viral_posts['viral_posts'])
 
 
 # Product/app name

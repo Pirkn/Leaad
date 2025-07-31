@@ -709,6 +709,27 @@
                     <div class="result-content" id="apiResultContent"></div>
                 </div>
             </div>
+
+            <!-- Viral Posts Section -->
+            <div class="section">
+                <h2><i class="fas fa-fire"></i> Viral Posts</h2>
+                
+                <div>
+                    <button class="btn" onclick="getViralPosts()">
+                        <i class="fas fa-fire"></i> Load Viral Posts
+                    </button>
+                </div>
+                
+                <div id="viralPostsResult" class="result hidden">
+                    <div class="result-header">
+                        <span><i class="fas fa-fire"></i> Viral Posts</span>
+                        <button class="copy-btn" onclick="copyToClipboard('viralPostsResult')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="result-content" id="viralPostsResultContent"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Main Content -->
@@ -942,6 +963,24 @@
             }
         }
 
+        // Get Viral Posts
+        async function getViralPosts() {
+            try {
+                showViralPostsResult('Loading viral posts...', true);
+                
+                const response = await fetch(`${API_BASE_URL}/get-viral-posts`);
+                const data = await response.json();
+                
+                if (response.ok && data) {
+                    showViralPosts(data);
+                } else {
+                    showViralPostsResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showViralPostsResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
         // Generate Reddit Post
         async function generateRedditPost() {
             const productName = document.getElementById('product_name').value;
@@ -1091,6 +1130,92 @@
             resultDiv.classList.remove('hidden');
         }
 
+        function showViralPostsResult(result, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('viralPostsResult');
+            const contentDiv = document.getElementById('viralPostsResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading"></div> ${result}`;
+            } else {
+                if (isError) {
+                    contentDiv.innerHTML = `<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${result}</span>`;
+                } else if (data) {
+                    contentDiv.innerHTML = formatJSON(result, data);
+                } else {
+                    contentDiv.textContent = result;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showViralPosts(posts) {
+            const resultDiv = document.getElementById('viralPostsResult');
+            const contentDiv = document.getElementById('viralPostsResultContent');
+            
+            let html = `<div class="success-message">
+                <i class="fas fa-fire"></i>
+                <strong>Success!</strong> Loaded ${posts.length} viral posts for inspiration.
+            </div>
+            <div class="post-grid">`;
+            
+            posts.forEach((post, index) => {
+                const title = post.title || 'No title';
+                const description = post.description || 'No description';
+                const subreddit = post.subreddit || 'Unknown';
+                const upvotes = post.upvotes || 0;
+                const comments = post.comments || 0;
+                
+                html += `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-meta">
+                                <div class="subreddit-tag">
+                                    <i class="fab fa-reddit"></i> ${subreddit}
+                                </div>
+                                <div class="post-number">Viral Post ${index + 1}</div>
+                            </div>
+                        </div>
+                        <div class="post-title">${title}</div>
+                        <div class="post-content">${description}</div>
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-number">${upvotes}</div>
+                                <div class="stat-label">Upvotes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">${comments}</div>
+                                <div class="stat-label">Comments</div>
+                            </div>
+                        </div>
+                        <div class="post-footer">
+                            <button class="footer-btn" onclick="copyViralPostContent(${index})">
+                                <i class="fas fa-copy"></i> Copy Content
+                            </button>
+                            <button class="footer-btn" onclick="copyViralPostTitle(${index})">
+                                <i class="fas fa-heading"></i> Copy Title
+                            </button>
+                            <button class="footer-btn" onclick="copyViralPostAll(${index})">
+                                <i class="fas fa-clipboard"></i> Copy All
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            // Store viral posts data for copy functions
+            window.viralPostsData = posts;
+            
+            contentDiv.innerHTML = html;
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
+        }
+
         function showRedditPosts(posts, data) {
             const resultDiv = document.getElementById('redditResult');
             const contentDiv = document.getElementById('redditResultContent');
@@ -1231,6 +1356,87 @@
                 console.error('Failed to copy: ', err);
                 showToast('Failed to copy to clipboard', 'error');
             });
+        }
+
+        // Viral Posts Copy Functions
+        function copyViralPostContent(index) {
+            if (!window.viralPostsData || !window.viralPostsData[index]) {
+                showToast('Viral post data not available', 'error');
+                return;
+            }
+            
+            const post = window.viralPostsData[index];
+            const content = post.description || 'No content';
+            
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Viral post content copied to clipboard!', 'success');
+                updateViralButtonState(index, 'content');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyViralPostTitle(index) {
+            if (!window.viralPostsData || !window.viralPostsData[index]) {
+                showToast('Viral post data not available', 'error');
+                return;
+            }
+            
+            const post = window.viralPostsData[index];
+            const title = post.title || 'No title';
+            
+            navigator.clipboard.writeText(title).then(() => {
+                showToast('Viral post title copied to clipboard!', 'success');
+                updateViralButtonState(index, 'title');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyViralPostAll(index) {
+            if (!window.viralPostsData || !window.viralPostsData[index]) {
+                showToast('Viral post data not available', 'error');
+                return;
+            }
+            
+            const post = window.viralPostsData[index];
+            const subreddit = post.subreddit || 'Unknown';
+            const title = post.title || 'No title';
+            const content = post.description || 'No content';
+            const upvotes = post.upvotes || 0;
+            const comments = post.comments || 0;
+            
+            const fullPost = `Subreddit: ${subreddit}\nTitle: ${title}\nUpvotes: ${upvotes}\nComments: ${comments}\n\nContent:\n${content}`;
+            
+            navigator.clipboard.writeText(fullPost).then(() => {
+                showToast('Complete viral post copied to clipboard!', 'success');
+                updateViralButtonState(index, 'all');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function updateViralButtonState(index, type) {
+            const postCard = document.querySelectorAll('.post-card')[index];
+            if (!postCard) return;
+            
+            const buttons = postCard.querySelectorAll('.footer-btn');
+            buttons.forEach(btn => btn.classList.remove('success'));
+            
+            if (type === 'content') {
+                buttons[0].classList.add('success');
+            } else if (type === 'title') {
+                buttons[1].classList.add('success');
+            } else if (type === 'all') {
+                buttons[2].classList.add('success');
+            }
+            
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('success'));
+            }, 2000);
         }
 
         function copyAllPosts() {
