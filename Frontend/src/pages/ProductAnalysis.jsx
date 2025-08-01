@@ -3,6 +3,7 @@ import { useAnalyzeProduct, useProductAnalysis } from "../hooks/useApi";
 
 function ProductAnalysis() {
   const [websiteUrl, setWebsiteUrl] = useState("");
+  const [productName, setProductName] = useState("");
   const [showResults, setShowResults] = useState(false);
 
   // TanStack Query hooks
@@ -28,6 +29,7 @@ function ProductAnalysis() {
   const handleClearResults = () => {
     setShowResults(false);
     setWebsiteUrl("");
+    setProductName("");
     analyzeMutation.reset();
   };
 
@@ -175,17 +177,33 @@ function ProductAnalysis() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-6 flex space-x-3">
-            <button className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium">
-              Generate Reddit Post
-            </button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
-              Export Analysis
-            </button>
-            <button className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm font-medium">
-              Save to Library
-            </button>
+          {/* Product Name Input */}
+          <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <h4 className="text-sm font-semibold text-orange-900 mb-3">
+              Save Product
+            </h4>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-orange-800 mb-1">
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  placeholder="Enter a name for this product"
+                  className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                />
+              </div>
+              <div className="flex space-x-3">
+                <button className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium">
+                  Save Product
+                </button>
+                <button className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm font-medium">
+                  Generate Reddit Post
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

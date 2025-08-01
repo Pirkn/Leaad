@@ -41,6 +41,22 @@ export const authService = {
     return user;
   },
 
+  // Get current session
+  async getSession() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session;
+  },
+
+  // Get access token
+  async getAccessToken() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session?.access_token;
+  },
+
   // Listen to auth state changes
   onAuthStateChange(callback) {
     return supabase.auth.onAuthStateChange(callback);

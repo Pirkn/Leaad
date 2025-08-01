@@ -1,25 +1,14 @@
-import { useState } from "react";
-import { useAnalyzeProduct, useHealthCheck } from "../hooks/useApi";
+import { useNavigate } from "react-router-dom";
+import { useHealthCheck } from "../hooks/useApi";
 
 function Dashboard() {
-  const [websiteUrl, setWebsiteUrl] = useState("");
-  const [showAnalysisForm, setShowAnalysisForm] = useState(false);
+  const navigate = useNavigate();
 
   // TanStack Query hooks
-  const analyzeMutation = useAnalyzeProduct();
   const { data: healthData, isLoading: healthLoading } = useHealthCheck();
 
-  const handleAnalyzeProduct = async (e) => {
-    e.preventDefault();
-    if (!websiteUrl.trim()) return;
-
-    try {
-      await analyzeMutation.mutateAsync(websiteUrl);
-      setShowAnalysisForm(false);
-    } catch (error) {
-      console.error("Failed to analyze product:", error);
-      alert("Failed to analyze product. Please check the URL and try again.");
-    }
+  const handleAnalyzeProduct = () => {
+    navigate("/products");
   };
 
   return (
@@ -27,10 +16,10 @@ function Dashboard() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
         <button
-          onClick={() => setShowAnalysisForm(true)}
+          onClick={handleAnalyzeProduct}
           className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium"
         >
-          Analyze Product
+          View Products
         </button>
       </div>
 
@@ -43,108 +32,6 @@ function Dashboard() {
               API Status: {healthData.status}
             </span>
           </div>
-        </div>
-      )}
-
-      {/* Product Analysis Form Modal */}
-      {showAnalysisForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Analyze Product Website
-            </h3>
-            <form onSubmit={handleAnalyzeProduct} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Website URL
-                </label>
-                <input
-                  type="url"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  placeholder="https://example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  required
-                />
-              </div>
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={analyzeMutation.isPending}
-                  className="flex-1 bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50"
-                >
-                  {analyzeMutation.isPending
-                    ? "Analyzing..."
-                    : "Analyze Product"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAnalysisForm(false)}
-                  className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Product Analysis Results */}
-      {analyzeMutation.data && (
-        <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Product Analysis Results
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
-                Target Audience
-              </h4>
-              <p className="text-sm text-gray-900">
-                {analyzeMutation.data.target_audience}
-              </p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
-                Description
-              </h4>
-              <p className="text-sm text-gray-900">
-                {analyzeMutation.data.description}
-              </p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
-                Problem Solved
-              </h4>
-              <p className="text-sm text-gray-900">
-                {analyzeMutation.data.problem_solved}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex space-x-2">
-            <button className="text-orange-600 hover:text-orange-700 text-sm font-medium">
-              Use for Reddit Post
-            </button>
-            <button
-              onClick={() => analyzeMutation.reset()}
-              className="text-gray-600 hover:text-gray-700 text-sm font-medium"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Error Display */}
-      {analyzeMutation.isError && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-red-900 mb-2">
-            Analysis Failed
-          </h3>
-          <p className="text-sm text-red-700">
-            {analyzeMutation.error?.message || "Failed to analyze product"}
-          </p>
         </div>
       )}
 

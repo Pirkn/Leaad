@@ -1,19 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiService from "../services/api";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 // Query Keys
 export const queryKeys = {
   viralPosts: ["viralPosts"],
   productAnalysis: (url) => ["productAnalysis", url],
   health: ["health"],
+  products: ["products"],
 };
 
 // Viral Posts Query
 export const useViralPosts = () => {
+  const { user } = useAuth();
+
   return useQuery({
     queryKey: queryKeys.viralPosts,
     queryFn: () => apiService.getViralPosts(),
+    enabled: !!user, // Only run query if user is authenticated
     staleTime: 1000 * 60 * 10, // 10 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
   });
@@ -21,10 +26,12 @@ export const useViralPosts = () => {
 
 // Product Analysis Query
 export const useProductAnalysis = (websiteUrl, enabled = false) => {
+  const { user } = useAuth();
+
   return useQuery({
     queryKey: queryKeys.productAnalysis(websiteUrl),
     queryFn: () => apiService.generateProductDetails(websiteUrl),
-    enabled: enabled && !!websiteUrl,
+    enabled: enabled && !!websiteUrl && !!user, // Only run if user is authenticated and URL is provided
     staleTime: 1000 * 60 * 60, // 1 hour
     gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
@@ -32,9 +39,12 @@ export const useProductAnalysis = (websiteUrl, enabled = false) => {
 
 // Health Check Query
 export const useHealthCheck = () => {
+  const { user } = useAuth();
+
   return useQuery({
     queryKey: queryKeys.health,
     queryFn: () => apiService.healthCheck(),
+    enabled: !!user, // Only run if user is authenticated
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -43,9 +53,15 @@ export const useHealthCheck = () => {
 // Generate Reddit Post Mutation
 export const useGenerateRedditPost = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (productData) => apiService.generateRedditPost(productData),
+    mutationFn: (productData) => {
+      if (!user) {
+        throw new Error("User must be authenticated to generate posts");
+      }
+      return apiService.generateRedditPost(productData);
+    },
     onSuccess: (data, variables) => {
       // Invalidate viral posts to refresh the list
       queryClient.invalidateQueries({ queryKey: queryKeys.viralPosts });
@@ -64,9 +80,15 @@ export const useGenerateRedditPost = () => {
 // Product Analysis Mutation (for manual triggering)
 export const useAnalyzeProduct = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (websiteUrl) => apiService.generateProductDetails(websiteUrl),
+    mutationFn: (websiteUrl) => {
+      if (!user) {
+        throw new Error("User must be authenticated to analyze products");
+      }
+      return apiService.generateProductDetails(websiteUrl);
+    },
     onSuccess: (data, websiteUrl) => {
       // Update the cache with the new analysis
       queryClient.setQueryData(queryKeys.productAnalysis(websiteUrl), data);
@@ -194,4 +216,80 @@ export const useRedditPostGeneration = () => {
     isOptimisticGenerating: optimisticMutation.isPending,
     error: generateMutation.error || optimisticMutation.error,
   };
+};
+
+// Products Query
+export const useProducts = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: queryKeys.products,
+    queryFn: () => apiService.getProducts(),
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+};
+
+// Create Product Mutation
+export const useCreateProduct = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: (productData) => {
+      if (!user) {
+        throw new Error("User must be authenticated to create products");
+      }
+      return apiService.createProduct(productData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.products });
+    },
+    onError: (error) => {
+      console.error("Failed to create product:", error);
+    },
+  });
+};
+
+// Update Product Mutation
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: ({ productId, productData }) => {
+      if (!user) {
+        throw new Error("User must be authenticated to update products");
+      }
+      return apiService.updateProduct(productId, productData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.products });
+    },
+    onError: (error) => {
+      console.error("Failed to update product:", error);
+    },
+  });
+};
+
+// Delete Product Mutation
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: (productId) => {
+      if (!user) {
+        throw new Error("User must be authenticated to delete products");
+      }
+      return apiService.deleteProduct(productId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.products });
+    },
+    onError: (error) => {
+      console.error("Failed to delete product:", error);
+    },
+  });
 };
