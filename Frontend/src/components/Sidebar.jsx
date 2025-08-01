@@ -1,7 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 function Sidebar() {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -163,6 +165,44 @@ function Sidebar() {
           </div>
           <span className="text-sm font-medium">Settings</span>
         </Link>
+      </div>
+
+      {/* User Section */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+            <span className="text-indigo-600 font-medium text-sm">
+              {user?.email?.charAt(0).toUpperCase() || "U"}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {user?.email || "User"}
+            </p>
+            <p className="text-xs text-gray-500">Signed in</p>
+          </div>
+        </div>
+
+        <button
+          onClick={signOut}
+          className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        >
+          <div className="w-5 h-5">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+          </div>
+          <span className="text-sm font-medium">Sign out</span>
+        </button>
       </div>
     </div>
   );
