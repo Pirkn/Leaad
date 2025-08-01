@@ -759,12 +759,30 @@
                 
                 <div class="form-group">
                     <label for="product_website_link"><i class="fas fa-link"></i> Website/App Store Link:</label>
-                    <input type="url" id="product_website_link" placeholder="https://example.com" required>
+                    <input type="url" id="product_website_link" placeholder="https://example.com" required onchange="checkProductLink()">
+                    <button id="generateDetailsBtn" class="btn btn-secondary" onclick="generateProductDetails()" style="margin-top: 10px; display: none;">
+                        <i class="fas fa-search"></i> Generate Product Details
+                    </button>
                 </div>
                 
                 <button class="btn btn-success" onclick="generateRedditPost()">
                     <i class="fas fa-magic"></i> Generate Reddit Posts
                 </button>
+                
+                <div id="productDetailsResult" class="response-container hidden">
+                    <div class="response-header">
+                        <h3><i class="fas fa-info-circle"></i> Product Details</h3>
+                        <div class="response-actions">
+                            <button class="action-btn" onclick="copyProductDetails()">
+                                <i class="fas fa-copy"></i> Copy Details
+                            </button>
+                            <button class="action-btn" onclick="exportProductDetailsAsJSON()">
+                                <i class="fas fa-download"></i> Export JSON
+                            </button>
+                        </div>
+                    </div>
+                    <div class="response-content" id="productDetailsResultContent"></div>
+                </div>
                 
                 <div id="redditResult" class="response-container hidden">
                     <div class="response-header">
@@ -981,6 +999,52 @@
             }
         }
 
+        // Check if product link is entered and show/hide generate details button
+        function checkProductLink() {
+            const productLink = document.getElementById('product_website_link').value;
+            const generateDetailsBtn = document.getElementById('generateDetailsBtn');
+            
+            if (productLink && productLink.trim() !== '') {
+                generateDetailsBtn.style.display = 'inline-flex';
+            } else {
+                generateDetailsBtn.style.display = 'none';
+            }
+        }
+
+        // Generate Product Details
+        async function generateProductDetails() {
+            const productWebsiteLink = document.getElementById('product_website_link').value;
+
+            if (!productWebsiteLink) {
+                showProductDetailsResult('Error: Please enter a product website link.', null, true);
+                return;
+            }
+
+            try {
+                showProductDetailsResult('Generating product details...', true);
+                
+                const response = await fetch(`${API_BASE_URL}/generate-product-details`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_website_link: productWebsiteLink
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data) {
+                    showProductDetails(data);
+                } else {
+                    showProductDetailsResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showProductDetailsResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
         // Generate Reddit Post
         async function generateRedditPost() {
             const productName = document.getElementById('product_name').value;
@@ -1109,6 +1173,89 @@
             }
             
             resultDiv.classList.remove('hidden');
+        }
+
+        function showProductDetailsResult(result, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('productDetailsResult');
+            const contentDiv = document.getElementById('productDetailsResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading"></div> ${result}`;
+            } else {
+                if (isError) {
+                    contentDiv.innerHTML = `<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${result}</span>`;
+                } else if (data) {
+                    contentDiv.innerHTML = formatJSON(result, data);
+                } else {
+                    contentDiv.textContent = result;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showProductDetails(details) {
+            const resultDiv = document.getElementById('productDetailsResult');
+            const contentDiv = document.getElementById('productDetailsResultContent');
+            
+            // Automatically fill the form fields with generated product details
+            if (details.target_audience) {
+                document.getElementById('product_target_audience').value = details.target_audience;
+            }
+            if (details.description) {
+                document.getElementById('product_description').value = details.description;
+            }
+            if (details.problem_solved) {
+                document.getElementById('product_main_benefit').value = details.problem_solved;
+            }
+            
+            let html = `<div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <strong>Success!</strong> Product details generated and form fields automatically filled.
+            </div>
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-meta">
+                        <div class="subreddit-tag" style="background: #28a745;">
+                            <i class="fas fa-info-circle"></i> Product Details
+                        </div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Target Audience</div>
+                            <div class="stat-number" style="font-size: 16px; color: #495057;">${details.target_audience || 'Not specified'}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Description</div>
+                            <div class="stat-number" style="font-size: 16px; color: #495057;">${details.description || 'Not specified'}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Problem Solved</div>
+                            <div class="stat-number" style="font-size: 16px; color: #495057;">${details.problem_solved || 'Not specified'}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-footer">
+                    <button class="footer-btn" onclick="copyProductDetails()">
+                        <i class="fas fa-copy"></i> Copy Details
+                    </button>
+                    <button class="footer-btn" onclick="exportProductDetailsAsJSON()">
+                        <i class="fas fa-download"></i> Export JSON
+                    </button>
+                </div>
+            </div>`;
+            
+            // Store product details data for copy functions
+            window.productDetailsData = details;
+            
+            contentDiv.innerHTML = html;
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
         }
 
         function showRedditResult(result, isLoading = false, data = null, isError = false) {
@@ -1545,6 +1692,43 @@
                 toast.style.transform = 'translateX(100%)';
                 setTimeout(() => document.body.removeChild(toast), 300);
             }, 3000);
+        }
+
+        // Copy product details to clipboard
+        function copyProductDetails() {
+            if (window.productDetailsData) {
+                const detailsText = `Target Audience: ${window.productDetailsData.target_audience || 'Not specified'}
+Description: ${window.productDetailsData.description || 'Not specified'}
+Problem Solved: ${window.productDetailsData.problem_solved || 'Not specified'}`;
+                
+                navigator.clipboard.writeText(detailsText).then(() => {
+                    showToast('Product details copied to clipboard!', 'success');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy to clipboard', 'error');
+                });
+            } else {
+                showToast('No product details to copy', 'error');
+            }
+        }
+
+        // Export product details as JSON
+        function exportProductDetailsAsJSON() {
+            if (window.productDetailsData) {
+                const dataStr = JSON.stringify(window.productDetailsData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'product_details.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showToast('Product details exported as JSON!', 'success');
+            } else {
+                showToast('No product details to export', 'error');
+            }
         }
 
         // Initialize when page loads

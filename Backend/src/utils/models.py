@@ -8,7 +8,6 @@ load_dotenv()
 class Model:
     def __init__(self):
         self.gemini_api_key = os.getenv('GEMINI_API_KEY', '')
-        self.groq_api_key = os.getenv('GROQ_API_KEY', '')
         self.gemini_client = self.get_gemini_client()
 
     def get_gemini_client(self):

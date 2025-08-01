@@ -9,7 +9,7 @@ from src.utils.models import Model
 
 load_dotenv()
 
-blp = Blueprint('routes', __name__, description='Routes Operations')
+blp = Blueprint('Reddit', __name__, description='Reddit Operations')
 
 @blp.route('/generate-reddit-post')
 class GenerateRedditPost(MethodView):
@@ -33,7 +33,7 @@ class GenerateRedditPost(MethodView):
         print(user_prompt)
 
         prompt_generator = PromptGenerator()
-        messages = prompt_generator.chat_prompt(user_prompt)
+        messages = prompt_generator.reddit_post_generator_prompt(user_prompt)
 
         model = Model()
         response = model.gemini_chat_completion(messages)
