@@ -13,6 +13,7 @@ blp = Blueprint('Reddit', __name__, description='Reddit Operations')
 
 @blp.route('/generate-reddit-post')
 class GenerateRedditPost(MethodView):
+    @verify_supabase_token
     def post(self):
         data = request.get_json()
         
@@ -30,8 +31,6 @@ class GenerateRedditPost(MethodView):
         Website/app store link: {product_website_link}
         """
 
-        print(user_prompt)
-
         prompt_generator = PromptGenerator()
         messages = prompt_generator.reddit_post_generator_prompt(user_prompt)
 
@@ -42,6 +41,7 @@ class GenerateRedditPost(MethodView):
 
 @blp.route('/get-viral-posts')
 class GetViralPosts(MethodView):
+    @verify_supabase_token
     def get(self):
         # Reads viral_posts.json file
         with open('Backend/src/data/viral_posts.json', 'r', encoding='utf-8') as file:

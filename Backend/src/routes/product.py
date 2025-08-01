@@ -15,6 +15,7 @@ blp = Blueprint('Product', __name__, description='Product Operations')
 
 @blp.route('/generate-product-details')
 class GenerateProductDetails(MethodView):
+    @verify_supabase_token
     def post(self):
         data = request.get_json()
         product_website_link = data.get('product_website_link')
