@@ -26,7 +26,7 @@ function Sidebar() {
       <div className="flex-1 p-4 space-y-1">
         <Link
           to="/"
-          className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 focus:outline-none ${
+          className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/")
               ? "bg-orange-50 text-orange-700 border border-orange-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -57,7 +57,7 @@ function Sidebar() {
 
         <Link
           to="/leads"
-          className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 focus:outline-none ${
+          className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/leads")
               ? "bg-orange-50 text-orange-700 border border-orange-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -83,7 +83,7 @@ function Sidebar() {
 
         <Link
           to="/viral-templates"
-          className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 focus:outline-none ${
+          className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/viral-templates")
               ? "bg-orange-50 text-orange-700 border border-orange-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -109,7 +109,7 @@ function Sidebar() {
 
         <Link
           to="/settings"
-          className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 focus:outline-none ${
+          className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/settings")
               ? "bg-orange-50 text-orange-700 border border-orange-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
