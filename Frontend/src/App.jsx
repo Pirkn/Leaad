@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import ViralTemplates from "./pages/ViralTemplates";
+import ProductAnalysis from "./pages/ProductAnalysis";
 import Settings from "./pages/Settings";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/viral-templates" element={<ViralTemplates />} />
+            <Route path="/product-analysis" element={<ProductAnalysis />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>
