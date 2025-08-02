@@ -88,7 +88,7 @@
             font-size: 14px;
         }
 
-        input[type="email"], input[type="password"], input[type="text"], input[type="url"] {
+        input[type="email"], input[type="password"], input[type="text"], input[type="url"], textarea {
             width: 100%;
             padding: 15px;
             border: 2px solid #e9ecef;
@@ -96,9 +96,15 @@
             font-size: 16px;
             transition: all 0.3s ease;
             background: white;
+            font-family: inherit;
         }
 
-        input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="url"]:focus {
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="url"]:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -595,6 +601,92 @@
             font-weight: 500;
         }
 
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.hidden .modal-content {
+            transform: scale(0.9);
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 grid-template-columns: 1fr;
@@ -730,6 +822,30 @@
                     <div class="result-content" id="viralPostsResultContent"></div>
                 </div>
             </div>
+
+            <!-- Product Management Section -->
+            <div class="section">
+                <h2><i class="fas fa-box"></i> Product Management</h2>
+                
+                <div>
+                    <button class="btn" onclick="getUserProducts()">
+                        <i class="fas fa-list"></i> Get My Products
+                    </button>
+                    <button class="btn btn-success" onclick="showCreateProductForm()">
+                        <i class="fas fa-plus"></i> Create Product
+                    </button>
+                </div>
+                
+                <div id="productsResult" class="result hidden">
+                    <div class="result-header">
+                        <span><i class="fas fa-box"></i> My Products</span>
+                        <button class="copy-btn" onclick="copyToClipboard('productsResult')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="result-content" id="productsResultContent"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Main Content -->
@@ -738,34 +854,21 @@
                 <h2><i class="fas fa-reddit"></i> Generate Reddit Posts</h2>
                 
                 <div class="form-group">
-                    <label for="product_name"><i class="fas fa-tag"></i> Product/App Name:</label>
-                    <input type="text" id="product_name" placeholder="Enter product or app name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="product_description"><i class="fas fa-info-circle"></i> One-line Description:</label>
-                    <input type="text" id="product_description" placeholder="What it does" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="product_target_audience"><i class="fas fa-users"></i> Target Audience:</label>
-                    <input type="text" id="product_target_audience" placeholder="Who uses it" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="product_main_benefit"><i class="fas fa-star"></i> Main Benefit/Problem Solved:</label>
-                    <input type="text" id="product_main_benefit" placeholder="Main benefit or problem it solves" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="product_website_link"><i class="fas fa-link"></i> Website/App Store Link:</label>
-                    <input type="url" id="product_website_link" placeholder="https://example.com" required onchange="checkProductLink()">
-                    <button id="generateDetailsBtn" class="btn btn-secondary" onclick="generateProductDetails()" style="margin-top: 10px; display: none;">
-                        <i class="fas fa-search"></i> Generate Product Details
+                    <label for="product_select"><i class="fas fa-box"></i> Select Your Product:</label>
+                    <select id="product_select" onchange="onProductSelect()" required>
+                        <option value="">-- Select a product --</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="loadUserProducts()" style="margin-top: 10px;">
+                        <i class="fas fa-refresh"></i> Refresh Products
                     </button>
                 </div>
                 
-                <button class="btn btn-success" onclick="generateRedditPost()">
+                <div id="selectedProductInfo" class="user-info hidden">
+                    <h3><i class="fas fa-info-circle"></i> Selected Product Details</h3>
+                    <div id="productInfoContent"></div>
+                </div>
+                
+                <button class="btn btn-success" onclick="generateRedditPost()" id="generateRedditBtn" disabled>
                     <i class="fas fa-magic"></i> Generate Reddit Posts
                 </button>
                 
@@ -799,13 +902,63 @@
                     <div class="response-content" id="redditResultContent"></div>
                 </div>
             </div>
+
+            <!-- Create Product Modal -->
+            <div id="createProductModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-plus"></i> Create New Product</h3>
+                        <button class="modal-close" onclick="hideCreateProductForm()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="newProductName"><i class="fas fa-tag"></i> Product Name:</label>
+                            <input type="text" id="newProductName" placeholder="Enter product name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newProductUrl"><i class="fas fa-link"></i> Product URL:</label>
+                            <input type="url" id="newProductUrl" placeholder="https://example.com" onchange="checkNewProductLink()">
+                            <button id="generateNewProductDetailsBtn" class="btn btn-secondary" onclick="generateNewProductDetails()" style="margin-top: 10px; display: none;">
+                                <i class="fas fa-robot"></i> Generate Details with AI
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newProductDescription"><i class="fas fa-info-circle"></i> Description:</label>
+                            <textarea id="newProductDescription" placeholder="Describe your product" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newProductTargetAudience"><i class="fas fa-users"></i> Target Audience:</label>
+                            <input type="text" id="newProductTargetAudience" placeholder="Who is your target audience?">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newProductProblemSolved"><i class="fas fa-lightbulb"></i> Problem Solved:</label>
+                            <textarea id="newProductProblemSolved" placeholder="What problem does your product solve?" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="hideCreateProductForm()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button class="btn btn-success" onclick="createProduct()">
+                                <i class="fas fa-save"></i> Create Product
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         // Replace these with your actual Supabase URL and anon key
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        const SUPABASE_URL = 'https://eagkbdpnrxwxgyhxrrch.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhZ2tiZHBucnh3eGd5aHhycmNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNDMyMDksImV4cCI6MjA2OTYxOTIwOX0.HGnY3qr62Vql73_zOEEasynuwN55lqraFtnknkBI4Bw';
         
         // Flask app URL
         const API_BASE_URL = 'http://127.0.0.1:5000';
@@ -834,11 +987,17 @@
                     accessToken = session.access_token;
                     showUserInfo();
                     showStatus('Successfully authenticated!', 'success');
+                    // Auto-load products when user signs in
+                    loadUserProducts();
                 } else {
                     currentUser = null;
                     accessToken = null;
                     showLoginForm();
                     showStatus('Please sign in to continue', 'info');
+                    // Clear products when user signs out
+                    userProducts = [];
+                    selectedProductId = null;
+                    populateProductDropdown();
                 }
             });
         }
@@ -938,6 +1097,275 @@
                 console.error('Sign out error:', error);
                 showStatus('An error occurred during sign out', 'error');
             }
+        }
+
+        // Product Management Functions
+        async function getUserProducts() {
+            if (!accessToken) {
+                showProductsResult('Error: You must be signed in to view your products', null, true);
+                return;
+            }
+
+            try {
+                showProductsResult('Loading your products...', true);
+                
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.products) {
+                    showProducts(data.products);
+                } else {
+                    showProductsResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showProductsResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
+        function showCreateProductForm() {
+            if (!accessToken) {
+                showToast('You must be signed in to create products', 'error');
+                return;
+            }
+            const modal = document.getElementById('createProductModal');
+            modal.classList.remove('hidden');
+            console.log('Modal shown:', !modal.classList.contains('hidden'));
+        }
+
+        function hideCreateProductForm() {
+            const modal = document.getElementById('createProductModal');
+            modal.classList.add('hidden');
+            console.log('Modal hidden:', modal.classList.contains('hidden'));
+            // Clear form fields
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductUrl').value = '';
+            document.getElementById('newProductDescription').value = '';
+            document.getElementById('newProductTargetAudience').value = '';
+            document.getElementById('newProductProblemSolved').value = '';
+        }
+
+        // Add click outside modal to close
+        function setupModalHandlers() {
+            const modal = document.getElementById('createProductModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    hideCreateProductForm();
+                }
+            });
+            
+            // Prevent closing when clicking inside modal content
+            modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    hideCreateProductForm();
+                }
+            });
+        }
+
+        async function createProduct() {
+            if (!accessToken) {
+                showToast('You must be signed in to create products', 'error');
+                return;
+            }
+
+            const name = document.getElementById('newProductName').value;
+            const url = document.getElementById('newProductUrl').value;
+            const description = document.getElementById('newProductDescription').value;
+            const targetAudience = document.getElementById('newProductTargetAudience').value;
+            const problemSolved = document.getElementById('newProductProblemSolved').value;
+
+            if (!name) {
+                showToast('Product name is required', 'error');
+                return;
+            }
+
+            try {
+                showToast('Creating product...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/create_product`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        url: url || null,
+                        description: description || null,
+                        target_audience: targetAudience || null,
+                        problem_solved: problemSolved || null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.product) {
+                    showToast('Product created successfully!', 'success');
+                    hideCreateProductForm();
+                    // Refresh products list
+                    getUserProducts();
+                } else {
+                    showToast(`Error: ${data.error || 'Failed to create product'}`, 'error');
+                }
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showProductsResult(result, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('productsResult');
+            const contentDiv = document.getElementById('productsResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading"></div> ${result}`;
+            } else {
+                if (isError) {
+                    contentDiv.innerHTML = `<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${result}</span>`;
+                } else if (data) {
+                    contentDiv.innerHTML = formatJSON(result, data);
+                } else {
+                    contentDiv.textContent = result;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showProducts(products) {
+            const resultDiv = document.getElementById('productsResult');
+            const contentDiv = document.getElementById('productsResultContent');
+            
+            if (products.length === 0) {
+                contentDiv.innerHTML = `
+                    <div class="success-message">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>No products found.</strong> Create your first product to get started!
+                    </div>
+                `;
+            } else {
+                let html = `<div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Success!</strong> Found ${products.length} product(s).
+                </div>
+                <div class="post-grid">`;
+                
+                products.forEach((product, index) => {
+                    const createdAt = new Date(product.created_at).toLocaleDateString();
+                    const updatedAt = new Date(product.updated_at).toLocaleDateString();
+                    
+                    html += `
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-meta">
+                                    <div class="subreddit-tag" style="background: #28a745;">
+                                        <i class="fas fa-box"></i> Product ${index + 1}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-title">${product.name}</div>
+                            <div class="post-content">
+                                ${product.description ? `<strong>Description:</strong> ${product.description}<br><br>` : ''}
+                                ${product.url ? `<strong>URL:</strong> <a href="${product.url}" target="_blank">${product.url}</a><br><br>` : ''}
+                                ${product.target_audience ? `<strong>Target Audience:</strong> ${product.target_audience}<br><br>` : ''}
+                                ${product.problem_solved ? `<strong>Problem Solved:</strong> ${product.problem_solved}<br><br>` : ''}
+                                <strong>Created:</strong> ${createdAt}<br>
+                                <strong>Updated:</strong> ${updatedAt}
+                            </div>
+                            <div class="post-footer">
+                                <button class="footer-btn" onclick="copyProductInfo(${index})">
+                                    <i class="fas fa-copy"></i> Copy Info
+                                </button>
+                                <button class="footer-btn" onclick="copyProductName(${index})">
+                                    <i class="fas fa-tag"></i> Copy Name
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                // Store products data for copy functions
+                window.productsData = products;
+                
+                contentDiv.innerHTML = html;
+            }
+            
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
+        }
+
+        function copyProductInfo(index) {
+            if (!window.productsData || !window.productsData[index]) {
+                showToast('Product data not available', 'error');
+                return;
+            }
+            
+            const product = window.productsData[index];
+            const info = `Product: ${product.name}
+${product.description ? `Description: ${product.description}` : ''}
+${product.url ? `URL: ${product.url}` : ''}
+${product.target_audience ? `Target Audience: ${product.target_audience}` : ''}
+${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
+            
+            navigator.clipboard.writeText(info).then(() => {
+                showToast('Product info copied to clipboard!', 'success');
+                updateProductButtonState(index, 'info');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyProductName(index) {
+            if (!window.productsData || !window.productsData[index]) {
+                showToast('Product data not available', 'error');
+                return;
+            }
+            
+            const product = window.productsData[index];
+            
+            navigator.clipboard.writeText(product.name).then(() => {
+                showToast('Product name copied to clipboard!', 'success');
+                updateProductButtonState(index, 'name');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function updateProductButtonState(index, type) {
+            const postCard = document.querySelectorAll('.post-card')[index];
+            if (!postCard) return;
+            
+            const buttons = postCard.querySelectorAll('.footer-btn');
+            buttons.forEach(btn => btn.classList.remove('success'));
+            
+            if (type === 'info') {
+                buttons[0].classList.add('success');
+            } else if (type === 'name') {
+                buttons[1].classList.add('success');
+            }
+            
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('success'));
+            }, 2000);
         }
 
         // Test health route (public)
@@ -1045,84 +1473,7 @@
             }
         }
 
-        // Generate Reddit Post
-        async function generateRedditPost() {
-            const productName = document.getElementById('product_name').value;
-            const productDescription = document.getElementById('product_description').value;
-            const productTargetAudience = document.getElementById('product_target_audience').value;
-            const productMainBenefit = document.getElementById('product_main_benefit').value;
-            const productWebsiteLink = document.getElementById('product_website_link').value;
 
-            if (!productName || !productDescription || !productTargetAudience || !productMainBenefit || !productWebsiteLink) {
-                showRedditResult('Error: Please fill in all fields for Reddit post generation.', null, true);
-                return;
-            }
-
-            try {
-                showRedditResult('Generating Reddit posts...', true);
-                
-                const response = await fetch(`${API_BASE_URL}/generate-reddit-post`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        product_name: productName,
-                        product_description: productDescription,
-                        product_target_audience: productTargetAudience,
-                        product_main_benefit: productMainBenefit,
-                        product_website_link: productWebsiteLink
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok && data.response) {
-                    // Try to parse the response as JSON
-                    let posts;
-                    try {
-                        posts = JSON.parse(data.response);
-                        
-                        // Check if it's an array
-                        if (Array.isArray(posts)) {
-                            // Display formatted Reddit posts
-                            showRedditPosts(posts, data);
-                        } else {
-                            // If it's not an array, try to extract from the response
-                            showRedditResult(`Status: ${response.status} ${response.statusText}\n\nUnexpected format. Expected array but got:\n${JSON.stringify(posts, null, 2)}`, false, data);
-                        }
-                    } catch (e) {
-                        // If parsing fails, show raw response
-                        showRedditResult(`Status: ${response.status} ${response.statusText}\n\nRaw Response:\n${data.response}`, false, data);
-                    }
-                } else {
-                    // Handle error responses
-                    let errorMessage = 'Unknown error';
-                    if (data.error) {
-                        errorMessage = data.error;
-                    } else if (data.response && data.response.includes('failed_generation')) {
-                        // Try to extract the actual JSON from the error
-                        try {
-                            const match = data.response.match(/'failed_generation':\s*'([^']+)'/);
-                            if (match) {
-                                const extractedJson = match[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-                                const posts = JSON.parse(extractedJson);
-                                if (Array.isArray(posts)) {
-                                    showRedditPosts(posts, data);
-                                    return;
-                                }
-                            }
-                        } catch (parseError) {
-                            console.log('Failed to parse extracted JSON:', parseError);
-                        }
-                        errorMessage = 'JSON validation failed, but posts were generated. Check the raw response.';
-                    }
-                    showRedditResult(`Error: ${errorMessage}`, false, null, true);
-                }
-            } catch (error) {
-                showRedditResult(`Error: ${error.message}`, false, null, true);
-            }
-        }
 
         // UI helper functions
         function showStatus(message, type) {
@@ -1731,9 +2082,246 @@ Problem Solved: ${window.productDetailsData.problem_solved || 'Not specified'}`;
             }
         }
 
+        // Product Selection Functions
+        let userProducts = [];
+        let selectedProductId = null;
+
+        async function loadUserProducts() {
+            if (!accessToken) {
+                showToast('You must be signed in to load products', 'error');
+                return;
+            }
+
+            try {
+                showToast('Loading your products...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.products) {
+                    userProducts = data.products;
+                    populateProductDropdown();
+                    showToast(`Loaded ${data.products.length} product(s)`, 'success');
+                } else {
+                    showToast(`Error: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function populateProductDropdown() {
+            const select = document.getElementById('product_select');
+            select.innerHTML = '<option value="">-- Select a product --</option>';
+            
+            userProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                select.appendChild(option);
+            });
+        }
+
+        function onProductSelect() {
+            const select = document.getElementById('product_select');
+            const selectedId = select.value;
+            const generateBtn = document.getElementById('generateRedditBtn');
+            const productInfo = document.getElementById('selectedProductInfo');
+            const productInfoContent = document.getElementById('productInfoContent');
+            
+            if (selectedId) {
+                selectedProductId = selectedId;
+                const product = userProducts.find(p => p.id === selectedId);
+                
+                if (product) {
+                    productInfoContent.innerHTML = `
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-label">Name</div>
+                                <div class="stat-number" style="font-size: 16px; color: #495057;">${product.name}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Description</div>
+                                <div class="stat-number" style="font-size: 16px; color: #495057;">${product.description || 'Not specified'}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Target Audience</div>
+                                <div class="stat-number" style="font-size: 16px; color: #495057;">${product.target_audience || 'Not specified'}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Problem Solved</div>
+                                <div class="stat-number" style="font-size: 16px; color: #495057;">${product.problem_solved || 'Not specified'}</div>
+                            </div>
+                            ${product.url ? `
+                            <div class="stat-card">
+                                <div class="stat-label">URL</div>
+                                <div class="stat-number" style="font-size: 16px; color: #495057;">
+                                    <a href="${product.url}" target="_blank">${product.url}</a>
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    productInfo.classList.remove('hidden');
+                    generateBtn.disabled = false;
+                }
+            } else {
+                selectedProductId = null;
+                productInfo.classList.add('hidden');
+                generateBtn.disabled = true;
+            }
+        }
+
+        // Updated Generate Reddit Post function
+        async function generateRedditPost() {
+            if (!selectedProductId) {
+                showRedditResult('Error: Please select a product first.', null, true);
+                return;
+            }
+
+            try {
+                showRedditResult('Generating Reddit posts...', true);
+                
+                const response = await fetch(`${API_BASE_URL}/generate-reddit-post`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: selectedProductId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.response) {
+                    // Try to parse the response as JSON
+                    let posts;
+                    try {
+                        posts = JSON.parse(data.response);
+                        
+                        // Check if it's an array
+                        if (Array.isArray(posts)) {
+                            // Display formatted Reddit posts
+                            showRedditPosts(posts, data);
+                        } else {
+                            // If it's not an array, try to extract from the response
+                            showRedditResult(`Status: ${response.status} ${response.statusText}\n\nUnexpected format. Expected array but got:\n${JSON.stringify(posts, null, 2)}`, false, data);
+                        }
+                    } catch (e) {
+                        // If parsing fails, show raw response
+                        showRedditResult(`Status: ${response.status} ${response.statusText}\n\nRaw Response:\n${data.response}`, false, data);
+                    }
+                } else {
+                    // Handle error responses
+                    let errorMessage = 'Unknown error';
+                    if (data.error) {
+                        errorMessage = data.error;
+                    } else if (data.response && data.response.includes('failed_generation')) {
+                        // Try to extract the actual JSON from the error
+                        try {
+                            const match = data.response.match(/'failed_generation':\s*'([^']+)'/);
+                            if (match) {
+                                const extractedJson = match[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                                const posts = JSON.parse(extractedJson);
+                                if (Array.isArray(posts)) {
+                                    showRedditPosts(posts, data);
+                                    return;
+                                }
+                            }
+                        } catch (parseError) {
+                            console.log('Failed to parse extracted JSON:', parseError);
+                        }
+                        errorMessage = 'JSON validation failed, but posts were generated. Check the raw response.';
+                    }
+                    showRedditResult(`Error: ${errorMessage}`, false, null, true);
+                }
+            } catch (error) {
+                showRedditResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
+        // New Product Creation with AI Details
+        function checkNewProductLink() {
+            const productLink = document.getElementById('newProductUrl').value;
+            const generateDetailsBtn = document.getElementById('generateNewProductDetailsBtn');
+            
+            if (productLink && productLink.trim() !== '') {
+                generateDetailsBtn.style.display = 'inline-flex';
+            } else {
+                generateDetailsBtn.style.display = 'none';
+            }
+        }
+
+        async function generateNewProductDetails() {
+            const productWebsiteLink = document.getElementById('newProductUrl').value;
+
+            if (!productWebsiteLink) {
+                showToast('Please enter a product website link first.', 'error');
+                return;
+            }
+
+            try {
+                showToast('Generating product details with AI...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/generate-product-details`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        product_website_link: productWebsiteLink
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data) {
+                    // Auto-fill the form fields with generated details
+                    if (data.target_audience) {
+                        document.getElementById('newProductTargetAudience').value = data.target_audience;
+                    }
+                    if (data.description) {
+                        document.getElementById('newProductDescription').value = data.description;
+                    }
+                    if (data.problem_solved) {
+                        document.getElementById('newProductProblemSolved').value = data.problem_solved;
+                    }
+                    
+                    showToast('Product details generated and form filled automatically!', 'success');
+                } else {
+                    showToast(`Error: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Remove old functions that are no longer needed
+        function checkProductLink() {
+            // This function is no longer needed
+        }
+
+        function generateProductDetails() {
+            // This function is no longer needed
+        }
+
         // Initialize when page loads
         window.onload = function() {
             initSupabase();
+            setupModalHandlers();
+            // Auto-load products when user is authenticated
+            if (accessToken) {
+                loadUserProducts();
+            }
         };
     </script>
 </body>
