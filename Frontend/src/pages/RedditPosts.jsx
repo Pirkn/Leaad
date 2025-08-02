@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGenerateRedditPost } from "../hooks/useApi";
 
@@ -8,6 +8,7 @@ function RedditPosts() {
   const [generatedPosts, setGeneratedPosts] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const hasStartedRef = useRef(false);
 
   const generateRedditPostMutation = useGenerateRedditPost();
 
@@ -20,6 +21,13 @@ function RedditPosts() {
       setIsLoading(false);
       return;
     }
+
+    // Prevent multiple API calls
+    if (hasStartedRef.current) {
+      return;
+    }
+
+    hasStartedRef.current = true;
 
     const generatePosts = async () => {
       try {
