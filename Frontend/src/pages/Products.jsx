@@ -4,22 +4,18 @@ import {
   useProducts,
   useUpdateProduct,
   useDeleteProduct,
-  useGenerateRedditPost,
 } from "../hooks/useApi";
 
 function Products() {
   const navigate = useNavigate();
   const [editingProduct, setEditingProduct] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
-  const [generatedPost, setGeneratedPost] = useState(null);
-  const [generatingForProduct, setGeneratingForProduct] = useState(null);
 
   // API hooks
   const { data: productsResponse, isLoading, error } = useProducts();
   const products = productsResponse?.products || [];
   const updateProductMutation = useUpdateProduct();
   const deleteProductMutation = useDeleteProduct();
-  const generateRedditPostMutation = useGenerateRedditPost();
 
   const handleAddProduct = () => {
     navigate("/product-analysis");
@@ -51,26 +47,8 @@ function Products() {
     }
   };
 
-  const handleGenerateRedditPost = async (product) => {
-    try {
-      setGeneratingForProduct(product.id);
-      const response = await generateRedditPostMutation.mutateAsync({
-        product_id: product.id,
-      });
-      setGeneratedPost({
-        product: product,
-        content: response.response,
-      });
-      setGeneratingForProduct(null);
-    } catch (error) {
-      console.error("Failed to generate Reddit post:", error);
-      alert(
-        `Failed to generate Reddit post: ${
-          error.message || "Please try again."
-        }`
-      );
-      setGeneratingForProduct(null);
-    }
+  const handleGenerateRedditPost = (product) => {
+    navigate("/reddit-posts", { state: { product } });
   };
 
   const formatDate = (dateString) => {
@@ -101,48 +79,6 @@ function Products() {
           Add Product
         </button>
       </div>
-
-      {/* Generated Post Display */}
-      {generatedPost && (
-        <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex justify-between items-start mb-3">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Generated Reddit Post for {generatedPost.product.name}
-            </h3>
-            <button
-              onClick={() => setGeneratedPost(null)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">
-              {generatedPost.content}
-            </p>
-          </div>
-          <div className="mt-3 flex space-x-2">
-            <button className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium">
-              Copy to Clipboard
-            </button>
-            <button className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium">
-              Use as Template
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Loading State */}
       {isLoading && (
@@ -395,47 +331,22 @@ function Products() {
                     <div className="pt-3 border-t border-gray-100 mt-auto">
                       <button
                         onClick={() => handleGenerateRedditPost(product)}
-                        disabled={
-                          generatingForProduct === product.id ||
-                          generateRedditPostMutation.isPending
-                        }
-                        className="w-full bg-[#3D348B] text-white px-3 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-[#3D348B] text-white px-3 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium flex items-center justify-center"
                       >
-                        {generatingForProduct === product.id ? (
-                          <>
-                            <svg
-                              className="w-4 h-4 mr-2 animate-spin"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                              />
-                            </svg>
-                            Generating...
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-4 h-4 mr-2"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                              />
-                            </svg>
-                            Generate Reddit Post
-                          </>
-                        )}
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                          />
+                        </svg>
+                        Generate Reddit Post
                       </button>
                     </div>
                   </div>

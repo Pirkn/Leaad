@@ -7,6 +7,7 @@ import Leads from "./pages/Leads";
 import ViralTemplates from "./pages/ViralTemplates";
 import Products from "./pages/Products";
 import ProductAnalysis from "./pages/ProductAnalysis";
+import RedditPosts from "./pages/RedditPosts";
 import Settings from "./pages/Settings";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -83,6 +84,19 @@ function App() {
                   <Sidebar />
                   <div className="flex-1 overflow-auto">
                     <ProductAnalysis />
+                  </div>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reddit-posts"
+            element={
+              <ProtectedRoute>
+                <div className="flex h-screen bg-gray-50">
+                  <Sidebar />
+                  <div className="flex-1 overflow-auto">
+                    <RedditPosts />
                   </div>
                 </div>
               </ProtectedRoute>

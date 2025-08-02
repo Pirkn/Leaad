@@ -62,6 +62,7 @@ export const useGenerateRedditPost = () => {
       }
       return apiService.generateRedditPost(productData);
     },
+    retry: false, // Disable retries to prevent multiple requests
     onSuccess: (data, variables) => {
       // Invalidate viral posts to refresh the list
       queryClient.invalidateQueries({ queryKey: queryKeys.viralPosts });
