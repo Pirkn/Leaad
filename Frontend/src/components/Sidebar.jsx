@@ -30,7 +30,7 @@ function Sidebar() {
           to="/"
           className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/")
-              ? "bg-orange-50 text-orange-700 border border-orange-200"
+              ? "bg-purple-50 text-purple-700 border border-purple-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           }`}
         >
@@ -61,7 +61,7 @@ function Sidebar() {
           to="/products"
           className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/products")
-              ? "bg-orange-50 text-orange-700 border border-orange-200"
+              ? "bg-purple-50 text-purple-700 border border-purple-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           }`}
         >
@@ -87,7 +87,7 @@ function Sidebar() {
           to="/leads"
           className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/leads")
-              ? "bg-orange-50 text-orange-700 border border-orange-200"
+              ? "bg-purple-50 text-purple-700 border border-purple-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           }`}
         >
@@ -113,8 +113,8 @@ function Sidebar() {
           to="/viral-templates"
           className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/viral-templates")
-              ? "bg-orange-50 text-orange-700 border border-orange-200"
-              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              ? "bg-purple-50 text-purple-700 border border-purple-200"
+              : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           }`}
         >
           {/* Viral Templates Icon */}
@@ -139,7 +139,7 @@ function Sidebar() {
           to="/settings"
           className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
             isActive("/settings")
-              ? "bg-orange-50 text-orange-700 border border-orange-200"
+              ? "bg-purple-50 text-purple-700 border border-purple-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           }`}
         >
@@ -170,8 +170,8 @@ function Sidebar() {
       {/* User Section */}
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-            <span className="text-indigo-600 font-medium text-sm">
+          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+            <span className="text-purple-600 font-medium text-sm">
               {user?.email?.charAt(0).toUpperCase() || "U"}
             </span>
           </div>

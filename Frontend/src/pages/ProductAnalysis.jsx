@@ -97,7 +97,7 @@ function ProductAnalysis() {
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
               placeholder="https://example.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B] focus:border-[#3D348B]"
               required
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -118,7 +118,7 @@ function ProductAnalysis() {
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-orange-600 text-white px-6 py-2 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium"
+              className="bg-[#3D348B] text-white px-6 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors disabled:opacity-50 font-medium"
             >
               {isLoading ? "Analyzing..." : "Analyze Product"}
             </button>
@@ -214,13 +214,13 @@ function ProductAnalysis() {
           </div>
 
           {/* Product Name Input */}
-          <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-            <h4 className="text-sm font-semibold text-orange-900 mb-3">
+          <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+            <h4 className="text-sm font-semibold text-purple-900 mb-3">
               Save Product
             </h4>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-orange-800 mb-1">
+                <label className="block text-sm font-medium text-purple-800 mb-1">
                   Product Name
                 </label>
                 <input
@@ -228,7 +228,7 @@ function ProductAnalysis() {
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   placeholder="Enter a name for this product"
-                  className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-3 py-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B] focus:border-[#3D348B]"
                 />
               </div>
               <div className="flex space-x-3">
@@ -237,7 +237,7 @@ function ProductAnalysis() {
                   disabled={
                     createProductMutation.isPending || !productName.trim()
                   }
-                  className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createProductMutation.isPending
                     ? "Saving..."

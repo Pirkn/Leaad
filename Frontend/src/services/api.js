@@ -74,11 +74,7 @@ class ApiService {
     return this.request("/generate-reddit-post", {
       method: "POST",
       body: JSON.stringify({
-        product_name: productData.productName,
-        product_description: productData.productDescription,
-        product_target_audience: productData.productTargetAudience,
-        product_main_benefit: productData.productMainBenefit,
-        product_website_link: productData.productWebsiteLink,
+        product_id: productData.product_id,
       }),
     });
   }
