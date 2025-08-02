@@ -93,17 +93,15 @@ class ApiService {
   }
 
   async createProduct(productData) {
-    return this.request("/products", {
+    return this.request("/create_product", {
       method: "POST",
       body: JSON.stringify(productData),
     });
   }
 
+  // TODO: Implement update product functionality
   async updateProduct(productId, productData) {
-    return this.request(`/products/${productId}`, {
-      method: "PUT",
-      body: JSON.stringify(productData),
-    });
+    throw new Error("Update product functionality not implemented yet");
   }
 
   async deleteProduct(productId) {

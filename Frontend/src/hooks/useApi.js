@@ -224,7 +224,10 @@ export const useProducts = () => {
 
   return useQuery({
     queryKey: queryKeys.products,
-    queryFn: () => apiService.getProducts(),
+    queryFn: async () => {
+      const response = await apiService.getProducts();
+      return response; // Backend returns {products: [...]}
+    },
     enabled: !!user,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
@@ -237,11 +240,12 @@ export const useCreateProduct = () => {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (productData) => {
+    mutationFn: async (productData) => {
       if (!user) {
         throw new Error("User must be authenticated to create products");
       }
-      return apiService.createProduct(productData);
+      const response = await apiService.createProduct(productData);
+      return response; // Backend returns {message: "...", product: {...}}
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products });
@@ -252,17 +256,17 @@ export const useCreateProduct = () => {
   });
 };
 
-// Update Product Mutation
+// Update Product Mutation - TODO: Implement functionality
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: ({ productId, productData }) => {
+    mutationFn: async ({ productId, productData }) => {
       if (!user) {
         throw new Error("User must be authenticated to update products");
       }
-      return apiService.updateProduct(productId, productData);
+      throw new Error("Update product functionality not implemented yet");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products });
@@ -279,11 +283,12 @@ export const useDeleteProduct = () => {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (productId) => {
+    mutationFn: async (productId) => {
       if (!user) {
         throw new Error("User must be authenticated to delete products");
       }
-      return apiService.deleteProduct(productId);
+      const response = await apiService.deleteProduct(productId);
+      return response; // Backend returns {message: "..."}
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products });

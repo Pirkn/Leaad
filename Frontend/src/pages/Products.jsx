@@ -12,7 +12,8 @@ function Products() {
   const [showDeleteModal, setShowDeleteModal] = useState(null);
 
   // API hooks
-  const { data: products = [], isLoading, error } = useProducts();
+  const { data: productsResponse, isLoading, error } = useProducts();
+  const products = productsResponse?.products || [];
   const updateProductMutation = useUpdateProduct();
   const deleteProductMutation = useDeleteProduct();
 
@@ -21,19 +22,13 @@ function Products() {
   };
 
   const handleEdit = (product) => {
-    setEditingProduct(product);
+    // TODO: Implement edit functionality
+    alert("Edit functionality not implemented yet. Coming soon!");
   };
 
   const handleSave = async (updatedProduct) => {
-    try {
-      await updateProductMutation.mutateAsync({
-        productId: updatedProduct.id,
-        productData: updatedProduct,
-      });
-      setEditingProduct(null);
-    } catch (error) {
-      console.error("Failed to update product:", error);
-    }
+    // TODO: Implement save functionality
+    alert("Save functionality not implemented yet. Coming soon!");
   };
 
   const handleCancel = () => {
@@ -46,6 +41,9 @@ function Products() {
       setShowDeleteModal(null);
     } catch (error) {
       console.error("Failed to delete product:", error);
+      alert(
+        `Failed to delete product: ${error.message || "Please try again."}`
+      );
     }
   };
 
@@ -123,12 +121,12 @@ function Products() {
               {products.map((product) => (
                 <div key={product.id} className="p-6">
                   {editingProduct?.id === product.id ? (
-                    <EditProductForm
-                      product={editingProduct}
-                      onSave={handleSave}
-                      onCancel={handleCancel}
-                      isUpdating={updateProductMutation.isPending}
-                    />
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-yellow-800 text-sm">
+                        Edit functionality coming soon! This feature is
+                        currently being implemented.
+                      </p>
+                    </div>
                   ) : (
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -137,7 +135,7 @@ function Products() {
                             {product.name}
                           </h3>
                           <span className="text-xs text-gray-500">
-                            Added {formatDate(product.createdAt)}
+                            Added {formatDate(product.created_at)}
                           </span>
                         </div>
 
@@ -161,7 +159,7 @@ function Products() {
                               Target Audience
                             </p>
                             <p className="text-sm text-gray-900">
-                              {product.targetAudience}
+                              {product.target_audience}
                             </p>
                           </div>
 
@@ -179,7 +177,7 @@ function Products() {
                               Problem Solved
                             </p>
                             <p className="text-sm text-gray-900">
-                              {product.problemSolved}
+                              {product.problem_solved}
                             </p>
                           </div>
                         </div>
@@ -188,8 +186,9 @@ function Products() {
                       <div className="flex space-x-2 ml-4">
                         <button
                           onClick={() => handleEdit(product)}
-                          disabled={updateProductMutation.isPending}
-                          className="text-orange-600 hover:text-orange-700 text-sm font-medium disabled:opacity-50"
+                          disabled={true}
+                          className="text-gray-400 text-sm font-medium cursor-not-allowed"
+                          title="Edit functionality coming soon"
                         >
                           Edit
                         </button>
@@ -243,113 +242,9 @@ function Products() {
   );
 }
 
-// Edit Product Form Component
-function EditProductForm({ product, onSave, onCancel, isUpdating }) {
-  const [formData, setFormData] = useState({
-    name: product.name,
-    url: product.url,
-    description: product.description,
-    problemSolved: product.problemSolved,
-    targetAudience: product.targetAudience,
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave({ ...product, ...formData });
-  };
-
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Product Name
-          </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Website URL
-          </label>
-          <input
-            type="url"
-            value={formData.url}
-            onChange={(e) => handleChange("url", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
-            value={formData.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Problem Solved
-          </label>
-          <textarea
-            value={formData.problemSolved}
-            onChange={(e) => handleChange("problemSolved", e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Target Audience
-          </label>
-          <textarea
-            value={formData.targetAudience}
-            onChange={(e) => handleChange("targetAudience", e.target.value)}
-            rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="flex space-x-3 pt-4">
-        <button
-          type="submit"
-          disabled={isUpdating}
-          className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50"
-        >
-          {isUpdating ? "Saving..." : "Save Changes"}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isUpdating}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
-}
+// TODO: Edit Product Form Component - To be implemented
+// function EditProductForm({ product, onSave, onCancel, isUpdating }) {
+//   // Implementation coming soon
+// }
 
 export default Products;

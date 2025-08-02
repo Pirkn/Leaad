@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { useAnalyzeProduct, useProductAnalysis } from "../hooks/useApi";
+import {
+  useAnalyzeProduct,
+  useProductAnalysis,
+  useCreateProduct,
+} from "../hooks/useApi";
 
 function ProductAnalysis() {
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -8,6 +12,7 @@ function ProductAnalysis() {
 
   // TanStack Query hooks
   const analyzeMutation = useAnalyzeProduct();
+  const createProductMutation = useCreateProduct();
   const {
     data: cachedAnalysis,
     isLoading: isCachedLoading,
@@ -31,6 +36,37 @@ function ProductAnalysis() {
     setWebsiteUrl("");
     setProductName("");
     analyzeMutation.reset();
+  };
+
+  const handleSaveProduct = async () => {
+    if (!productName.trim() || !analysisData) {
+      alert("Please enter a product name and analyze a product first.");
+      return;
+    }
+
+    try {
+      const productData = {
+        name: productName,
+        url: websiteUrl,
+        description: analysisData.description,
+        target_audience: analysisData.target_audience,
+        problem_solved: analysisData.problem_solved,
+      };
+
+      await createProductMutation.mutateAsync(productData);
+
+      // Clear form and show success message
+      setProductName("");
+      setShowResults(false);
+      setWebsiteUrl("");
+      analyzeMutation.reset();
+
+      // You could add a success toast here
+      alert("Product saved successfully!");
+    } catch (error) {
+      console.error("Failed to save product:", error);
+      alert(`Failed to save product: ${error.message || "Please try again."}`);
+    }
   };
 
   // Use mutation data if available, otherwise use cached data
@@ -196,8 +232,16 @@ function ProductAnalysis() {
                 />
               </div>
               <div className="flex space-x-3">
-                <button className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium">
-                  Save Product
+                <button
+                  onClick={handleSaveProduct}
+                  disabled={
+                    createProductMutation.isPending || !productName.trim()
+                  }
+                  className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {createProductMutation.isPending
+                    ? "Saving..."
+                    : "Save Product"}
                 </button>
                 <button className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm font-medium">
                   Generate Reddit Post
