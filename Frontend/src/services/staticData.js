@@ -70,7 +70,15 @@ class StaticDataService {
 
   // Get viral post by ID
   getViralPostById(id) {
-    return this.viralPosts.find((post) => post.id === id);
+    // Handle both string and number IDs
+    const numericId = typeof id === "string" ? parseInt(id, 10) : id;
+
+    // Check if the ID is valid
+    if (isNaN(numericId)) {
+      return null;
+    }
+
+    return this.viralPosts.find((post) => post.id === numericId);
   }
 
   // Get viral posts by purpose

@@ -5,31 +5,27 @@ import Snackbar from "@mui/material/Snackbar";
 
 function ViralTemplateEdit() {
   const { templateId } = useParams();
-  const [template, setTemplate] = useState(null);
-  const [editedTitle, setEditedTitle] = useState("");
-  const [editedPostText, setEditedPostText] = useState("");
-  const [originalTitle, setOriginalTitle] = useState("");
-  const [originalPostText, setOriginalPostText] = useState("");
+
+  // Get template data immediately - no useEffect needed for static data
+  const templateData = staticDataService.getViralPostById(templateId);
+
+  const [template] = useState(templateData);
+  const [editedTitle, setEditedTitle] = useState(
+    templateData?.postTitle || templateData?.title || ""
+  );
+  const [editedPostText, setEditedPostText] = useState(
+    templateData?.postText || templateData?.originalPostText || ""
+  );
+  const [originalTitle, setOriginalTitle] = useState(
+    templateData?.postTitle || templateData?.title || ""
+  );
+  const [originalPostText, setOriginalPostText] = useState(
+    templateData?.postText || templateData?.originalPostText || ""
+  );
 
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  useEffect(() => {
-    // Get template data from static data
-    const templateData = staticDataService.getViralPostById(
-      parseInt(templateId)
-    );
-    if (templateData) {
-      setTemplate(templateData);
-      setEditedTitle(templateData.postTitle || templateData.title);
-      setEditedPostText(templateData.postText || templateData.originalPostText);
-      setOriginalTitle(templateData.postTitle || templateData.title);
-      setOriginalPostText(
-        templateData.postText || templateData.originalPostText
-      );
-    }
-  }, [templateId]);
 
   const handleCopyToClipboard = async () => {
     const content = `${editedTitle}\n\n${editedPostText}`;

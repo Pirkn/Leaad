@@ -7,12 +7,14 @@ import { motion, AnimatePresence } from "framer-motion";
 function ViralTemplates() {
   const navigate = useNavigate();
   const [showProductModal, setShowProductModal] = useState(false);
-  const [generatedPost, setGeneratedPost] = useState(null);
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [engagementFilter, setEngagementFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+
+  // Get all viral posts once - static data is immediately available
+  const allPosts = useMemo(() => staticDataService.getViralPosts(), []);
 
   // Filter and sort posts
   const filteredPosts = useMemo(() => {
@@ -84,31 +86,6 @@ function ViralTemplates() {
           Generate your own
         </button>
       </div>
-
-      {/* Generated Post Display */}
-      {generatedPost && (
-        <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">
-            Generated Reddit Post
-          </h3>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">
-              {generatedPost}
-            </p>
-          </div>
-          <div className="mt-3 flex space-x-2">
-            <button className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium">
-              Copy to Clipboard
-            </button>
-            <button
-              onClick={() => setGeneratedPost(null)}
-              className="text-gray-600 hover:text-gray-700 text-sm font-medium"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Filter Section */}
       <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
@@ -189,8 +166,7 @@ function ViralTemplates() {
 
         {/* Results Count */}
         <div className="mt-3 text-sm text-gray-600">
-          Showing {filteredPosts.length} of{" "}
-          {staticDataService.getViralPosts().length} templates
+          Showing {filteredPosts.length} of {allPosts.length} templates
           {hasActiveFilters && (
             <span className="ml-2 text-[#3D348B] font-medium">(filtered)</span>
           )}
@@ -331,9 +307,7 @@ function ViralTemplates() {
             {filteredPosts.map((post, index) => (
               <div
                 key={post.id || index}
-                className={`bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors flex flex-col h-52 ${
-                  post.isOptimistic ? "opacity-75" : ""
-                }`}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors flex flex-col h-52"
               >
                 {/* Card Header */}
                 <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 h-16 flex items-center">
@@ -344,7 +318,7 @@ function ViralTemplates() {
                         `Viral Post ${index + 1}`}
                     </h3>
                     <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full border border-green-200 bg-green-50 text-green-700 flex-shrink-0">
-                      {post.isOptimistic ? "Generating..." : "Viral"}
+                      Viral
                     </span>
                   </div>
                 </div>
