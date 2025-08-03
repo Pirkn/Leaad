@@ -37,10 +37,37 @@ def karma_helper_prompt(posts):
     with open(config_path, 'r') as file:
         system_prompt = file.read()
     
+    # ===== Format Posts Data for Better AI Understanding =====
+    formatted_posts = []
+    
+    for i, post in enumerate(posts, 1):
+        formatted_post = f"""
+            === POST {i} ===
+            Title: {post['title']}
+            Author: {post['author']}
+            Score: {post['score']} upvotes
+            Total Comments: {post['comments']}
+            URL: {post['url']}
+            Content: {post['selftext']}
+            NSFW: {post['nsfw']}
+            Stickied: {post['stickied']}
+
+            TOP COMMENTS:
+        """
+        
+        for j, comment in enumerate(post['top_comments'], 1):
+            formatted_post += f"{j}. Score: {comment['score']} | Comment: {comment['comment']}\n"
+        
+        formatted_post += "=" * 30
+        formatted_posts.append(formatted_post)
+    
+    # Combine all formatted posts
+    formatted_content = "\n\n".join(formatted_posts)
+    print(formatted_content)
     # ===== Create Messages =====
     messages = [
         {"role": "system", "content": system_prompt},
-        {"role": "user", "content": posts}
+        {"role": "user", "content": f"Here are the top 10 rising posts from the subreddit:\n\n{formatted_content}"}
     ]
 
     return messages

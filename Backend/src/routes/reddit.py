@@ -66,7 +66,7 @@ class GetKarma(MethodView):
     def get(self):
         subreddit_name = request.args.get('subreddit_name')
         posts = get_posts(subreddit_name)
-        print(posts)
+
         messages = karma_helper_prompt(posts)
 
         model = Model()

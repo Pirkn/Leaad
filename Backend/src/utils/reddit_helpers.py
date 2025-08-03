@@ -14,20 +14,44 @@ reddit = praw.Reddit(
 def get_posts(subreddit_name):
     subreddit = reddit.subreddit(subreddit_name)
 
-    post_content = ""
+    post_content = []
 
     for post in subreddit.rising(limit=10):
-        post_content += f"""
-        Title: {post.title}
-        Author: {post.author.name if post.author else 'deleted'}
-        Score: {post.score} (↑{post.ups} ↓{post.downs})
-        Comments: {post.num_comments}
-        Created: {post.created}
-        URL: {post.url}
-        Self Text: {post.selftext[:1000]}..." if post.selftext else "No text")
-        NSFW: {post.over_18}
-        Stickied: {post.stickied}
-        """
+        try:
+            comments = []
+            
+            # Construct the proper Reddit comment URL using post ID
+            # This ensures we get the comment page URL, not the direct image/media URL
+            comment_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{post.id}/"
+            
+            # Get the post using the comment URL
+            post = reddit.submission(url=comment_url)
+            post.comment_sort = 'top'   
+
+            for comment in post.comments[:3]:
+                new_comment = {
+                    "comment": comment.body,
+                    "score": comment.score
+                }
+                comments.append(new_comment)
+
+            rising_post = {
+                "title": post.title,
+                "author": post.author.name if post.author else 'deleted',
+                "score": post.score,
+                "comments": post.num_comments,
+                "created": post.created,
+                "url": comment_url,  # Use the comment URL, not the original post.url
+                "selftext": post.selftext[:1000] if post.selftext else "No text",
+                "nsfw": post.over_18,
+                "stickied": post.stickied,
+                "top_comments": comments
+            }
+            post_content.append(rising_post)
+            
+        except Exception as e:
+            print(f"Error processing post {post.id}: {str(e)}")
+            continue
 
     return post_content
 
