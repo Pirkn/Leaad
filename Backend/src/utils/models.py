@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from cost_calculator import GeminiCostCalculator
+from src.utils.cost_calculator import GeminiCostCalculator
 
 load_dotenv() 
 

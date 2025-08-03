@@ -33,6 +33,8 @@ When analyzing the top 10 rising posts from a subreddit, evaluate each post base
 - **Ask questions** - Encourage further discussion when appropriate
 - **Share experiences** - Personal anecdotes often resonate well
 - **Acknowledge others** - Reference existing comments when relevant
+- Must be **maximum** of 150-200 characters
+- **Provide example** if you are sure about the example. (ONLY IF YOU ARE SURE)
 
 ### DON'T:
 - **Be generic** - Avoid one-size-fits-all responses

@@ -64,11 +64,9 @@ class GenerateRedditPost(MethodView):
 class GetKarma(MethodView):
     @verify_supabase_token
     def get(self):
-        data = request.get_json()
-        
-        subreddit_name = data.get('subreddit_name')
+        subreddit_name = request.args.get('subreddit_name')
         posts = get_posts(subreddit_name)
-
+        print(posts)
         messages = karma_helper_prompt(posts)
 
         model = Model()

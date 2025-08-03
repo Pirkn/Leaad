@@ -823,6 +823,32 @@
                 </div>
             </div>
 
+            <!-- Karma Helper Section -->
+            <div class="section">
+                <h2><i class="fas fa-chart-line"></i> Karma Helper</h2>
+                
+                <div class="form-group">
+                    <label for="subreddit_name"><i class="fas fa-reddit"></i> Subreddit Name:</label>
+                    <input type="text" id="subreddit_name" placeholder="Enter subreddit name (e.g., saas, microsaas)" value="saas">
+                </div>
+                
+                <div>
+                    <button class="btn" onclick="getKarmaAnalysis()">
+                        <i class="fas fa-chart-line"></i> Analyze Karma
+                    </button>
+                </div>
+                
+                <div id="karmaResult" class="result hidden">
+                    <div class="result-header">
+                        <span><i class="fas fa-chart-line"></i> Karma Analysis</span>
+                        <button class="copy-btn" onclick="copyToClipboard('karmaResult')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="result-content" id="karmaResultContent"></div>
+                </div>
+            </div>
+
             <!-- Product Management Section -->
             <div class="section">
                 <h2><i class="fas fa-box"></i> Product Management</h2>
@@ -1427,6 +1453,43 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             }
         }
 
+        // Get Karma Analysis
+        async function getKarmaAnalysis() {
+            if (!accessToken) {
+                showKarmaResult('Error: You must be signed in to analyze karma', null, true);
+                return;
+            }
+
+            const subredditName = document.getElementById('subreddit_name').value;
+            
+            if (!subredditName) {
+                showKarmaResult('Error: Please enter a subreddit name', null, true);
+                return;
+            }
+
+            try {
+                showKarmaResult('Analyzing karma patterns...', true);
+                
+                        const response = await fetch(`${API_BASE_URL}/get_karma?subreddit_name=${encodeURIComponent(subredditName)}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.response) {
+                    showKarmaAnalysis(data.response);
+                } else {
+                    showKarmaResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showKarmaResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
         // Check if product link is entered and show/hide generate details button
         function checkProductLink() {
             const productLink = document.getElementById('product_website_link').value;
@@ -1645,6 +1708,67 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             }
             
             resultDiv.classList.remove('hidden');
+        }
+
+        function showKarmaResult(result, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('karmaResult');
+            const contentDiv = document.getElementById('karmaResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading"></div> ${result}`;
+            } else {
+                if (isError) {
+                    contentDiv.innerHTML = `<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${result}</span>`;
+                } else if (data) {
+                    contentDiv.innerHTML = formatJSON(result, data);
+                } else {
+                    contentDiv.textContent = result;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showKarmaAnalysis(analysis) {
+            const resultDiv = document.getElementById('karmaResult');
+            const contentDiv = document.getElementById('karmaResultContent');
+            
+            let html = `<div class="success-message">
+                <i class="fas fa-chart-line"></i>
+                <strong>Success!</strong> Karma analysis completed.
+            </div>
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-meta">
+                        <div class="subreddit-tag" style="background: #667eea;">
+                            <i class="fas fa-chart-line"></i> Karma Analysis
+                        </div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef;">
+                        ${analysis}
+                    </div>
+                </div>
+                <div class="post-footer">
+                    <button class="footer-btn" onclick="copyKarmaAnalysis()">
+                        <i class="fas fa-copy"></i> Copy Analysis
+                    </button>
+                    <button class="footer-btn" onclick="exportKarmaAnalysisAsJSON()">
+                        <i class="fas fa-download"></i> Export JSON
+                    </button>
+                </div>
+            </div>`;
+            
+            // Store karma analysis data for copy functions
+            window.karmaAnalysisData = analysis;
+            
+            contentDiv.innerHTML = html;
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
         }
 
         function showViralPosts(posts) {
@@ -1915,6 +2039,58 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
                 console.error('Failed to copy: ', err);
                 showToast('Failed to copy to clipboard', 'error');
             });
+        }
+
+        // Karma Analysis Copy Functions
+        function copyKarmaAnalysis() {
+            if (window.karmaAnalysisData) {
+                navigator.clipboard.writeText(window.karmaAnalysisData).then(() => {
+                    showToast('Karma analysis copied to clipboard!', 'success');
+                    updateKarmaButtonState('copy');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy to clipboard', 'error');
+                });
+            } else {
+                showToast('No karma analysis to copy', 'error');
+            }
+        }
+
+        function exportKarmaAnalysisAsJSON() {
+            if (window.karmaAnalysisData) {
+                const dataStr = JSON.stringify({ analysis: window.karmaAnalysisData }, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'karma_analysis.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showToast('Karma analysis exported as JSON!', 'success');
+                updateKarmaButtonState('export');
+            } else {
+                showToast('No karma analysis to export', 'error');
+            }
+        }
+
+        function updateKarmaButtonState(type) {
+            const postCard = document.querySelector('#karmaResult .post-card');
+            if (!postCard) return;
+            
+            const buttons = postCard.querySelectorAll('.footer-btn');
+            buttons.forEach(btn => btn.classList.remove('success'));
+            
+            if (type === 'copy') {
+                buttons[0].classList.add('success');
+            } else if (type === 'export') {
+                buttons[1].classList.add('success');
+            }
+            
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('success'));
+            }, 2000);
         }
 
         function updateViralButtonState(index, type) {
