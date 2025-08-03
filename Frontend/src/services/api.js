@@ -79,9 +79,7 @@ class ApiService {
     });
   }
 
-  async getViralPosts() {
-    return this.request("/get-viral-posts");
-  }
+  // Removed getViralPosts - now using static data instead of API calls
 
   // Product management endpoints
   async getProducts() {

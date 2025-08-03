@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import ViralTemplates from "./pages/ViralTemplates";
+import ViralTemplateEdit from "./pages/ViralTemplateEdit";
 import Products from "./pages/Products";
 import ProductAnalysis from "./pages/ProductAnalysis";
 import RedditPosts from "./pages/RedditPosts";
@@ -58,6 +59,19 @@ function App() {
                   <Sidebar />
                   <div className="flex-1 overflow-auto">
                     <ViralTemplates />
+                  </div>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/viral-templates/:templateId"
+            element={
+              <ProtectedRoute>
+                <div className="flex h-screen bg-gray-50">
+                  <Sidebar />
+                  <div className="flex-1 overflow-auto">
+                    <ViralTemplateEdit />
                   </div>
                 </div>
               </ProtectedRoute>

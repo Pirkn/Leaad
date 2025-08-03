@@ -5,24 +5,13 @@ import { useAuth } from "../contexts/AuthContext";
 
 // Query Keys
 export const queryKeys = {
-  viralPosts: ["viralPosts"],
   productAnalysis: (url) => ["productAnalysis", url],
   health: ["health"],
   products: ["products"],
 };
 
-// Viral Posts Query
-export const useViralPosts = () => {
-  const { user } = useAuth();
-
-  return useQuery({
-    queryKey: queryKeys.viralPosts,
-    queryFn: () => apiService.getViralPosts(),
-    enabled: !!user, // Only run query if user is authenticated
-    staleTime: 1000 * 60 * 10, // 10 minutes
-    gcTime: 1000 * 60 * 30, // 30 minutes
-  });
-};
+// Viral posts are now loaded as static data - no need for TanStack Query
+// Use staticDataService directly in components
 
 // Product Analysis Query
 export const useProductAnalysis = (websiteUrl, enabled = false) => {
@@ -64,9 +53,7 @@ export const useGenerateRedditPost = () => {
     },
     retry: false, // Disable retries to prevent multiple requests
     onSuccess: (data, variables) => {
-      // Invalidate viral posts to refresh the list
-      queryClient.invalidateQueries({ queryKey: queryKeys.viralPosts });
-
+      // Viral posts are now static data, no need to invalidate
       // You could also add the generated post to a local cache
       // queryClient.setQueryData(['generatedPosts'], (old) => {
       //   return old ? [...old, data] : [data];
@@ -100,45 +87,12 @@ export const useAnalyzeProduct = () => {
   });
 };
 
-// Optimistic Updates for Viral Posts
+// Optimistic Updates for Viral Posts - Simplified since viral posts are now static
 export const useOptimisticViralPost = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (productData) => apiService.generateRedditPost(productData),
-    onMutate: async (productData) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: queryKeys.viralPosts });
-
-      // Snapshot the previous value
-      const previousPosts = queryClient.getQueryData(queryKeys.viralPosts);
-
-      // Optimistically update to the new value
-      const optimisticPost = {
-        id: Date.now(),
-        title: `Generated Post for ${productData.productName}`,
-        content: "Generating...",
-        subreddit: "r/entrepreneur",
-        upvotes: 0,
-        isOptimistic: true,
-      };
-
-      queryClient.setQueryData(queryKeys.viralPosts, (old) => {
-        return old ? [optimisticPost, ...old] : [optimisticPost];
-      });
-
-      // Return a context object with the snapshotted value
-      return { previousPosts };
-    },
     onError: (err, productData, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
-      if (context?.previousPosts) {
-        queryClient.setQueryData(queryKeys.viralPosts, context.previousPosts);
-      }
-    },
-    onSettled: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: queryKeys.viralPosts });
+      console.error("Failed to generate optimistic post:", err);
     },
   });
 };

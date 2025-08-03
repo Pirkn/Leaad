@@ -24,6 +24,7 @@ Authorization: Bearer <your-supabase-jwt-token>
 Check if the API is running.
 
 **Response:**
+
 ```json
 {
   "status": "healthy"
@@ -37,9 +38,11 @@ Check if the API is running.
 Test endpoint for authenticated users.
 
 **Headers:**
+
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Response:**
+
 ```json
 {
   "message": "This is a protected route",
@@ -57,10 +60,12 @@ Test endpoint for authenticated users.
 Generate product details by analyzing a website URL using AI.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "product_website_link": "https://example.com"
@@ -68,6 +73,7 @@ Generate product details by analyzing a website URL using AI.
 ```
 
 **Response:**
+
 ```json
 {
   "target_audience": "Entrepreneurs and SaaS founders",
@@ -77,6 +83,7 @@ Generate product details by analyzing a website URL using AI.
 ```
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/generate-product-details \
   -H "Content-Type: application/json" \
@@ -91,10 +98,12 @@ curl -X POST http://localhost:5000/generate-product-details \
 Create a new product for the authenticated user.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "name": "Product Name",
@@ -106,6 +115,7 @@ Create a new product for the authenticated user.
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Product created successfully",
@@ -124,6 +134,7 @@ Create a new product for the authenticated user.
 ```
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/create_product \
   -H "Content-Type: application/json" \
@@ -142,9 +153,11 @@ curl -X POST http://localhost:5000/create_product \
 Get all products for the authenticated user.
 
 **Headers:**
+
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Response:**
+
 ```json
 {
   "products": [
@@ -164,6 +177,7 @@ Get all products for the authenticated user.
 ```
 
 **Example Usage:**
+
 ```bash
 curl -X GET http://localhost:5000/products \
   -H "Authorization: Bearer <your-jwt-token>"
@@ -176,10 +190,12 @@ curl -X GET http://localhost:5000/products \
 Generate Reddit marketing posts using AI based on product information stored in the database.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "product_id": "product-uuid"
@@ -187,6 +203,7 @@ Generate Reddit marketing posts using AI based on product information stored in 
 ```
 
 **Response:**
+
 ```json
 {
   "response": "Generated Reddit post content..."
@@ -194,6 +211,7 @@ Generate Reddit marketing posts using AI based on product information stored in 
 ```
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/generate-reddit-post \
   -H "Content-Type: application/json" \
@@ -203,41 +221,23 @@ curl -X POST http://localhost:5000/generate-reddit-post \
   }'
 ```
 
-### GET /get-viral-posts
+### Viral Posts (Static Data)
 
-Retrieve a collection of viral Reddit posts for reference and inspiration.
+Viral posts are now loaded as static data from the frontend and no longer require API calls. The data is stored in `Frontend/src/data/viral_posts.json` and accessed through the static data service.
 
-**Headers:**
-- `Authorization: Bearer <jwt-token>` (Required)
-
-**Response:**
-```json
-[
-  {
-    "title": "Viral Post Title",
-    "content": "Post content...",
-    "subreddit": "r/entrepreneur",
-    "upvotes": 1500,
-    "comments": 200
-  }
-]
-```
-
-**Example Usage:**
-```bash
-curl -X GET http://localhost:5000/get-viral-posts \
-  -H "Authorization: Bearer <your-jwt-token>"
-```
+**Note:** This endpoint has been deprecated in favor of static data loading for better performance and reduced server load.
 
 ### GET /get_karma
 
 Get karma analysis for a specific subreddit using Reddit API data.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "subreddit_name": "entrepreneur"
@@ -245,6 +245,7 @@ Get karma analysis for a specific subreddit using Reddit API data.
 ```
 
 **Response:**
+
 ```json
 {
   "response": "Karma analysis and insights for the subreddit..."
@@ -252,6 +253,7 @@ Get karma analysis for a specific subreddit using Reddit API data.
 ```
 
 **Example Usage:**
+
 ```bash
 curl -X GET http://localhost:5000/get_karma \
   -H "Content-Type: application/json" \
@@ -264,6 +266,7 @@ curl -X GET http://localhost:5000/get_karma \
 ## Error Responses
 
 ### 400 Bad Request
+
 ```json
 {
   "error": "Bad Request",
@@ -272,6 +275,7 @@ curl -X GET http://localhost:5000/get_karma \
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "error": "Unauthorized",
@@ -280,6 +284,7 @@ curl -X GET http://localhost:5000/get_karma \
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "error": "Not Found",
@@ -288,6 +293,7 @@ curl -X GET http://localhost:5000/get_karma \
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "error": "Internal Server Error",
@@ -298,6 +304,7 @@ curl -X GET http://localhost:5000/get_karma \
 ## CORS Configuration
 
 The API is configured to accept requests from:
+
 - `http://localhost:5173`
 - `http://127.0.0.1:5500`
 - `http://localhost:5500`
@@ -372,12 +379,14 @@ The API will be available at `http://localhost:5000`
 ### API Documentation
 
 The API uses Flask-Smorest for automatic OpenAPI documentation. Access the interactive documentation at:
+
 - Swagger UI: `http://localhost:5000/swagger`
 - ReDoc: `http://localhost:5000/redoc`
 
 ## Database Schema
 
 ### Products Table
+
 - `id` (UUID, Primary Key)
 - `user_id` (UUID, Foreign Key to users)
 - `name` (Text, Required)
@@ -394,4 +403,4 @@ Currently, no rate limiting is implemented. Consider implementing rate limiting 
 
 ## Support
 
-For API support or questions, please refer to the project documentation or create an issue in the repository. 
+For API support or questions, please refer to the project documentation or create an issue in the repository.
