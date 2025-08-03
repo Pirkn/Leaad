@@ -76,6 +76,36 @@
             color: #667eea;
         }
 
+        .subsection {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .subsection h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 8px;
+        }
+
+        .subsection h3 i {
+            color: #28a745;
+        }
+
+        .subsection p {
+            margin-bottom: 15px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -827,15 +857,85 @@
             <div class="section">
                 <h2><i class="fas fa-chart-line"></i> Karma Helper</h2>
                 
-                <div class="form-group">
-                    <label for="subreddit_name"><i class="fas fa-reddit"></i> Subreddit Name:</label>
-                    <input type="text" id="subreddit_name" placeholder="Enter subreddit name (e.g., saas, microsaas)" value="saas">
+                <!-- Get Karma Posts Section -->
+                <div class="subsection">
+                    <h3><i class="fas fa-list"></i> View My Karma Posts</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                        <i class="fas fa-info-circle"></i> View all your previously generated karma posts with images
+                    </p>
+                    
+                    <div>
+                        <button class="btn" onclick="getKarmaPosts()">
+                            <i class="fas fa-list"></i> Load My Karma Posts
+                        </button>
+                    </div>
                 </div>
                 
-                <div>
-                    <button class="btn" onclick="getKarmaAnalysis()">
-                        <i class="fas fa-chart-line"></i> Analyze Karma
-                    </button>
+                <!-- Get Post Karma Section -->
+                <div class="subsection">
+                    <h3><i class="fas fa-image"></i> Generate Karma Post with Image</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                        <i class="fas fa-info-circle"></i> Generates a Reddit post with WebP image and saves to database
+                    </p>
+                    
+                    <div>
+                        <button class="btn btn-success" onclick="getPostKarma()">
+                            <i class="fas fa-image"></i> Generate Karma Post
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Manual Subreddit Analysis -->
+                <div class="subsection">
+                    <h3><i class="fas fa-user-edit"></i> Trending Posts Analysis</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                        <i class="fas fa-info-circle"></i> Analyzes trending posts from popular subreddits and provides karma optimization strategies
+                    </p>
+                    <div class="form-group">
+                        <label for="subreddit_name"><i class="fas fa-reddit"></i> Subreddit Name (Optional):</label>
+                        <input type="text" id="subreddit_name" placeholder="Enter subreddit name (e.g., saas, microsaas)" value="saas">
+                        <small style="color: #6c757d; font-size: 12px;">Leave empty to analyze random trending subreddits</small>
+                    </div>
+                    
+                    <div>
+                        <button class="btn" onclick="getKarmaAnalysis()">
+                            <i class="fas fa-chart-line"></i> Analyze Trending Posts
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Auto Karma Builder -->
+                <div class="subsection">
+                    <h3><i class="fas fa-magic"></i> Smart Karma Builder</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                        <i class="fas fa-info-circle"></i> Generates personalized karma strategies based on your experience level and interests
+                    </p>
+                    
+                    <div class="form-group">
+                        <label for="karma_level"><i class="fas fa-user"></i> Your Current Karma Level:</label>
+                        <select id="karma_level">
+                            <option value="beginner">Beginner (0-50 karma)</option>
+                            <option value="intermediate">Intermediate (50-500 karma)</option>
+                            <option value="advanced">Advanced (500+ karma)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interest_category"><i class="fas fa-heart"></i> Interest Category:</label>
+                        <select id="interest_category">
+                            <option value="general">General/Mixed Topics</option>
+                            <option value="wholesome">Wholesome & Positive</option>
+                            <option value="advice">Advice & Help</option>
+                            <option value="creative">Creative & Fun</option>
+                            <option value="discussion">Questions & Discussion</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <button class="btn btn-primary" onclick="getSmartKarmaAnalysis()">
+                            <i class="fas fa-magic"></i> Generate Smart Karma Plan
+                        </button>
+                    </div>
                 </div>
                 
                 <div id="karmaResult" class="result hidden">
@@ -846,6 +946,36 @@
                         </button>
                     </div>
                     <div class="result-content" id="karmaResultContent"></div>
+                </div>
+
+                <div id="smartKarmaResult" class="result hidden">
+                    <div class="result-header">
+                        <span><i class="fas fa-magic"></i> Smart Karma Plan</span>
+                        <button class="copy-btn" onclick="copyToClipboard('smartKarmaResult')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="result-content" id="smartKarmaResultContent"></div>
+                </div>
+
+                <div id="karmaPostsResult" class="result hidden">
+                    <div class="result-header">
+                        <span><i class="fas fa-list"></i> My Karma Posts</span>
+                        <button class="copy-btn" onclick="copyToClipboard('karmaPostsResult')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="result-content" id="karmaPostsResultContent"></div>
+                </div>
+
+                <div id="karmaPostResult" class="result hidden">
+                    <div class="result-header">
+                        <span><i class="fas fa-image"></i> Karma Post with Image</span>
+                        <button class="copy-btn" onclick="copyToClipboard('karmaPostResult')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="result-content" id="karmaPostResultContent"></div>
                 </div>
             </div>
 
@@ -1453,7 +1583,7 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             }
         }
 
-        // Get Karma Analysis
+                // Get Karma Analysis
         async function getKarmaAnalysis() {
             if (!accessToken) {
                 showKarmaResult('Error: You must be signed in to analyze karma', null, true);
@@ -1468,18 +1598,18 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             }
 
             try {
-                showKarmaResult('Analyzing karma patterns...', true);
+                showKarmaResult('Analyzing karma patterns from trending posts...', true);
                 
-                        const response = await fetch(`${API_BASE_URL}/get_karma?subreddit_name=${encodeURIComponent(subredditName)}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        });
+                const response = await fetch(`${API_BASE_URL}/get_karma`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
                 
                 const data = await response.json();
-                
+
                 if (response.ok && data.response) {
                     showKarmaAnalysis(data.response);
                 } else {
@@ -1488,6 +1618,173 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             } catch (error) {
                 showKarmaResult(`Error: ${error.message}`, false, null, true);
             }
+        }
+
+        // Get Karma Posts
+        async function getKarmaPosts() {
+            if (!accessToken) {
+                showKarmaPostsResult('Error: You must be signed in to view karma posts', null, true);
+                return;
+            }
+
+            try {
+                showKarmaPostsResult('Loading your karma posts...', true);
+                
+                const response = await fetch(`${API_BASE_URL}/get_karma_posts`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+
+                if (response.ok && data.karma_posts) {
+                    showKarmaPosts(data.karma_posts);
+                } else {
+                    showKarmaPostsResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showKarmaPostsResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
+        // Create Karma Post with Image
+        async function getPostKarma() {
+            if (!accessToken) {
+                showKarmaPostResult('Error: You must be signed in to generate karma posts', null, true);
+                return;
+            }
+
+            try {
+                showKarmaPostResult('Generating karma post with image...', true);
+                
+                const response = await fetch(`${API_BASE_URL}/create_karma_post`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+
+                if (response.ok && data) {
+                    showKarmaPost(data);
+                } else {
+                    showKarmaPostResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showKarmaPostResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
+        // Get Smart Karma Analysis
+        async function getSmartKarmaAnalysis() {
+            if (!accessToken) {
+                showSmartKarmaResult('Error: You must be signed in to get karma analysis', null, true);
+                return;
+            }
+
+            const karmaLevel = document.getElementById('karma_level').value;
+            const interestCategory = document.getElementById('interest_category').value;
+
+            try {
+                showSmartKarmaResult('Analyzing trending posts and generating personalized karma strategy...', true);
+                
+                // Use the existing get_karma endpoint multiple times for different analysis
+                const response = await fetch(`${API_BASE_URL}/get_karma`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+
+                if (response.ok && data.response) {
+                    // Enhance the response with user-specific context
+                    const enhancedResponse = `# Smart Karma Strategy for ${karmaLevel} level user
+
+## Your Profile
+- **Karma Level**: ${karmaLevel}
+- **Interest Category**: ${interestCategory}
+- **Analysis Date**: ${new Date().toLocaleDateString()}
+
+## Personalized Analysis
+${data.response}
+
+## Additional Tips for ${karmaLevel} Users
+${getKarmaLevelTips(karmaLevel)}
+
+## Best Practices for ${interestCategory} Content
+${getInterestCategoryTips(interestCategory)}
+
+## Next Steps
+1. Start with the recommended subreddits above
+2. Focus on quality over quantity
+3. Engage authentically with the community
+4. Monitor your karma growth weekly
+5. Adjust strategy based on what works best for you`;
+                    
+                    showSmartKarmaAnalysis(enhancedResponse);
+                } else {
+                    showSmartKarmaResult(`Error: ${response.status} ${response.statusText}`, false, null, true);
+                }
+            } catch (error) {
+                showSmartKarmaResult(`Error: ${error.message}`, false, null, true);
+            }
+        }
+
+        // Helper function to get karma level specific tips
+        function getKarmaLevelTips(level) {
+            const tips = {
+                'beginner': `- Start with r/askreddit and r/nostupidquestions
+- Focus on asking genuine questions
+- Avoid controversial topics initially
+- Build karma slowly and steadily
+- Read subreddit rules before posting`,
+                'intermediate': `- Try more diverse subreddits
+- Share personal experiences when relevant
+- Engage in meaningful discussions
+- Help other users with advice
+- Consider posting original content`,
+                'advanced': `- You can handle most subreddits
+- Share expertise in your areas of knowledge
+- Create high-quality original content
+- Mentor newer users
+- Experiment with different content types`
+            };
+            return tips[level] || tips['beginner'];
+        }
+
+        // Helper function to get interest category specific tips
+        function getInterestCategoryTips(category) {
+            const tips = {
+                'general': `- Focus on universal topics that appeal to everyone
+- Ask questions that encourage diverse responses
+- Share interesting facts or observations
+- Engage with trending topics respectfully`,
+                'wholesome': `- Share positive experiences and uplifting content
+- Compliment others genuinely
+- Focus on feel-good stories and moments
+- Avoid negative or controversial topics`,
+                'advice': `- Provide helpful, actionable advice
+- Ask for advice when you genuinely need it
+- Share personal experiences that could help others
+- Be supportive and encouraging`,
+                'creative': `- Share original ideas and creative content
+- Engage with writing prompts and creative challenges
+- Share interesting observations or thoughts
+- Participate in creative discussions`,
+                'discussion': `- Ask thought-provoking questions
+- Engage in meaningful debates respectfully
+- Share different perspectives
+- Encourage open dialogue`
+            };
+            return tips[category] || tips['general'];
         }
 
         // Check if product link is entered and show/hide generate details button
@@ -1733,9 +2030,12 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             const resultDiv = document.getElementById('karmaResult');
             const contentDiv = document.getElementById('karmaResultContent');
             
+            // Format the analysis text for better readability
+            const formattedAnalysis = formatKarmaAnalysis(analysis);
+            
             let html = `<div class="success-message">
                 <i class="fas fa-chart-line"></i>
-                <strong>Success!</strong> Karma analysis completed.
+                <strong>Success!</strong> Karma analysis completed from trending posts.
             </div>
             <div class="post-card">
                 <div class="post-header">
@@ -1743,11 +2043,12 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
                         <div class="subreddit-tag" style="background: #667eea;">
                             <i class="fas fa-chart-line"></i> Karma Analysis
                         </div>
+                        <div class="post-number">AI Generated</div>
                     </div>
                 </div>
                 <div class="post-content">
-                    <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef;">
-                        ${analysis}
+                    <div style="white-space: pre-wrap; font-family: 'Segoe UI', sans-serif; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; line-height: 1.6; font-size: 14px;">
+                        ${formattedAnalysis}
                     </div>
                 </div>
                 <div class="post-footer">
@@ -1756,6 +2057,9 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
                     </button>
                     <button class="footer-btn" onclick="exportKarmaAnalysisAsJSON()">
                         <i class="fas fa-download"></i> Export JSON
+                    </button>
+                    <button class="footer-btn" onclick="refreshKarmaAnalysis()">
+                        <i class="fas fa-refresh"></i> Refresh Analysis
                     </button>
                 </div>
             </div>`;
@@ -1769,6 +2073,333 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             // Add success animation
             resultDiv.classList.add('success-animation');
             setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
+        }
+
+        // Helper function to format karma analysis text
+        function formatKarmaAnalysis(text) {
+            // Convert markdown-style headers to HTML
+            text = text.replace(/^# (.*$)/gm, '<h2 style="color: #667eea; margin: 20px 0 10px 0; font-size: 18px;">$1</h2>');
+            text = text.replace(/^## (.*$)/gm, '<h3 style="color: #495057; margin: 15px 0 8px 0; font-size: 16px;">$1</h3>');
+            text = text.replace(/^### (.*$)/gm, '<h4 style="color: #6c757d; margin: 12px 0 6px 0; font-size: 14px;">$1</h4>');
+            
+            // Convert bullet points
+            text = text.replace(/^- (.*$)/gm, '<li style="margin: 5px 0; padding-left: 10px;">$1</li>');
+            text = text.replace(/^(\d+)\. (.*$)/gm, '<li style="margin: 5px 0; padding-left: 10px;">$1. $2</li>');
+            
+            // Wrap lists in ul/ol tags
+            text = text.replace(/(<li.*<\/li>)/gs, '<ul style="margin: 10px 0; padding-left: 20px;">$1</ul>');
+            
+            // Convert bold text
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #495057;">$1</strong>');
+            
+            // Convert italic text
+            text = text.replace(/\*(.*?)\*/g, '<em style="color: #6c757d;">$1</em>');
+            
+            // Convert code blocks
+            text = text.replace(/```(.*?)```/gs, '<code style="background: #e9ecef; padding: 2px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
+            
+            // Convert inline code
+            text = text.replace(/`(.*?)`/g, '<code style="background: #e9ecef; padding: 2px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
+            
+            // Convert line breaks to paragraphs
+            text = text.replace(/\n\n/g, '</p><p style="margin: 10px 0;">');
+            text = '<p style="margin: 10px 0;">' + text + '</p>';
+            
+            return text;
+        }
+
+        // Function to refresh karma analysis
+        function refreshKarmaAnalysis() {
+            const subredditName = document.getElementById('subreddit_name').value;
+            if (subredditName) {
+                getKarmaAnalysis();
+            } else {
+                showToast('Please enter a subreddit name first', 'error');
+            }
+        }
+
+        function showSmartKarmaAnalysis(analysis) {
+            const resultDiv = document.getElementById('smartKarmaResult');
+            const contentDiv = document.getElementById('smartKarmaResultContent');
+            
+            // Format the analysis text for better readability
+            const formattedAnalysis = formatKarmaAnalysis(analysis);
+            
+            let html = `<div class="success-message">
+                <i class="fas fa-magic"></i>
+                <strong>Success!</strong> Personalized karma strategy generated based on your profile.
+            </div>
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-meta">
+                        <div class="subreddit-tag" style="background: #ff6b6b;">
+                            <i class="fas fa-magic"></i> Smart Karma Plan
+                        </div>
+                        <div class="post-number">Personalized</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div style="white-space: pre-wrap; font-family: 'Segoe UI', sans-serif; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; line-height: 1.6; font-size: 14px;">
+                        ${formattedAnalysis}
+                    </div>
+                </div>
+                <div class="post-footer">
+                    <button class="footer-btn" onclick="copySmartKarmaAnalysis()">
+                        <i class="fas fa-copy"></i> Copy Plan
+                    </button>
+                    <button class="footer-btn" onclick="exportSmartKarmaAsJSON()">
+                        <i class="fas fa-download"></i> Export JSON
+                    </button>
+                    <button class="footer-btn" onclick="refreshSmartKarmaAnalysis()">
+                        <i class="fas fa-refresh"></i> Refresh Plan
+                    </button>
+                </div>
+            </div>`;
+            
+            // Store smart karma analysis data for copy functions
+            window.smartKarmaAnalysisData = analysis;
+            
+            contentDiv.innerHTML = html;
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
+        }
+
+        // Function to refresh smart karma analysis
+        function refreshSmartKarmaAnalysis() {
+            getSmartKarmaAnalysis();
+        }
+
+        function showKarmaPostsResult(message, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('karmaPostsResult');
+            const contentDiv = document.getElementById('karmaPostsResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading"></div> ${message}`;
+            } else {
+                if (isError) {
+                    contentDiv.innerHTML = `<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${message}</span>`;
+                } else if (data) {
+                    contentDiv.innerHTML = formatJSON(message, data);
+                } else {
+                    contentDiv.textContent = message;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showKarmaPosts(posts) {
+            const resultDiv = document.getElementById('karmaPostsResult');
+            const contentDiv = document.getElementById('karmaPostsResultContent');
+            
+            if (posts.length === 0) {
+                contentDiv.innerHTML = `
+                    <div class="success-message">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>No karma posts found.</strong> Generate your first karma post to get started!
+                    </div>
+                `;
+            } else {
+                let html = `<div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Success!</strong> Found ${posts.length} karma post(s).
+                </div>
+                <div class="post-grid">`;
+                
+                posts.forEach((post, index) => {
+                    html += `
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-meta">
+                                    <div class="subreddit-tag" style="background: #ff4500;">
+                                        <i class="fab fa-reddit"></i> ${post.subreddit || 'Unknown'}
+                                    </div>
+                                    <div class="post-number">Karma Post ${index + 1}</div>
+                                </div>
+                            </div>
+                            <div class="post-title">${post.title || 'No title'}</div>`;
+                    
+                    // Add image if available
+                    if (post.image_url) {
+                        html += `
+                        <div style="margin: 15px 0; text-align: center;">
+                            <img src="${post.image_url}" alt="Generated image" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            <div style="margin-top: 10px; font-size: 12px; color: #6c757d;">
+                                <i class="fas fa-image"></i> WebP Image (Signed URL - expires in 1 hour)
+                            </div>
+                        </div>`;
+                    }
+                    
+                    // Add description if available
+                    if (post.description) {
+                        html += `<div class="post-content">${post.description}</div>`;
+                    }
+                    
+                    html += `
+                            <div class="post-footer">
+                                <button class="footer-btn" onclick="copyKarmaPostContent(${index})">
+                                    <i class="fas fa-copy"></i> Copy Content
+                                </button>
+                                <button class="footer-btn" onclick="copyKarmaPostTitle(${index})">
+                                    <i class="fas fa-heading"></i> Copy Title
+                                </button>
+                                <button class="footer-btn" onclick="copyKarmaPostAll(${index})">
+                                    <i class="fas fa-clipboard"></i> Copy All
+                                </button>
+                                ${post.image_url ? `<button class="footer-btn" onclick="openKarmaPostImage(${index})">
+                                    <i class="fas fa-external-link-alt"></i> Open Image
+                                </button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                // Store karma posts data for copy functions
+                window.karmaPostsData = posts;
+                
+                contentDiv.innerHTML = html;
+            }
+            
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
+        }
+
+        function showKarmaPostResult(message, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('karmaPostResult');
+            const contentDiv = document.getElementById('karmaPostResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading"></div> ${message}`;
+            } else {
+                if (isError) {
+                    contentDiv.innerHTML = `<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${message}</span>`;
+                } else if (data) {
+                    contentDiv.innerHTML = formatJSON(message, data);
+                } else {
+                    contentDiv.textContent = message;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showKarmaPost(postData) {
+            const resultDiv = document.getElementById('karmaPostResult');
+            const contentDiv = document.getElementById('karmaPostResultContent');
+            
+            let html = `<div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <strong>Success!</strong> Generated karma post with image and saved to database.
+            </div>
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-meta">
+                        <div class="subreddit-tag" style="background: #ff4500;">
+                            <i class="fab fa-reddit"></i> ${postData.subreddit || 'Unknown'}
+                        </div>
+                        <div class="post-number">Karma Post</div>
+                    </div>
+                </div>
+                <div class="post-title">${postData.title || 'No title'}</div>`;
+            
+            // Add image if available
+            if (postData.image_url) {
+                html += `
+                <div style="margin: 15px 0; text-align: center;">
+                    <img src="${postData.image_url}" alt="Generated image" style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div style="margin-top: 10px; font-size: 12px; color: #6c757d;">
+                        <i class="fas fa-image"></i> WebP Image (Signed URL - expires in 1 hour)
+                    </div>
+                </div>`;
+            }
+            
+            // Add description if available
+            if (postData.description) {
+                html += `<div class="post-content">${postData.description}</div>`;
+            }
+            
+            // Add post metadata
+            html += `
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">${postData.subreddit || 'Unknown'}</div>
+                        <div class="stat-label">Subreddit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${postData.post_id ? 'Saved' : 'Not saved'}</div>
+                        <div class="stat-label">Database Status</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${postData.image_url ? 'Signed URL' : 'Not available'}</div>
+                        <div class="stat-label">Image Status</div>
+                    </div>
+                </div>
+                <div class="post-footer">
+                    <button class="footer-btn" onclick="copyKarmaPostContent()">
+                        <i class="fas fa-copy"></i> Copy Content
+                    </button>
+                    <button class="footer-btn" onclick="copyKarmaPostTitle()">
+                        <i class="fas fa-heading"></i> Copy Title
+                    </button>
+                    <button class="footer-btn" onclick="copyKarmaPostAll()">
+                        <i class="fas fa-clipboard"></i> Copy All
+                    </button>
+                    <button class="footer-btn" onclick="openImageInNewTab()">
+                        <i class="fas fa-external-link-alt"></i> Open Image
+                    </button>
+                </div>
+            </div>`;
+            
+            // Store karma post data for copy functions
+            window.karmaPostData = postData;
+            
+            contentDiv.innerHTML = html;
+            resultDiv.classList.remove('hidden');
+            
+            // Add success animation
+            resultDiv.classList.add('success-animation');
+            setTimeout(() => resultDiv.classList.remove('success-animation'), 600);
+        }
+
+        function showSmartKarmaResult(message, isLoading = false, data = null, isError = false) {
+            const resultDiv = document.getElementById('smartKarmaResult');
+            const contentDiv = document.getElementById('smartKarmaResultContent');
+            
+            if (isLoading) {
+                contentDiv.innerHTML = `<div class="loading-message">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>${message}</span>
+                </div>`;
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (isError) {
+                contentDiv.innerHTML = `<div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>${message}</span>
+                </div>`;
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (data) {
+                showSmartKarmaAnalysis(data);
+            } else {
+                contentDiv.innerHTML = `<div class="info-message">
+                    <i class="fas fa-info-circle"></i>
+                    <span>${message}</span>
+                </div>`;
+                resultDiv.classList.remove('hidden');
+            }
         }
 
         function showViralPosts(posts) {
@@ -2091,6 +2722,288 @@ ${product.problem_solved ? `Problem Solved: ${product.problem_solved}` : ''}`;
             setTimeout(() => {
                 buttons.forEach(btn => btn.classList.remove('success'));
             }, 2000);
+        }
+
+        // Smart Karma Analysis Copy Functions
+        function copySmartKarmaAnalysis() {
+            if (window.smartKarmaAnalysisData) {
+                navigator.clipboard.writeText(window.smartKarmaAnalysisData).then(() => {
+                    showToast('Smart karma plan copied to clipboard!', 'success');
+                    updateSmartKarmaButtonState('copy');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy to clipboard', 'error');
+                });
+            } else {
+                showToast('No smart karma plan to copy', 'error');
+            }
+        }
+
+        function exportSmartKarmaAsJSON() {
+            if (window.smartKarmaAnalysisData) {
+                const dataStr = JSON.stringify({ smart_karma_plan: window.smartKarmaAnalysisData }, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'smart_karma_plan.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showToast('Smart karma plan exported as JSON!', 'success');
+                updateSmartKarmaButtonState('export');
+            } else {
+                showToast('No smart karma plan to export', 'error');
+            }
+        }
+
+        function updateSmartKarmaButtonState(type) {
+            const postCard = document.querySelector('#smartKarmaResult .post-card');
+            if (!postCard) return;
+            
+            const buttons = postCard.querySelectorAll('.footer-btn');
+            buttons.forEach(btn => btn.classList.remove('success'));
+            
+            if (type === 'copy') {
+                buttons[0].classList.add('success');
+            } else if (type === 'export') {
+                buttons[1].classList.add('success');
+            }
+            
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('success'));
+            }, 2000);
+        }
+
+        // Karma Post Copy Functions
+        function copyKarmaPostContent() {
+            if (!window.karmaPostData) {
+                showToast('Karma post data not available', 'error');
+                return;
+            }
+            
+            const content = window.karmaPostData.description || 'No content';
+            
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Karma post content copied to clipboard!', 'success');
+                updateKarmaPostButtonState('content');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyKarmaPostTitle() {
+            if (!window.karmaPostData) {
+                showToast('Karma post data not available', 'error');
+                return;
+            }
+            
+            const title = window.karmaPostData.title || 'No title';
+            
+            navigator.clipboard.writeText(title).then(() => {
+                showToast('Karma post title copied to clipboard!', 'success');
+                updateKarmaPostButtonState('title');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyKarmaPostAll() {
+            if (!window.karmaPostData) {
+                showToast('Karma post data not available', 'error');
+                return;
+            }
+            
+            const post = window.karmaPostData;
+            const subreddit = post.subreddit || 'Unknown';
+            const title = post.title || 'No title';
+            const content = post.description || 'No content';
+            const imageUrl = post.image_url || 'No image';
+            
+            const fullPost = `Subreddit: ${subreddit}\nTitle: ${title}\n\nContent:\n${content}\n\nImage URL: ${imageUrl}`;
+            
+            navigator.clipboard.writeText(fullPost).then(() => {
+                showToast('Complete karma post copied to clipboard!', 'success');
+                updateKarmaPostButtonState('all');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function openImageInNewTab() {
+            if (!window.karmaPostData || !window.karmaPostData.image_url) {
+                showToast('No image available to open', 'error');
+                return;
+            }
+            
+            window.open(window.karmaPostData.image_url, '_blank');
+            showToast('Image opened in new tab!', 'success');
+            updateKarmaPostButtonState('image');
+        }
+
+        // Karma Posts List Copy Functions
+        function copyKarmaPostContent(index) {
+            if (!window.karmaPostsData || !window.karmaPostsData[index]) {
+                showToast('Karma post data not available', 'error');
+                return;
+            }
+            
+            const post = window.karmaPostsData[index];
+            const content = post.description || 'No content';
+            
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Karma post content copied to clipboard!', 'success');
+                updateKarmaPostsButtonState(index, 'content');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyKarmaPostTitle(index) {
+            if (!window.karmaPostsData || !window.karmaPostsData[index]) {
+                showToast('Karma post data not available', 'error');
+                return;
+            }
+            
+            const post = window.karmaPostsData[index];
+            const title = post.title || 'No title';
+            
+            navigator.clipboard.writeText(title).then(() => {
+                showToast('Karma post title copied to clipboard!', 'success');
+                updateKarmaPostsButtonState(index, 'title');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function copyKarmaPostAll(index) {
+            if (!window.karmaPostsData || !window.karmaPostsData[index]) {
+                showToast('Karma post data not available', 'error');
+                return;
+            }
+            
+            const post = window.karmaPostsData[index];
+            const subreddit = post.subreddit || 'Unknown';
+            const title = post.title || 'No title';
+            const content = post.description || 'No content';
+            const imageUrl = post.image_url || 'No image';
+            
+            const fullPost = `Subreddit: ${subreddit}\nTitle: ${title}\n\nContent:\n${content}\n\nImage URL: ${imageUrl}`;
+            
+            navigator.clipboard.writeText(fullPost).then(() => {
+                showToast('Complete karma post copied to clipboard!', 'success');
+                updateKarmaPostsButtonState(index, 'all');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function openKarmaPostImage(index) {
+            if (!window.karmaPostsData || !window.karmaPostsData[index] || !window.karmaPostsData[index].image_url) {
+                showToast('No image available to open', 'error');
+                return;
+            }
+            
+            window.open(window.karmaPostsData[index].image_url, '_blank');
+            showToast('Image opened in new tab!', 'success');
+            updateKarmaPostsButtonState(index, 'image');
+        }
+
+        function updateKarmaPostsButtonState(index, type) {
+            const postCards = document.querySelectorAll('#karmaPostsResult .post-card');
+            if (!postCards[index]) return;
+            
+            const buttons = postCards[index].querySelectorAll('.footer-btn');
+            buttons.forEach(btn => btn.classList.remove('success'));
+            
+            if (type === 'content') {
+                buttons[0].classList.add('success');
+            } else if (type === 'title') {
+                buttons[1].classList.add('success');
+            } else if (type === 'all') {
+                buttons[2].classList.add('success');
+            } else if (type === 'image' && buttons[3]) {
+                buttons[3].classList.add('success');
+            }
+            
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('success'));
+            }, 2000);
+        }
+
+        function updateKarmaPostButtonState(type) {
+            const postCard = document.querySelector('#karmaPostResult .post-card');
+            if (!postCard) return;
+            
+            const buttons = postCard.querySelectorAll('.footer-btn');
+            buttons.forEach(btn => btn.classList.remove('success'));
+            
+            if (type === 'content') {
+                buttons[0].classList.add('success');
+            } else if (type === 'title') {
+                buttons[1].classList.add('success');
+            } else if (type === 'all') {
+                buttons[2].classList.add('success');
+            } else if (type === 'image') {
+                buttons[3].classList.add('success');
+            }
+            
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('success'));
+            }, 2000);
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                max-width: 300px;
+                word-wrap: break-word;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            // Set background color based on type
+            if (type === 'success') {
+                toast.style.background = '#28a745';
+            } else if (type === 'error') {
+                toast.style.background = '#dc3545';
+            } else {
+                toast.style.background = '#17a2b8';
+            }
+            
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
         }
 
         function updateViralButtonState(index, type) {

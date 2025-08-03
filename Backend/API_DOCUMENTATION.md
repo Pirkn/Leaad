@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Marketing Agent API is a Flask-based REST API that provides AI-powered marketing tools for product analysis and content generation. The API uses Supabase for authentication and integrates with Gemini AI for content generation.
+The Marketing Agent API is a Flask-based REST API that provides AI-powered marketing tools for product analysis and content generation. The API uses Supabase for authentication and integrates with Gemini AI for content generation, Reddit API for karma optimization, and image generation capabilities.
 
 **Base URL:** `http://localhost:5000`  
 **API Version:** v1  
@@ -203,35 +203,9 @@ curl -X POST http://localhost:5000/generate-reddit-post \
   }'
 ```
 
-### GET /get-viral-posts
+### POST /create_karma_comment
 
-Retrieve a collection of viral Reddit posts for reference and inspiration.
-
-**Headers:**
-- `Authorization: Bearer <jwt-token>` (Required)
-
-**Response:**
-```json
-[
-  {
-    "title": "Viral Post Title",
-    "content": "Post content...",
-    "subreddit": "r/entrepreneur",
-    "upvotes": 1500,
-    "comments": 200
-  }
-]
-```
-
-**Example Usage:**
-```bash
-curl -X GET http://localhost:5000/get-viral-posts \
-  -H "Authorization: Bearer <your-jwt-token>"
-```
-
-### GET /get_karma
-
-Get karma analysis for a specific subreddit using Reddit API data.
+Generate high-quality Reddit comments for karma optimization based on trending posts from popular subreddits.
 
 **Headers:**
 - `Content-Type: application/json`
@@ -239,26 +213,80 @@ Get karma analysis for a specific subreddit using Reddit API data.
 
 **Request Body:**
 ```json
-{
-  "subreddit_name": "entrepreneur"
-}
+{}
 ```
 
 **Response:**
 ```json
 {
-  "response": "Karma analysis and insights for the subreddit..."
+  "response": "AI-generated comment suggestions for trending posts..."
 }
 ```
 
 **Example Usage:**
 ```bash
-curl -X GET http://localhost:5000/get_karma \
+curl -X POST http://localhost:5000/create_karma_comment \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <your-jwt-token>" \
-  -d '{
-    "subreddit_name": "entrepreneur"
-  }'
+  -d '{}'
+```
+
+### POST /create_karma_post
+
+Create a complete Reddit post with image for karma optimization. Generates content, creates an image, uploads to storage, and saves to database.
+
+**Headers:**
+- `Content-Type: application/json`
+- `Authorization: Bearer <jwt-token>` (Required)
+
+**Request Body:**
+```json
+{}
+```
+
+**Response:**
+```json
+{
+  "title": "Generated post title",
+  "subreddit": "aww",
+  "description": "Generated post description",
+  "image_url": "https://signed-url-to-generated-image.webp"
+}
+```
+
+**Example Usage:**
+```bash
+curl -X POST http://localhost:5000/create_karma_post \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-jwt-token>" \
+  -d '{}'
+```
+
+### GET /get_karma_posts
+
+Retrieve all karma posts created by the authenticated user. Returns posts with their associated images as signed URLs.
+
+**Headers:**
+- `Authorization: Bearer <jwt-token>` (Required)
+
+**Response:**
+```json
+{
+  "karma_posts": [
+    {
+      "subreddit": "aww",
+      "title": "Generated post title",
+      "description": "Generated post description",
+      "image_url": "https://signed-url-to-generated-image.webp"
+    }
+  ]
+}
+```
+
+**Example Usage:**
+```bash
+curl -X GET http://localhost:5000/get_karma_posts \
+  -H "Authorization: Bearer <your-jwt-token>"
 ```
 
 ## Error Responses
@@ -312,6 +340,8 @@ SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_JWT_SECRET=your_supabase_jwt_secret
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 GEMINI_API_KEY=your_gemini_api_key
+REDDIT_CLIENT=your_reddit_client_id
+REDDIT_SECRET=your_reddit_client_secret
 ```
 
 ## Dependencies
@@ -327,6 +357,7 @@ praw==7.7.1
 requests==2.31.0
 google-generativeai==0.3.2
 supabase==2.3.4
+Pillow==10.0.0
 ```
 
 ## Project Structure
@@ -338,17 +369,44 @@ Backend/
 ├── API_DOCUMENTATION.md  # This documentation
 └── src/
     ├── config/           # AI prompt configurations
-    ├── data/            # Static data files (viral_posts.json)
+    │   ├── karma_helper_prompt.txt
+    │   ├── product_details_prompt.txt
+    │   └── reddit_post_generator_prompt.txt
     ├── routes/          # API route blueprints
     │   ├── product.py   # Product-related endpoints
     │   └── reddit.py    # Reddit-related endpoints
     └── utils/           # Utility modules
         ├── auth.py      # Authentication utilities
+        ├── cost_calculator.py  # Cost calculation utilities
+        ├── image_handling.py   # Image processing and storage
         ├── models.py    # AI model integration
         ├── prompt_generator.py  # Prompt generation
         ├── reddit_helpers.py    # Reddit API helpers
         └── website_scraper.py   # Web scraping utilities
 ```
+
+## Database Schema
+
+### Products Table
+- `id` (UUID, Primary Key)
+- `user_id` (UUID, Foreign Key to users)
+- `name` (Text, Required)
+- `url` (Text, Optional)
+- `description` (Text, Optional)
+- `target_audience` (Text, Optional)
+- `problem_solved` (Text, Optional)
+- `created_at` (Timestamp)
+- `updated_at` (Timestamp)
+
+### Karma Posts Table
+- `id` (UUID, Primary Key)
+- `user_id` (UUID, Foreign Key to users)
+- `subreddit` (Text)
+- `title` (Text)
+- `description` (Text, Optional)
+- `storage_path` (Text, Optional)
+- `created_at` (Timestamp)
+- `updated_at` (Timestamp)
 
 ## Security Considerations
 
@@ -356,7 +414,8 @@ Backend/
 2. **CORS**: Configured to allow specific origins only
 3. **Input Validation**: Implement proper input validation for all endpoints
 4. **HTTPS**: Use HTTPS in production environments
-5. **User Isolation**: Products are isolated by user_id to prevent unauthorized access
+5. **User Isolation**: Products and karma posts are isolated by user_id to prevent unauthorized access
+6. **Image Storage**: Generated images are stored securely with signed URLs that expire
 
 ## Development
 
@@ -375,22 +434,9 @@ The API uses Flask-Smorest for automatic OpenAPI documentation. Access the inter
 - Swagger UI: `http://localhost:5000/swagger`
 - ReDoc: `http://localhost:5000/redoc`
 
-## Database Schema
-
-### Products Table
-- `id` (UUID, Primary Key)
-- `user_id` (UUID, Foreign Key to users)
-- `name` (Text, Required)
-- `url` (Text, Optional)
-- `description` (Text, Optional)
-- `target_audience` (Text, Optional)
-- `problem_solved` (Text, Optional)
-- `created_at` (Timestamp)
-- `updated_at` (Timestamp)
-
 ## Rate Limiting
 
-Currently, no rate limiting is implemented. Consider implementing rate limiting for production use.
+Currently, no rate limiting is implemented. Consider implementing rate limiting for production use, especially for AI-powered endpoints.
 
 ## Support
 

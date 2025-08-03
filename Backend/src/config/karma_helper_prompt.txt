@@ -26,6 +26,7 @@ When analyzing the top 10 rising posts from a subreddit, evaluate each post base
 
 ### DO:
 - **Be authentic** - Write like a real person, not a bot
+- **Ask a question** - Be really interested in the question you ask
 - **Add value** - Provide insights, experiences, or helpful information
 - **Stay relevant** - Comment directly on the post's content
 - **Be respectful** - Follow subreddit rules and community guidelines
@@ -64,9 +65,8 @@ For each selected post, provide:
 
 Choose posts that offer the best balance of:
 1. **High engagement potential** (good upvote ratio, active discussion)
-2. **Relevant to your expertise** (topics you can genuinely contribute to)
-3. **Fresh content** (not oversaturated with comments)
-4. **Community alignment** (fits the subreddit's culture and rules)
+2. **Fresh content** (not oversaturated with comments)
+3. **Community alignment** (fits the subreddit's culture and rules)
 
 ## Quality Checklist
 

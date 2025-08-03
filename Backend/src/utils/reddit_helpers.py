@@ -1,6 +1,10 @@
 import praw
 import os
 from dotenv import load_dotenv
+import random
+import requests
+from src.utils.image_handling import convert_to_webp
+from src.utils.prompt_generator import post_karma_prompt
 
 load_dotenv()
 
@@ -11,18 +15,22 @@ reddit = praw.Reddit(
     user_agent="MarketingAgent/1.0",
 )
 
-def get_posts(subreddit_name):
-    subreddit = reddit.subreddit(subreddit_name)
+def get_rising_posts():
+    subreddits = ['ask', 'help', 'askreddit', 'mildlyinteresting', 'nostupidquestions']
+    
+    random_subreddit = random.choice(subreddits)
+
+    subreddit = reddit.subreddit(random_subreddit)
 
     post_content = []
-
-    for post in subreddit.rising(limit=10):
+    
+    for post in subreddit.rising(limit=5):
         try:
             comments = []
             
             # Construct the proper Reddit comment URL using post ID
             # This ensures we get the comment page URL, not the direct image/media URL
-            comment_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{post.id}/"
+            comment_url = f"https://www.reddit.com/r/{random_subreddit}/comments/{post.id}/"
             
             # Get the post using the comment URL
             post = reddit.submission(url=comment_url)
@@ -55,13 +63,21 @@ def get_posts(subreddit_name):
 
     return post_content
 
-# posts = get_posts("microsaas")
-# from prompt_generator import karma_helper_prompt
-# from models import Model
 
+def create_karma_post():
+    subreddits = ['aww']
+    random_subreddit = random.choice(subreddits)
 
-# messages = karma_helper_prompt(posts)
+    if random_subreddit == 'aww':
+        response = requests.get("https://genrandom.com/api/cat")
+        image_data = response.content
 
-# model = Model()
-# response = model.gemini_chat_completion(messages)
-# print(response)
+        webp_data = convert_to_webp(image_data)
+            
+        # Convert WebP to base64
+        import base64
+        webp_base64 = base64.b64encode(webp_data).decode('utf-8')
+        
+        messages = post_karma_prompt(webp_base64, random_subreddit)
+
+        return messages, random_subreddit, webp_data
