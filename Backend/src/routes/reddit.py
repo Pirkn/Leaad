@@ -8,14 +8,7 @@ from src.utils.auth import verify_supabase_token
 from src.utils.prompt_generator import reddit_post_generator_prompt, karma_helper_prompt
 from src.utils.models import Model
 from supabase import create_client, Client
-
-# Optional import for Reddit functionality
-try:
-    from src.utils.reddit_helpers import get_posts
-    REDDIT_AVAILABLE = True
-except Exception as e:
-    print(f"Warning: Reddit helpers not available: {e}")
-    REDDIT_AVAILABLE = False
+from src.utils.reddit_helpers import get_posts
 
 load_dotenv()
 
@@ -66,43 +59,21 @@ class GenerateRedditPost(MethodView):
         except Exception as e:
             print(f"Error generating reddit post: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
-
-@blp.route('/get-viral-posts')
-class GetViralPosts(MethodView):
-    @verify_supabase_token
-    def get(self):
-        # Reads viral_posts.json file
-        data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'viral_posts.json')
-        with open(data_path, 'r', encoding='utf-8') as file:
-            viral_posts = json.load(file)
-            return jsonify(viral_posts['viral_posts'])
         
 @blp.route('/get_karma')
 class GetKarma(MethodView):
     @verify_supabase_token
     def get(self):
-        if not REDDIT_AVAILABLE:
-            return jsonify({'error': 'Reddit API not configured'}), 503
+        data = request.get_json()
         
-        try:
-            data = request.get_json()
-            
-            subreddit_name = data.get('subreddit_name')
-            posts = get_posts(subreddit_name)
+        subreddit_name = data.get('subreddit_name')
+        posts = get_posts(subreddit_name)
 
-            messages = karma_helper_prompt(posts)
+        messages = karma_helper_prompt(posts)
 
-            model = Model()
-            response = model.gemini_chat_completion(messages)
+        model = Model()
+        response = model.gemini_chat_completion(messages)
 
-            return jsonify({'response': response})
-        except Exception as e:
-            return jsonify({'error': f'Reddit API error: {str(e)}'}), 500
-
-# Product/app name
-# One-line description (what it does)
-# Target audience (who uses it)
-# Main benefit/problem it solves
-# Website/app store link
+        return jsonify({'response': response})
 
 
