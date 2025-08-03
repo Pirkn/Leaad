@@ -1,13 +1,11 @@
 from flask.views import MethodView
-from flask_smorest import Blueprint, abort
+from flask_smorest import Blueprint
 from flask import jsonify, request, g, current_app
 from dotenv import load_dotenv
-import json
 from src.utils.auth import verify_supabase_token
 from src.utils.prompt_generator import generate_product_details_prompt
 from src.utils.models import Model
 from supabase import create_client, Client
-import requests
 from src.utils.website_scraper import get_website_content
 import os
 
