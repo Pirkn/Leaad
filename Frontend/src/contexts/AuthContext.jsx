@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "../services/supabase";
+import karmaService from "../services/karmaService";
 
 const AuthContext = createContext();
 
@@ -36,6 +37,15 @@ export const AuthProvider = ({ children }) => {
     } = authService.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+
+      // Generate karma content when user signs in (only if no content exists)
+      if (event === "SIGNED_IN" && session?.user) {
+        console.log("User signed in, checking for karma content...");
+        // Start karma generation in the background only if no content exists
+        setTimeout(() => {
+          karmaService.generateKarmaContent(false); // false = don't force refresh
+        }, 1000); // Small delay to ensure user is fully loaded
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -50,6 +60,12 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     const { data, error } = await authService.signIn(email, password);
     if (error) throw error;
+
+    // Start karma generation after successful sign in (only if no content exists)
+    setTimeout(() => {
+      karmaService.generateKarmaContent(false); // false = don't force refresh
+    }, 1000);
+
     return data;
   };
 

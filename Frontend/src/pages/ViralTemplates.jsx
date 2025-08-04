@@ -61,34 +61,60 @@ function ViralTemplates() {
     searchTerm || engagementFilter !== "all" || sortBy !== "newest";
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Viral Templates
-        </h1>
-        <button
-          onClick={() => setShowProductModal(true)}
-          className="bg-[#3D348B] text-white px-4 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="p-6"
+    >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="flex justify-between items-center mb-6"
+      >
+        <motion.h1
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="text-2xl font-semibold text-gray-900"
         >
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          Viral Templates
+        </motion.h1>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
+          <button
+            onClick={() => setShowProductModal(true)}
+            className="bg-[#3D348B] text-white px-4 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-          Generate your own
-        </button>
-      </div>
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+            Generate your own
+          </button>
+        </motion.div>
+      </motion.div>
 
       {/* Filter Section */}
-      <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="mb-6 bg-white border border-gray-200 rounded-lg p-4"
+      >
         <div className="space-y-3 md:space-y-0 md:flex md:items-center md:gap-4">
           {/* Search */}
           <div className="flex-1 min-w-0">
@@ -171,7 +197,7 @@ function ViralTemplates() {
             <span className="ml-2 text-[#3D348B] font-medium">(filtered)</span>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Product Selection Modal */}
       <AnimatePresence>
@@ -302,11 +328,23 @@ function ViralTemplates() {
 
       {/* Viral Posts from Static Data */}
       {filteredPosts.length > 0 ? (
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.25 }}
+          className="mb-8"
+        >
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredPosts.map((post, index) => (
-              <div
+              <motion.div
                 key={post.id || index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.3,
+                  delay: 0.3 + index * 0.05,
+                  ease: "easeOut",
+                }}
                 className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors flex flex-col h-52"
               >
                 {/* Card Header */}
@@ -417,10 +455,10 @@ function ViralTemplates() {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       ) : hasActiveFilters ? (
         <div className="text-center py-8">
           <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -474,7 +512,7 @@ function ViralTemplates() {
           <p className="text-gray-500">Check back later for new templates</p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

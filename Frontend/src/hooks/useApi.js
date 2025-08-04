@@ -65,6 +65,44 @@ export const useGenerateRedditPost = () => {
   });
 };
 
+// Generate Karma Comment Mutation
+export const useGenerateKarmaComment = () => {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: () => {
+      if (!user) {
+        throw new Error(
+          "User must be authenticated to generate karma comments"
+        );
+      }
+      return apiService.generateKarmaComment();
+    },
+    retry: false,
+    onError: (error) => {
+      console.error("Failed to generate karma comment:", error);
+    },
+  });
+};
+
+// Generate Karma Post Mutation
+export const useGenerateKarmaPost = () => {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: () => {
+      if (!user) {
+        throw new Error("User must be authenticated to generate karma posts");
+      }
+      return apiService.generateKarmaPost();
+    },
+    retry: false,
+    onError: (error) => {
+      console.error("Failed to generate karma post:", error);
+    },
+  });
+};
+
 // Product Analysis Mutation (for manual triggering)
 export const useAnalyzeProduct = () => {
   const queryClient = useQueryClient();

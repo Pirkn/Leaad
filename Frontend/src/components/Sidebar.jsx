@@ -222,6 +222,45 @@ function Sidebar() {
           >
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
               <Link
+                to="/karma"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
+                  isActive("/karma")
+                    ? "bg-purple-50 text-purple-700 border border-purple-200"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+                style={{
+                  borderColor: isActive("/karma") ? "#e9d5ff" : "transparent",
+                  borderWidth: "1px",
+                  transition: "border-color 0.2s ease",
+                }}
+              >
+                {/* Karma Icon */}
+                <div className="w-5 h-5">
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">Karma Builder</span>
+              </Link>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.8 }}
+          >
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+              <Link
                 to="/settings"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/settings")

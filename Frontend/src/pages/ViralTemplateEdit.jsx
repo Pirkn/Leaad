@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import staticDataService from "../services/staticData";
 import Snackbar from "@mui/material/Snackbar";
+import { motion, AnimatePresence } from "framer-motion";
 
 function ViralTemplateEdit() {
   const { templateId } = useParams();
@@ -71,46 +72,87 @@ function ViralTemplateEdit() {
   }
 
   return (
-    <div className="p-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="p-6"
+    >
       {/* Header */}
-      <div className="mb-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="mb-6"
+      >
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900">
-                {template.title}
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Edit your viral post template
-              </p>
-            </div>
-          </div>
-          <Link
-            to="/viral-templates"
-            className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium flex items-center"
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="flex items-center"
           >
-            <svg
-              className="w-4 h-4 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="text-2xl font-semibold text-gray-900"
+              >
+                {template.title}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.15 }}
+                className="text-sm text-gray-600 mt-1"
+              >
+                Edit your viral post template
+              </motion.p>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+          >
+            <Link
+              to="/viral-templates"
+              className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium flex items-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Back to Templates
-          </Link>
+              <svg
+                className="w-4 h-4 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Back to Templates
+            </Link>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
         {/* Editable Template Column */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.25 }}
+          className="bg-white border border-gray-200 rounded-lg p-6"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <svg
@@ -254,10 +296,15 @@ function ViralTemplateEdit() {
               Reset Changes
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Original Post Column */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+          className="bg-white border border-gray-200 rounded-lg p-6"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <svg
@@ -330,13 +377,18 @@ function ViralTemplateEdit() {
               style={{ whiteSpace: "pre-wrap" }}
             />
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Recommended Subreddits */}
       {template.recommendedSubreddits &&
         template.recommendedSubreddits.length > 0 && (
-          <div className="mt-6 bg-white border border-gray-200 rounded-lg p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
+            className="mt-6 bg-white border border-gray-200 rounded-lg p-6"
+          >
             <div className="flex items-center mb-4">
               <svg
                 className="w-5 h-5 text-[#3D348B] mr-2"
@@ -382,7 +434,7 @@ function ViralTemplateEdit() {
                 </span>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
       {/* Snackbar for notifications */}
@@ -393,7 +445,7 @@ function ViralTemplateEdit() {
         message={snackbarMessage}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
-    </div>
+    </motion.div>
   );
 }
 
