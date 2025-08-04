@@ -62,7 +62,7 @@ function ViralTemplateEdit() {
           </p>
           <Link
             to="/viral-templates"
-            className="mt-4 inline-block bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors"
+            className="mt-4 inline-block bg-[#FF4500] text-white px-4 py-2 rounded-md hover:bg-[#CC3700] transition-colors"
           >
             Back to Templates
           </Link>
@@ -118,7 +118,7 @@ function ViralTemplateEdit() {
           >
             <Link
               to="/viral-templates"
-              className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium flex items-center"
+              className="text-[#FF4500] hover:text-[#CC3700] text-sm font-medium flex items-center"
             >
               <svg
                 className="w-4 h-4 mr-1"
@@ -189,7 +189,7 @@ function ViralTemplateEdit() {
                   setSnackbarMessage("Title copied to clipboard!");
                   setSnackbarOpen(true);
                 }}
-                className="text-gray-400 hover:text-[#3D348B] transition-colors"
+                className="text-gray-400 hover:text-[#FF4500] transition-colors"
                 title="Copy title to clipboard"
               >
                 <svg
@@ -211,7 +211,7 @@ function ViralTemplateEdit() {
               type="text"
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B] focus:border-[#3D348B]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500]"
               placeholder="Enter your post title..."
             />
           </div>
@@ -228,7 +228,7 @@ function ViralTemplateEdit() {
                   setSnackbarMessage("Content copied to clipboard!");
                   setSnackbarOpen(true);
                 }}
-                className="text-gray-400 hover:text-[#3D348B] transition-colors"
+                className="text-gray-400 hover:text-[#FF4500] transition-colors"
                 title="Copy content to clipboard"
               >
                 <svg
@@ -250,7 +250,7 @@ function ViralTemplateEdit() {
               value={editedPostText}
               onChange={(e) => setEditedPostText(e.target.value)}
               rows={12}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B] focus:border-[#3D348B] resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none"
               placeholder="Enter your post content..."
             />
           </div>
@@ -259,7 +259,7 @@ function ViralTemplateEdit() {
           <div className="flex space-x-3">
             <button
               onClick={handleCopyToClipboard}
-              className="bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium flex items-center"
+              className="bg-[#FF4500] text-white px-4 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium flex items-center"
             >
               <svg
                 className="w-4 h-4 mr-2"
@@ -391,7 +391,7 @@ function ViralTemplateEdit() {
           >
             <div className="flex items-center mb-4">
               <svg
-                className="w-5 h-5 text-[#3D348B] mr-2"
+                className="w-5 h-5 text-[#FF4500] mr-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -417,7 +417,7 @@ function ViralTemplateEdit() {
               {template.recommendedSubreddits.map((subreddit, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-900 border border-purple-300"
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-900 border border-orange-300"
                 >
                   <svg
                     className="w-4 h-4 mr-1"

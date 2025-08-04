@@ -126,7 +126,7 @@ function RedditPosts() {
       {/* Loading State */}
       {isLoading && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-          <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#3D348B] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#FF4500] border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600">Generating Reddit posts...</p>
           <p className="text-sm text-gray-500 mt-2">
             This may take a few moments
@@ -163,7 +163,7 @@ function RedditPosts() {
                 <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#3D348B] text-white">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#FF4500] text-white">
                         {post["r/subreddit"]}
                       </span>
                       <span className="text-sm text-gray-500">
@@ -174,7 +174,7 @@ function RedditPosts() {
                       onClick={() =>
                         handleCopyToClipboard(`${post.Title}\n\n${post.Post}`)
                       }
-                      className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium"
+                      className="text-[#FF4500] hover:text-[#CC3700] text-sm font-medium"
                     >
                       Copy Post
                     </button>

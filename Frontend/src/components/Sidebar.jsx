@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
+import { Home, Package, Users, Flame, Sparkles, Settings } from "lucide-react";
 
 function Sidebar() {
   const location = useLocation();
@@ -62,35 +63,17 @@ function Sidebar() {
             to="/"
             className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
               isActive("/")
-                ? "bg-purple-50 text-purple-700 border border-purple-200"
+                ? "bg-orange-50 text-orange-700 border border-orange-200"
                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
             }`}
             style={{
-              borderColor: isActive("/") ? "#e9d5ff" : "transparent",
+              borderColor: isActive("/") ? "#FFE4CC" : "transparent",
               borderWidth: "1px",
               transition: "border-color 0.2s ease",
             }}
           >
             {/* Dashboard Icon */}
-            <div className="w-5 h-5">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"
-                />
-              </svg>
-            </div>
+            <Home className="w-5 h-5" strokeWidth={1.5} />
             <span className="text-sm font-medium">Dashboard</span>
           </Link>
 
@@ -104,32 +87,19 @@ function Sidebar() {
                 to="/products"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/products")
-                    ? "bg-purple-50 text-purple-700 border border-purple-200"
+                    ? "bg-orange-50 text-orange-700 border border-orange-200"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
                 style={{
                   borderColor: isActive("/products")
-                    ? "#e9d5ff"
+                    ? "#FFE4CC"
                     : "transparent",
                   borderWidth: "1px",
                   transition: "border-color 0.2s ease",
                 }}
               >
                 {/* Products Icon */}
-                <div className="w-5 h-5">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  </svg>
-                </div>
+                <Package className="w-5 h-5" strokeWidth={1.5} />
                 <span className="text-sm font-medium">Products</span>
               </Link>
             </motion.div>
@@ -145,30 +115,17 @@ function Sidebar() {
                 to="/leads"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/leads")
-                    ? "bg-purple-50 text-purple-700 border border-purple-200"
+                    ? "bg-orange-50 text-orange-700 border border-orange-200"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
                 style={{
-                  borderColor: isActive("/leads") ? "#e9d5ff" : "transparent",
+                  borderColor: isActive("/leads") ? "#FFE4CC" : "transparent",
                   borderWidth: "1px",
                   transition: "border-color 0.2s ease",
                 }}
               >
                 {/* Leads Icon */}
-                <div className="w-5 h-5">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
+                <Users className="w-5 h-5" strokeWidth={1.5} />
                 <span className="text-sm font-medium">Leads</span>
               </Link>
             </motion.div>
@@ -184,32 +141,19 @@ function Sidebar() {
                 to="/viral-templates"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/viral-templates")
-                    ? "bg-purple-50 text-purple-700 border border-purple-200"
+                    ? "bg-orange-50 text-orange-700 border border-orange-200"
                     : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                 }`}
                 style={{
                   borderColor: isActive("/viral-templates")
-                    ? "#e9d5ff"
+                    ? "#FFE4CC"
                     : "transparent",
                   borderWidth: "1px",
                   transition: "border-color 0.2s ease",
                 }}
               >
                 {/* Viral Templates Icon */}
-                <div className="w-5 h-5">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                    />
-                  </svg>
-                </div>
+                <Flame className="w-5 h-5" strokeWidth={1.5} />
                 <span className="text-sm font-medium">Viral Templates</span>
               </Link>
             </motion.div>
@@ -225,30 +169,17 @@ function Sidebar() {
                 to="/karma"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/karma")
-                    ? "bg-purple-50 text-purple-700 border border-purple-200"
+                    ? "bg-orange-50 text-orange-700 border border-orange-200"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
                 style={{
-                  borderColor: isActive("/karma") ? "#e9d5ff" : "transparent",
+                  borderColor: isActive("/karma") ? "#FFE4CC" : "transparent",
                   borderWidth: "1px",
                   transition: "border-color 0.2s ease",
                 }}
               >
                 {/* Karma Icon */}
-                <div className="w-5 h-5">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                    />
-                  </svg>
-                </div>
+                <Sparkles className="w-5 h-5" strokeWidth={1.5} />
                 <span className="text-sm font-medium">Karma Builder</span>
               </Link>
             </motion.div>
@@ -264,37 +195,19 @@ function Sidebar() {
                 to="/settings"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/settings")
-                    ? "bg-purple-50 text-purple-700 border border-purple-200"
+                    ? "bg-orange-50 text-orange-700 border border-orange-200"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
                 style={{
                   borderColor: isActive("/settings")
-                    ? "#e9d5ff"
+                    ? "#FFE4CC"
                     : "transparent",
                   borderWidth: "1px",
                   transition: "border-color 0.2s ease",
                 }}
               >
                 {/* Settings Icon */}
-                <div className="w-5 h-5">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
+                <Settings className="w-5 h-5" strokeWidth={1.5} />
                 <span className="text-sm font-medium">Settings</span>
               </Link>
             </motion.div>
@@ -317,9 +230,9 @@ function Sidebar() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center"
+            className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center"
           >
-            <span className="text-purple-600 font-medium text-sm">
+            <span className="text-orange-600 font-medium text-sm">
               {user?.email?.charAt(0).toUpperCase() || "U"}
             </span>
           </motion.div>

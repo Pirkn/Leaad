@@ -32,7 +32,7 @@ function ViralTemplates() {
   const getProductIcon = () => {
     return (
       <svg
-        className="w-5 h-5 text-[#3D348B]"
+        className="w-5 h-5 text-[#FF4500]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -88,7 +88,7 @@ function ViralTemplates() {
         >
           <button
             onClick={() => setShowProductModal(true)}
-            className="bg-[#3D348B] text-white px-4 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
+            className="bg-[#FF4500] text-white px-4 py-3 rounded-lg hover:bg-[#CC3700] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -137,7 +137,7 @@ function ViralTemplates() {
                 placeholder="Search templates..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3D348B] focus:border-[#3D348B]"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#FF4500] focus:border-[#FF4500]"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ function ViralTemplates() {
               <select
                 value={engagementFilter}
                 onChange={(e) => setEngagementFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3D348B] focus:border-[#3D348B] text-sm min-w-0 max-w-32 sm:max-w-40"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#FF4500] focus:border-[#FF4500] text-sm min-w-0 max-w-32 sm:max-w-40"
               >
                 <option value="all">All</option>
                 <option value="high">High</option>
@@ -169,7 +169,7 @@ function ViralTemplates() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#3D348B] focus:border-[#3D348B] text-sm min-w-0 max-w-32 sm:max-w-40"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#FF4500] focus:border-[#FF4500] text-sm min-w-0 max-w-32 sm:max-w-40"
               >
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
@@ -194,7 +194,7 @@ function ViralTemplates() {
         <div className="mt-3 text-sm text-gray-600">
           Showing {filteredPosts.length} of {allPosts.length} templates
           {hasActiveFilters && (
-            <span className="ml-2 text-[#3D348B] font-medium">(filtered)</span>
+            <span className="ml-2 text-[#FF4500] font-medium">(filtered)</span>
           )}
         </div>
       </motion.div>
@@ -221,7 +221,7 @@ function ViralTemplates() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center">
                   <svg
-                    className="w-5 h-5 text-[#3D348B] mr-2"
+                    className="w-5 h-5 text-[#FF4500] mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -259,7 +259,7 @@ function ViralTemplates() {
 
               {productsLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3D348B] mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF4500] mx-auto"></div>
                   <p className="text-gray-500 mt-2">Loading products...</p>
                 </div>
               ) : productsData?.products && productsData.products.length > 0 ? (
@@ -274,7 +274,7 @@ function ViralTemplates() {
                       }}
                     >
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-[#3D348B]/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                        <div className="w-10 h-10 bg-[#FF4500]/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                           {getProductIcon()}
                         </div>
                         <div className="flex-1 min-w-0 overflow-hidden">
@@ -315,7 +315,7 @@ function ViralTemplates() {
                   </p>
                   <Link
                     to="/products"
-                    className="inline-block bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium"
+                    className="inline-block bg-[#FF4500] text-white px-4 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium"
                   >
                     Create Product
                   </Link>
@@ -413,7 +413,7 @@ function ViralTemplates() {
                   <div className="flex space-x-3">
                     <Link
                       to={`/viral-templates/${post.id}`}
-                      className="text-[#3D348B] hover:text-[#2A1F6B] text-xs font-medium flex items-center space-x-1"
+                      className="text-[#FF4500] hover:text-[#CC3700] text-xs font-medium flex items-center space-x-1"
                     >
                       <svg
                         className="w-3 h-3"
@@ -484,7 +484,7 @@ function ViralTemplates() {
           </p>
           <button
             onClick={clearFilters}
-            className="bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium"
+            className="bg-[#FF4500] text-white px-4 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium"
           >
             Clear All Filters
           </button>

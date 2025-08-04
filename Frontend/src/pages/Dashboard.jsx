@@ -167,7 +167,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50">
-            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-900">
                 New viral template created

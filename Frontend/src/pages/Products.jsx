@@ -61,7 +61,7 @@ function Products() {
         <h1 className="text-2xl font-semibold text-gray-900">Products</h1>
         <button
           onClick={handleAddProduct}
-          className="bg-[#3D348B] text-white px-4 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
+          className="bg-[#FF4500] text-white px-4 py-3 rounded-lg hover:bg-[#CC3700] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
         >
           <svg
             className="w-4 h-4 mr-2"
@@ -83,7 +83,7 @@ function Products() {
       {/* Loading State */}
       {isLoading && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-          <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#3D348B] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#FF4500] border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600">Loading products...</p>
         </div>
       )}
@@ -128,7 +128,7 @@ function Products() {
               </p>
               <button
                 onClick={handleAddProduct}
-                className="bg-[#3D348B] text-white px-6 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 flex items-center mx-auto shadow-sm hover:shadow-md"
+                className="bg-[#FF4500] text-white px-6 py-3 rounded-lg hover:bg-[#CC3700] transition-all duration-200 flex items-center mx-auto shadow-sm hover:shadow-md"
               >
                 <svg
                   className="w-4 h-4 mr-2"
@@ -151,7 +151,7 @@ function Products() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-[#3D348B] transition-colors flex flex-col h-60 shadow-sm hover:shadow-md"
+                  className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-[#FF4500] transition-colors flex flex-col h-60 shadow-sm hover:shadow-md"
                 >
                   {/* Card Content */}
                   <div className="p-4 flex-1 flex flex-col">

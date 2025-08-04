@@ -146,7 +146,7 @@ function Leads() {
                   </div>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full border border-purple-200 bg-purple-50 text-purple-700">
+                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full border border-orange-200 bg-orange-50 text-orange-700">
                     Social Media
                   </span>
                 </td>
