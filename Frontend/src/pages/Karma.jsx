@@ -76,7 +76,8 @@ function Karma() {
     try {
       const result = await generateCommentMutation.mutateAsync();
       setGeneratedComment(result);
-      localStorage.setItem("karma_comment", JSON.stringify(result));
+      // Store in localStorage using karmaService for consistency
+      karmaService.updateStoredKarmaContent("comment", result);
     } catch (error) {
       console.error("Failed to generate comment:", error);
     }
@@ -86,7 +87,8 @@ function Karma() {
     try {
       const result = await generatePostMutation.mutateAsync();
       setGeneratedPost(result);
-      localStorage.setItem("karma_post", JSON.stringify(result));
+      // Store in localStorage using karmaService for consistency
+      karmaService.updateStoredKarmaContent("post", result);
     } catch (error) {
       console.error("Failed to generate post:", error);
     }
@@ -95,13 +97,13 @@ function Karma() {
   const handleRefreshComments = async () => {
     try {
       setIsBackgroundGenerating(true);
-      await karmaService.generateComment();
+      const result = await karmaService.generateComment();
 
-      // Reload comment content after generation
-      const updatedContent = karmaService.getStoredKarmaContent();
-      if (updatedContent.comment) {
-        setGeneratedComment(updatedContent.comment);
-      }
+      // Update state with the new result
+      setGeneratedComment(result);
+
+      // Note: localStorage is already updated by karmaService.generateComment()
+      console.log("Comment refreshed via karmaService");
     } catch (error) {
       console.error("Failed to refresh karma comments:", error);
     } finally {
@@ -112,13 +114,13 @@ function Karma() {
   const handleRefreshPosts = async () => {
     try {
       setIsBackgroundGenerating(true);
-      await karmaService.generatePost();
+      const result = await karmaService.generatePost();
 
-      // Reload post content after generation
-      const updatedContent = karmaService.getStoredKarmaContent();
-      if (updatedContent.post) {
-        setGeneratedPost(updatedContent.post);
-      }
+      // Update state with the new result
+      setGeneratedPost(result);
+
+      // Note: localStorage is already updated by karmaService.generatePost()
+      console.log("Post refreshed via karmaService");
     } catch (error) {
       console.error("Failed to refresh karma posts:", error);
     } finally {

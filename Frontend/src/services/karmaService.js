@@ -34,7 +34,7 @@ class KarmaService {
           "karma_comment",
           JSON.stringify(commentResult.value)
         );
-        console.log("Karma comment generated and stored");
+        console.log("Karma comment generated and stored in bulk generation");
       } else {
         console.error(
           "Failed to generate karma comment:",
@@ -44,7 +44,7 @@ class KarmaService {
 
       if (postResult.status === "fulfilled") {
         localStorage.setItem("karma_post", JSON.stringify(postResult.value));
-        console.log("Karma post generated and stored");
+        console.log("Karma post generated and stored in bulk generation");
       } else {
         console.error("Failed to generate karma post:", postResult.reason);
       }
@@ -59,6 +59,9 @@ class KarmaService {
   async generateComment() {
     try {
       const result = await apiService.generateKarmaComment();
+      // Store the result in localStorage
+      localStorage.setItem("karma_comment", JSON.stringify(result));
+      console.log("Comment generated and stored in karmaService");
       return result;
     } catch (error) {
       console.error("Failed to generate comment:", error);
@@ -70,6 +73,9 @@ class KarmaService {
   async generatePost() {
     try {
       const result = await apiService.generateKarmaPost();
+      // Store the result in localStorage
+      localStorage.setItem("karma_post", JSON.stringify(result));
+      console.log("Post generated and stored in karmaService");
       return result;
     } catch (error) {
       console.error("Failed to generate post:", error);
@@ -99,6 +105,17 @@ class KarmaService {
   clearKarmaContent() {
     localStorage.removeItem("karma_comment");
     localStorage.removeItem("karma_post");
+  }
+
+  // Update stored karma content manually
+  updateStoredKarmaContent(type, content) {
+    if (type === "comment") {
+      localStorage.setItem("karma_comment", JSON.stringify(content));
+      console.log("Comment manually updated in localStorage");
+    } else if (type === "post") {
+      localStorage.setItem("karma_post", JSON.stringify(content));
+      console.log("Post manually updated in localStorage");
+    }
   }
 }
 
