@@ -24,6 +24,7 @@ Authorization: Bearer <your-supabase-jwt-token>
 Check if the API is running.
 
 **Response:**
+
 ```json
 {
   "status": "healthy"
@@ -37,9 +38,11 @@ Check if the API is running.
 Test endpoint for authenticated users.
 
 **Headers:**
+
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Response:**
+
 ```json
 {
   "message": "This is a protected route",
@@ -57,10 +60,12 @@ Test endpoint for authenticated users.
 Generate product details by analyzing a website URL using AI. This endpoint scrapes the website content and uses Gemini AI to extract key product information.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "product_website_link": "https://example.com"
@@ -68,6 +73,7 @@ Generate product details by analyzing a website URL using AI. This endpoint scra
 ```
 
 **Response:**
+
 ```json
 {
   "target_audience": "Entrepreneurs and SaaS founders",
@@ -83,6 +89,7 @@ Generate product details by analyzing a website URL using AI. This endpoint scra
 4. Returns structured JSON with target audience, description, and problem solved
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/generate-product-details \
   -H "Content-Type: application/json" \
@@ -97,10 +104,12 @@ curl -X POST http://localhost:5000/generate-product-details \
 Create a new product for the authenticated user.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "name": "Product Name",
@@ -112,6 +121,7 @@ Create a new product for the authenticated user.
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Product created successfully",
@@ -135,6 +145,7 @@ Create a new product for the authenticated user.
 - User ID is automatically extracted from JWT token
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/create_product \
   -H "Content-Type: application/json" \
@@ -153,9 +164,11 @@ curl -X POST http://localhost:5000/create_product \
 Get all products for the authenticated user.
 
 **Headers:**
+
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Response:**
+
 ```json
 {
   "products": [
@@ -180,6 +193,7 @@ Get all products for the authenticated user.
 - Includes all product metadata
 
 **Example Usage:**
+
 ```bash
 curl -X GET http://localhost:5000/products \
   -H "Authorization: Bearer <your-jwt-token>"
@@ -192,10 +206,12 @@ curl -X GET http://localhost:5000/products \
 Generate Reddit marketing posts using AI based on product information stored in the database. Creates organic, value-driven posts that feel authentic rather than promotional.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {
   "product_id": "product-uuid"
@@ -203,6 +219,7 @@ Generate Reddit marketing posts using AI based on product information stored in 
 ```
 
 **Response:**
+
 ```json
 {
   "response": [
@@ -223,6 +240,7 @@ Generate Reddit marketing posts using AI based on product information stored in 
 4. Focuses on value-driven content with natural product mentions
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/generate-reddit-post \
   -H "Content-Type: application/json" \
@@ -237,15 +255,18 @@ curl -X POST http://localhost:5000/generate-reddit-post \
 Generate high-quality Reddit comments for karma optimization based on trending posts from popular subreddits.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {}
 ```
 
 **Response:**
+
 ```json
 {
   "response": [
@@ -268,6 +289,7 @@ Generate high-quality Reddit comments for karma optimization based on trending p
 4. Focuses on community fit and cultural alignment
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/create_karma_comment \
   -H "Content-Type: application/json" \
@@ -280,15 +302,18 @@ curl -X POST http://localhost:5000/create_karma_comment \
 Create a complete Reddit post with image for karma optimization. Generates content, creates an image, and provides the complete post data.
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
+
 ```json
 {}
 ```
 
 **Response:**
+
 ```json
 {
   "title": "Generated post title",
@@ -305,6 +330,7 @@ Create a complete Reddit post with image for karma optimization. Generates conte
 4. Returns complete post data with base64-encoded image
 
 **Example Usage:**
+
 ```bash
 curl -X POST http://localhost:5000/create_karma_post \
   -H "Content-Type: application/json" \
@@ -315,6 +341,7 @@ curl -X POST http://localhost:5000/create_karma_post \
 ## Error Responses
 
 ### 400 Bad Request
+
 ```json
 {
   "error": "Bad Request",
@@ -323,6 +350,7 @@ curl -X POST http://localhost:5000/create_karma_post \
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "error": "Unauthorized",
@@ -331,6 +359,7 @@ curl -X POST http://localhost:5000/create_karma_post \
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "error": "Not Found",
@@ -339,6 +368,7 @@ curl -X POST http://localhost:5000/create_karma_post \
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "error": "Internal Server Error",
@@ -412,6 +442,7 @@ Backend/
 ## Database Schema
 
 ### Products Table
+
 - `id` (UUID, Primary Key)
 - `user_id` (UUID, Foreign Key to users)
 - `name` (Text, Required)
@@ -423,6 +454,7 @@ Backend/
 - `updated_at` (Timestamp)
 
 ### Karma Posts Table
+
 - `id` (UUID, Primary Key)
 - `user_id` (UUID, Foreign Key to users)
 - `subreddit` (Text)
@@ -476,6 +508,7 @@ The API will be available at `http://localhost:5000`
 ### API Documentation
 
 The API uses Flask-Smorest for automatic OpenAPI documentation. Access the interactive documentation at:
+
 - Swagger UI: `http://localhost:5000/swagger`
 - ReDoc: `http://localhost:5000/redoc`
 
@@ -498,4 +531,4 @@ Currently, no rate limiting is implemented. Consider implementing rate limiting 
 
 ## Support
 
-For API support or questions, please refer to the project documentation or create an issue in the repository. 
+For API support or questions, please refer to the project documentation or create an issue in the repository.

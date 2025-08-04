@@ -1,129 +1,54 @@
 import { useState, useMemo } from "react";
-import { useViralPosts, useRedditPostGeneration } from "../hooks/useApi";
+import { Link, useNavigate } from "react-router-dom";
+import { useProducts } from "../hooks/useApi";
+import staticDataService from "../services/staticData";
+import { motion, AnimatePresence } from "framer-motion";
 
 function ViralTemplates() {
-  const [showGenerateForm, setShowGenerateForm] = useState(false);
-  const [generatedPost, setGeneratedPost] = useState(null);
+  const navigate = useNavigate();
+  const [showProductModal, setShowProductModal] = useState(false);
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [engagementFilter, setEngagementFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
-  // TanStack Query hooks
-  const { data: viralPosts = [], isLoading, error } = useViralPosts();
-  const {
-    formData,
-    setFormData,
-    generatePost,
-    generateOptimisticPost,
-    isGenerating,
-    error: generationError,
-  } = useRedditPostGeneration();
+  // Get all viral posts once - static data is immediately available
+  const allPosts = useMemo(() => staticDataService.getViralPosts(), []);
 
   // Filter and sort posts
   const filteredPosts = useMemo(() => {
-    let filtered = viralPosts;
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (post) =>
-          post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          post.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          post.originalPostText
-            ?.toLowerCase()
-            .includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Engagement filter
-    if (engagementFilter !== "all") {
-      filtered = filtered.filter((post) => {
-        const upvotes = post.upvotes || 0;
-        const comments = post.comments || 0;
-
-        switch (engagementFilter) {
-          case "high":
-            return upvotes > 1000 || comments > 100;
-          case "medium":
-            return (
-              (upvotes >= 100 && upvotes <= 1000) ||
-              (comments >= 10 && comments <= 100)
-            );
-          case "low":
-            return upvotes < 100 && comments < 10;
-          default:
-            return true;
-        }
-      });
-    }
-
-    // Sort posts
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return new Date(b.created_at || 0) - new Date(a.created_at || 0);
-        case "oldest":
-          return new Date(a.created_at || 0) - new Date(b.created_at || 0);
-        case "most-engaged":
-          return (b.upvotes || 0) - (a.upvotes || 0);
-        case "most-commented":
-          return (b.comments || 0) - (a.comments || 0);
-        default:
-          return 0;
-      }
+    return staticDataService.getViralPostsWithFilters({
+      searchTerm,
+      engagementFilter,
+      sortBy,
     });
+  }, [searchTerm, engagementFilter, sortBy]);
 
-    return filtered;
-  }, [viralPosts, searchTerm, engagementFilter, sortBy]);
+  // Get user's products
+  const { data: productsData, isLoading: productsLoading } = useProducts();
 
-  const handleGeneratePost = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await generatePost(formData);
-      setGeneratedPost(response.response);
-      setShowGenerateForm(false);
-      // Reset form
-      setFormData({
-        productName: "",
-        productDescription: "",
-        productTargetAudience: "",
-        productMainBenefit: "",
-        productWebsiteLink: "",
-      });
-    } catch (error) {
-      console.error("Failed to generate Reddit post:", error);
-      alert("Failed to generate Reddit post. Please try again.");
-    }
+  // Function to get product icon
+  const getProductIcon = () => {
+    return (
+      <svg
+        className="w-5 h-5 text-[#3D348B]"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+        />
+      </svg>
+    );
   };
 
-  const handleOptimisticGenerate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await generateOptimisticPost(formData);
-      setGeneratedPost(response.response);
-      setShowGenerateForm(false);
-      // Reset form
-      setFormData({
-        productName: "",
-        productDescription: "",
-        productTargetAudience: "",
-        productMainBenefit: "",
-        productWebsiteLink: "",
-      });
-    } catch (error) {
-      console.error("Failed to generate Reddit post:", error);
-      alert("Failed to generate Reddit post. Please try again.");
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleGenerateRedditPost = (product) => {
+    navigate("/reddit-posts", { state: { product } });
   };
 
   const clearFilters = () => {
@@ -136,59 +61,60 @@ function ViralTemplates() {
     searchTerm || engagementFilter !== "all" || sortBy !== "newest";
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Viral Templates
-        </h1>
-        <button
-          onClick={() => setShowGenerateForm(true)}
-          className="bg-[#3D348B] text-white px-4 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="p-6"
+    >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="flex justify-between items-center mb-6"
+      >
+        <motion.h1
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="text-2xl font-semibold text-gray-900"
         >
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          Viral Templates
+        </motion.h1>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
+          <button
+            onClick={() => setShowProductModal(true)}
+            className="bg-[#3D348B] text-white px-4 py-3 rounded-lg hover:bg-[#2A1F6B] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-            />
-          </svg>
-          Generate Reddit Post
-        </button>
-      </div>
-
-      {/* Generated Post Display */}
-      {generatedPost && (
-        <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">
-            Generated Reddit Post
-          </h3>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">
-              {generatedPost}
-            </p>
-          </div>
-          <div className="mt-3 flex space-x-2">
-            <button className="text-[#3D348B] hover:text-[#2A1F6B] text-sm font-medium">
-              Copy to Clipboard
-            </button>
-            <button
-              onClick={() => setGeneratedPost(null)}
-              className="text-gray-600 hover:text-gray-700 text-sm font-medium"
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+            Generate your own
+          </button>
+        </motion.div>
+      </motion.div>
 
       {/* Filter Section */}
-      <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="mb-6 bg-white border border-gray-200 rounded-lg p-4"
+      >
         <div className="space-y-3 md:space-y-0 md:flex md:items-center md:gap-4">
           {/* Search */}
           <div className="flex-1 min-w-0">
@@ -266,132 +192,160 @@ function ViralTemplates() {
 
         {/* Results Count */}
         <div className="mt-3 text-sm text-gray-600">
-          Showing {filteredPosts.length} of {viralPosts.length} templates
+          Showing {filteredPosts.length} of {allPosts.length} templates
           {hasActiveFilters && (
             <span className="ml-2 text-[#3D348B] font-medium">(filtered)</span>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Generate Post Form Modal */}
-      {showGenerateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Generate Reddit Post
-            </h3>
-            <form onSubmit={handleGeneratePost} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Name
-                </label>
-                <input
-                  type="text"
-                  name="productName"
-                  value={formData.productName}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B]"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Description
-                </label>
-                <textarea
-                  name="productDescription"
-                  value={formData.productDescription}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B]"
-                  rows="3"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Audience
-                </label>
-                <input
-                  type="text"
-                  name="productTargetAudience"
-                  value={formData.productTargetAudience}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B]"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Main Benefit
-                </label>
-                <textarea
-                  name="productMainBenefit"
-                  value={formData.productMainBenefit}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B]"
-                  rows="2"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Website Link
-                </label>
-                <input
-                  type="url"
-                  name="productWebsiteLink"
-                  value={formData.productWebsiteLink}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D348B]"
-                  required
-                />
-              </div>
-              <div className="flex space-x-3 pt-4">
+      {/* Product Selection Modal */}
+      <AnimatePresence>
+        {showProductModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
+            onClick={() => setShowProductModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-white rounded-xl p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center">
+                  <svg
+                    className="w-5 h-5 text-[#3D348B] mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Select a Product
+                  </h3>
+                </div>
                 <button
-                  type="submit"
-                  disabled={isGenerating}
-                  className="flex-1 bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors disabled:opacity-50"
+                  onClick={() => setShowProductModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {isGenerating ? "Generating..." : "Generate Post"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowGenerateForm(false)}
-                  className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
-                >
-                  Cancel
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
 
-      {/* Error Display */}
-      {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-red-900 mb-2">
-            Error Loading Viral Posts
-          </h3>
-          <p className="text-sm text-red-700">{error.message}</p>
-        </div>
-      )}
+              {productsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3D348B] mx-auto"></div>
+                  <p className="text-gray-500 mt-2">Loading products...</p>
+                </div>
+              ) : productsData?.products && productsData.products.length > 0 ? (
+                <div className="space-y-3">
+                  {productsData.products.map((product) => (
+                    <div
+                      key={product.id}
+                      className="p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-sm border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                      onClick={() => {
+                        setShowProductModal(false);
+                        handleGenerateRedditPost(product);
+                      }}
+                    >
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-[#3D348B]/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                          {getProductIcon()}
+                        </div>
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <h4 className="font-semibold text-gray-900 truncate">
+                            {product.name}
+                          </h4>
+                          <p className="text-sm text-gray-600 truncate">
+                            {product.target_audience ||
+                              "No target audience specified"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-8 h-8 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No products available
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    You need to create a product first to generate posts.
+                  </p>
+                  <Link
+                    to="/products"
+                    className="inline-block bg-[#3D348B] text-white px-4 py-2 rounded-md hover:bg-[#2A1F6B] transition-colors text-sm font-medium"
+                  >
+                    Create Product
+                  </Link>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Viral Posts from API */}
-      {isLoading ? (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#3D348B]"></div>
-          <p className="text-gray-500 mt-2">Loading viral posts...</p>
-        </div>
-      ) : filteredPosts.length > 0 ? (
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Viral Posts from Static Data */}
+      {filteredPosts.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.25 }}
+          className="mb-8"
+        >
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredPosts.map((post, index) => (
-              <div
+              <motion.div
                 key={post.id || index}
-                className={`bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors flex flex-col h-52 ${
-                  post.isOptimistic ? "opacity-75" : ""
-                }`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.3,
+                  delay: 0.3 + index * 0.05,
+                  ease: "easeOut",
+                }}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors flex flex-col h-52"
               >
                 {/* Card Header */}
                 <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 h-16 flex items-center">
@@ -402,18 +356,20 @@ function ViralTemplates() {
                         `Viral Post ${index + 1}`}
                     </h3>
                     <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full border border-green-200 bg-green-50 text-green-700 flex-shrink-0">
-                      {post.isOptimistic ? "Generating..." : "Viral"}
+                      Viral
                     </span>
                   </div>
                 </div>
 
                 {/* Card Content */}
                 <div className="p-4 flex-1 flex flex-col">
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-3 flex-1">
-                    {post.description ||
-                      post.originalPostText?.substring(0, 150) ||
-                      "No description available"}
-                  </p>
+                  <div className="text-sm text-gray-600 mb-3 flex-1 relative overflow-hidden">
+                    <div className="line-clamp-1">
+                      {post.originalPostText?.substring(0, 80) ||
+                        "No content available"}
+                    </div>
+                    <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-white to-transparent"></div>
+                  </div>
 
                   {/* Engagement Stats */}
                   <div className="flex items-center space-x-4 mt-auto">
@@ -455,7 +411,10 @@ function ViralTemplates() {
                 {/* Card Actions */}
                 <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
                   <div className="flex space-x-3">
-                    <button className="text-[#3D348B] hover:text-[#2A1F6B] text-xs font-medium flex items-center space-x-1">
+                    <Link
+                      to={`/viral-templates/${post.id}`}
+                      className="text-[#3D348B] hover:text-[#2A1F6B] text-xs font-medium flex items-center space-x-1"
+                    >
                       <svg
                         className="w-3 h-3"
                         fill="none"
@@ -470,7 +429,7 @@ function ViralTemplates() {
                         />
                       </svg>
                       <span>Use as Template</span>
-                    </button>
+                    </Link>
                     {post.originalPostUrl && (
                       <a
                         href={post.originalPostUrl}
@@ -496,10 +455,10 @@ function ViralTemplates() {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       ) : hasActiveFilters ? (
         <div className="text-center py-8">
           <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -553,7 +512,7 @@ function ViralTemplates() {
           <p className="text-gray-500">Check back later for new templates</p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

@@ -5,10 +5,12 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import ViralTemplates from "./pages/ViralTemplates";
+import ViralTemplateEdit from "./pages/ViralTemplateEdit";
 import Products from "./pages/Products";
 import ProductAnalysis from "./pages/ProductAnalysis";
 import RedditPosts from "./pages/RedditPosts";
 import Settings from "./pages/Settings";
+import Karma from "./pages/Karma";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -64,6 +66,19 @@ function App() {
             }
           />
           <Route
+            path="/viral-templates/:templateId"
+            element={
+              <ProtectedRoute>
+                <div className="flex h-screen bg-gray-50">
+                  <Sidebar />
+                  <div className="flex-1 overflow-auto">
+                    <ViralTemplateEdit />
+                  </div>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/products"
             element={
               <ProtectedRoute>
@@ -97,6 +112,19 @@ function App() {
                   <Sidebar />
                   <div className="flex-1 overflow-auto">
                     <RedditPosts />
+                  </div>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/karma"
+            element={
+              <ProtectedRoute>
+                <div className="flex h-screen bg-gray-50">
+                  <Sidebar />
+                  <div className="flex-1 overflow-auto">
+                    <Karma />
                   </div>
                 </div>
               </ProtectedRoute>

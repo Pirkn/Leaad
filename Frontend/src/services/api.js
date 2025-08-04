@@ -79,9 +79,20 @@ class ApiService {
     });
   }
 
-  async getViralPosts() {
-    return this.request("/get-viral-posts");
+  // Karma endpoints
+  async generateKarmaComment() {
+    return this.request("/create_karma_comment", {
+      method: "POST",
+    });
   }
+
+  async generateKarmaPost() {
+    return this.request("/create_karma_post", {
+      method: "POST",
+    });
+  }
+
+  // Removed getViralPosts - now using static data instead of API calls
 
   // Product management endpoints
   async getProducts() {
