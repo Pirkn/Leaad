@@ -20,6 +20,11 @@ function Karma() {
   const [copiedText, setCopiedText] = useState("");
   const [isBackgroundGenerating, setIsBackgroundGenerating] = useState(false);
 
+  // Individual copy states for each button
+  const [copiedCommentStates, setCopiedCommentStates] = useState({});
+  const [copiedPostState, setCopiedPostState] = useState(false);
+  const [copiedImageState, setCopiedImageState] = useState(false);
+
   // API hooks for generating karma content
   const generateCommentMutation = useGenerateKarmaComment();
   const generatePostMutation = useGenerateKarmaPost();
@@ -54,11 +59,24 @@ function Karma() {
       .trim();
 
     navigator.clipboard.writeText(plainText);
-    setCopiedText(type);
-    setTimeout(() => setCopiedText(""), 2000);
+
+    // Set individual copy states
+    if (type.startsWith("comment-")) {
+      setCopiedCommentStates((prev) => ({ ...prev, [type]: true }));
+      setTimeout(() => {
+        setCopiedCommentStates((prev) => ({ ...prev, [type]: false }));
+      }, 2000);
+    } else if (type === "post") {
+      setCopiedPostState(true);
+      setTimeout(() => setCopiedPostState(false), 2000);
+    }
   };
 
   const handleCopyImage = async (imageUrl, type) => {
+    // Optimistically update UI immediately
+    setCopiedImageState(true);
+    setTimeout(() => setCopiedImageState(false), 2000);
+
     try {
       // Fetch the image
       const response = await fetch(imageUrl);
@@ -71,15 +89,38 @@ function Karma() {
 
       // Copy to clipboard
       await navigator.clipboard.write([clipboardItem]);
-
-      setCopiedText(type);
-      setTimeout(() => setCopiedText(""), 2000);
     } catch (error) {
       console.error("Failed to copy image:", error);
-      // Fallback to copying URL if image copy fails
-      navigator.clipboard.writeText(imageUrl);
-      setCopiedText(type);
-      setTimeout(() => setCopiedText(""), 2000);
+      // Fallback: try to copy the image using a different approach
+      try {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = async () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          canvas.toBlob(async (blob) => {
+            try {
+              const clipboardItem = new ClipboardItem({
+                [blob.type]: blob,
+              });
+              await navigator.clipboard.write([clipboardItem]);
+            } catch (err) {
+              console.error("Failed to copy image blob:", err);
+              // Final fallback: copy URL
+              navigator.clipboard.writeText(imageUrl);
+            }
+          });
+        };
+        img.src = imageUrl;
+      } catch (fallbackError) {
+        console.error("Fallback image copy failed:", fallbackError);
+        // Final fallback: copy URL
+        navigator.clipboard.writeText(imageUrl);
+      }
     }
   };
 
@@ -357,17 +398,17 @@ function Karma() {
                                     Target Post:
                                   </h4>
                                   <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() =>
                                       handleCopyText(
                                         commentData.comment,
                                         `comment-${index}`
                                       )
                                     }
-                                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center"
+                                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center transition-colors"
                                   >
-                                    {copiedText === `comment-${index}` ? (
+                                    {copiedCommentStates[`comment-${index}`] ? (
                                       <>
                                         <Check
                                           className="w-4 h-4 mr-1"
@@ -465,17 +506,17 @@ function Karma() {
                               Generated Comment
                             </h3>
                             <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
                               onClick={() =>
                                 handleCopyText(
                                   generatedComment.response,
                                   "comment"
                                 )
                               }
-                              className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center"
+                              className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center transition-colors"
                             >
-                              {copiedText === "comment" ? (
+                              {copiedCommentStates["comment"] ? (
                                 <>
                                   <Check
                                     className="w-4 h-4 mr-1"
@@ -657,8 +698,8 @@ function Karma() {
                           Title:
                         </h4>
                         <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() =>
                             handleCopyText(
                               `${generatedPost.title}\n\n${
@@ -667,9 +708,9 @@ function Karma() {
                               "post"
                             )
                           }
-                          className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center transition-colors"
                         >
-                          {copiedText === "post" ? (
+                          {copiedPostState ? (
                             <>
                               <Check
                                 className="w-4 h-4 mr-1"
@@ -719,17 +760,17 @@ function Karma() {
                               Generated Image:
                             </h4>
                             <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
                               onClick={() =>
                                 handleCopyImage(
                                   generatedPost.image_url,
                                   "image"
                                 )
                               }
-                              className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center"
+                              className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center transition-colors"
                             >
-                              {copiedText === "image" ? (
+                              {copiedImageState ? (
                                 <>
                                   <Check
                                     className="w-4 h-4 mr-1"
