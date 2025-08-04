@@ -5,6 +5,8 @@ import random
 import requests
 from src.utils.image_handling import convert_to_webp
 from src.utils.prompt_generator import post_karma_prompt
+from flask import jsonify, current_app
+from supabase import create_client, Client
 
 load_dotenv()
 
@@ -25,6 +27,8 @@ def get_rising_posts():
     post_content = []
     
     for post in subreddit.rising(limit=5):
+        if post.over_18 == True:
+            continue
         try:
             comments = []
             
@@ -73,11 +77,26 @@ def create_karma_post():
         image_data = response.content
 
         webp_data = convert_to_webp(image_data)
-            
+        
         # Convert WebP to base64
         import base64
         webp_base64 = base64.b64encode(webp_data).decode('utf-8')
         
         messages = post_karma_prompt(webp_base64, random_subreddit)
 
-        return messages, random_subreddit, webp_data
+        return messages, random_subreddit, webp_base64
+    
+def get_product_lead_subreddits(product_id):
+    supabase_url = current_app.config['SUPABASE_URL']
+    supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+    supabase: Client = create_client(supabase_url, supabase_key)
+    
+    leads_result = supabase.table('lead_subreddits').select('*').eq('product_id', product_id).order('created_at', desc=True).execute()
+    
+    if leads_result.data is not None:
+        return jsonify({
+            'leads': leads_result.data,
+            'total_count': len(leads_result.data)
+        }), 200
+    else:
+        return jsonify({'error': 'Failed to fetch leads'}), 500

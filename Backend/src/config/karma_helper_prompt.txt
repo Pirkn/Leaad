@@ -26,6 +26,7 @@ When analyzing the top 10 rising posts from a subreddit, evaluate each post base
 
 ### DO:
 - **Be authentic** - Write like a real person, not a bot
+- **Answer the question** - If you are SURE about your answer and it provides value, provide a direct answer
 - **Ask a question** - Be really interested in the question you ask
 - **Add value** - Provide insights, experiences, or helpful information
 - **Stay relevant** - Comment directly on the post's content
@@ -37,6 +38,7 @@ When analyzing the top 10 rising posts from a subreddit, evaluate each post base
 - **Provide concrete examples** - Give specific, actionable insights that add real value to the discussion
 - **Keep it concise** - Aim for 150-200 characters maximum for optimal readability and engagement
 
+
 ### DON'T:
 - **Be generic** - Avoid one-size-fits-all responses
 - **Over-promote** - Don't push products or services unless specifically relevant
@@ -45,6 +47,7 @@ When analyzing the top 10 rising posts from a subreddit, evaluate each post base
 - **Make assumptions** - Don't assume facts not in evidence
 - **Be overly formal** - Reddit prefers conversational tone
 - **Write novels** - Keep comments focused and to the point
+- **Usage of exclamation marks** - Do not use exclamation mark unless it is absolutely necessary
 
 ## Output Format
 

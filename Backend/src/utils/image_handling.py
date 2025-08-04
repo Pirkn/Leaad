@@ -5,7 +5,7 @@ import uuid
 from supabase import create_client, Client
 from flask import current_app
 
-def convert_to_webp(image_data, quality=40, optimize=True):
+def convert_to_webp(image_data, quality=100, optimize=True):
     # Open the image from bytes
     image = Image.open(io.BytesIO(image_data))
 
@@ -15,23 +15,12 @@ def convert_to_webp(image_data, quality=40, optimize=True):
 
     # Convert to WebP with optimization
     webp_buffer = io.BytesIO()
-    image.save(webp_buffer, format='WEBP', quality=40, optimize=True)
+    image.save(webp_buffer, format='WEBP', quality=quality, optimize=optimize)
     webp_data = webp_buffer.getvalue()
 
     return webp_data
 
 def upload_image_to_storage(image_data, user_id, filename=None):
-    """
-    Upload image data to Supabase storage and return the storage path
-    
-    Args:
-        image_data (bytes): The image data to upload
-        user_id (str): The user ID for organizing files
-        filename (str, optional): Custom filename. If not provided, generates one.
-    
-    Returns:
-        str: The storage path of the uploaded image
-    """
     try:
         # Initialize Supabase client
         supabase_url = current_app.config['SUPABASE_URL']
@@ -64,16 +53,6 @@ def upload_image_to_storage(image_data, user_id, filename=None):
         raise e
 
 def get_signed_url(storage_path, expires_in=3600):
-    """
-    Get a signed URL for a file in Supabase storage
-    
-    Args:
-        storage_path (str): The storage path of the file
-        expires_in (int): Expiration time in seconds (default: 1 hour)
-    
-    Returns:
-        str: The signed URL of the file
-    """
     try:
         supabase_url = current_app.config['SUPABASE_URL']
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
@@ -91,15 +70,6 @@ def get_signed_url(storage_path, expires_in=3600):
         raise e
 
 def get_storage_url(storage_path):
-    """
-    Get the public URL for a file in Supabase storage
-    
-    Args:
-        storage_path (str): The storage path of the file
-    
-    Returns:
-        str: The public URL of the file
-    """
     try:
         supabase_url = current_app.config['SUPABASE_URL']
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')

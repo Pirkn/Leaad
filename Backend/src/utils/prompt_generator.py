@@ -97,3 +97,27 @@ def post_karma_prompt(webp_base64, subreddit):
         ]
 
     return messages
+
+def lead_subreddits_for_product_prompt(product_data):
+    prompt = f"""
+    Analyze this product and find the BEST subreddits for lead generation:
+    
+    Product: {product_data['name']}
+    Target Audience: {product_data['target_audience']}
+    Problem Solved: {product_data['problem_solved']}
+    Description: {product_data['description']}
+    
+    Find subreddits where:
+    1. The target audience actively seeks help
+    2. People discuss the exact problem this product solves
+    3. Community allows helpful recommendations (not anti-promotion)
+    4. Active enough for regular lead opportunities
+    
+    Return top 10 subreddits with reasoning for each.
+    Return in the following format:
+    {{"subreddits": ["subreddit1", "subreddit2", "subreddit3"]}}
+    """
+    
+    messages = [{"role": "user", "content": prompt}]
+
+    return messages
