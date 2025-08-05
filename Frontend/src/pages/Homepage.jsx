@@ -38,35 +38,38 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, filter: "blur(1px)" },
   visible: {
     opacity: 1,
+    filter: "blur(0px)",
     transition: {
-      duration: 0.6,
+      duration: 0.4,
       ease: "easeOut",
     },
   },
 };
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 30, filter: "blur(1px)" },
   visible: {
     opacity: 1,
     y: 0,
+    filter: "blur(0px)",
     transition: {
-      duration: 0.8,
+      duration: 0.6,
       ease: "easeOut",
     },
   },
 };
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, scale: 0.9, filter: "blur(1px)" },
   visible: {
     opacity: 1,
     scale: 1,
+    filter: "blur(0px)",
     transition: {
-      duration: 0.6,
+      duration: 0.4,
       ease: "easeOut",
     },
   },
