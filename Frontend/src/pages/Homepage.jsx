@@ -24,6 +24,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 // Animation variants
 const containerVariants = {
@@ -100,11 +103,37 @@ const slideInFromRight = {
 };
 
 export default function HomePage() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 5);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleAuthAction = (action) => {
+    if (user) {
+      // If user is authenticated, redirect to dashboard
+      navigate("/dashboard");
+    } else {
+      // If user is not authenticated, proceed with the original action
+      navigate(action);
+    }
+  };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
       <motion.nav
-        className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm"
+        className={`bg-white/80 backdrop-blur-sm sticky top-0 z-50 transition-all duration-500 ease-out ${
+          isScrolled ? "shadow-[0_4px_32px_rgba(0,0,0,0.10)]" : "shadow-none"
+        }`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -123,31 +152,43 @@ export default function HomePage() {
                 LeadGen AI
               </span>
             </motion.div>
-            <div className="hidden md:flex items-center space-x-8">
-              <motion.a
-                href="#features"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                Features
-              </motion.a>
-              <motion.a
-                href="#how-it-works"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                How it Works
-              </motion.a>
-              <motion.a
-                href="#pricing"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                Pricing
-              </motion.a>
+            <div className="hidden md:flex items-center justify-center flex-1">
+              <div className="flex items-center space-x-8 ml-8">
+                <motion.a
+                  href="#features"
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Features
+                </motion.a>
+                <motion.a
+                  href="#how-it-works"
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  How it Works
+                </motion.a>
+                <motion.a
+                  href="#pricing"
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Pricing
+                </motion.a>
+                <motion.a
+                  href="#faq"
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  FAQ
+                </motion.a>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -156,8 +197,9 @@ export default function HomePage() {
                   variant="outline"
                   size="lg"
                   className="border-orange-200 text-orange-600 hover:bg-orange-50 bg-transparent"
+                  onClick={() => handleAuthAction("/signin")}
                 >
-                  Sign In
+                  {user ? "Dashboard" : "Sign In"}
                 </Button>
               </motion.div>
               <motion.div
@@ -167,8 +209,9 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                  onClick={() => handleAuthAction("/signup")}
                 >
-                  Get Started
+                  {user ? "Dashboard" : "Get Started"}
                 </Button>
               </motion.div>
             </div>
@@ -222,8 +265,9 @@ export default function HomePage() {
                   <Button
                     size="lg"
                     className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    onClick={() => handleAuthAction("/signup")}
                   >
-                    Start Generating Leads
+                    {user ? "Go to Dashboard" : "Start Generating Leads"}
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </motion.div>
@@ -904,6 +948,7 @@ export default function HomePage() {
                 asChild
                 size="lg"
                 className="px-16 py-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                onClick={() => handleAuthAction("/signup")}
               >
                 <button className="flex items-center justify-center">
                   Start Free Trial

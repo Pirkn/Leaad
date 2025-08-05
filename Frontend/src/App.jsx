@@ -15,6 +15,14 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import Homepage from "./pages/Homepage";
+import { useAuth } from "./contexts/AuthContext";
+import { Navigate } from "react-router-dom";
+
+// Component to handle root path redirects
+const RootRedirect = () => {
+  const { user } = useAuth();
+  return user ? <Navigate to="/dashboard" replace /> : <Homepage />;
+};
 
 function App() {
   return (
@@ -22,14 +30,14 @@ function App() {
       <Router>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Homepage />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* Protected routes */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <div className="flex h-screen bg-gray-50">
