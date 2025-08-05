@@ -191,6 +191,20 @@ function Karma() {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="p-6"
     >
+      {/* Sticky Header */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
+      >
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Karma Builder
+          </h1>
+        </div>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -198,20 +212,6 @@ function Karma() {
         className="mb-6"
       >
         <div>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-            className="flex items-center mb-2"
-          >
-            <Sparkles
-              className="w-8 h-8 text-orange-600 mr-3"
-              strokeWidth={1.5}
-            />
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Karma Builder
-            </h1>
-          </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

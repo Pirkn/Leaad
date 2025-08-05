@@ -42,7 +42,7 @@ function Sidebar() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg font-semibold text-gray-900"
           >
-            Marketing Agent
+            Leaad
           </motion.h1>
         </div>
       </motion.div>
@@ -59,23 +59,25 @@ function Sidebar() {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
-          <Link
-            to="/"
-            className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
-              isActive("/")
-                ? "bg-orange-50 text-orange-700 border border-orange-200"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`}
-            style={{
-              borderColor: isActive("/") ? "#FFE4CC" : "transparent",
-              borderWidth: "1px",
-              transition: "border-color 0.2s ease",
-            }}
-          >
-            {/* Dashboard Icon */}
-            <Home className="w-5 h-5" strokeWidth={1.5} />
-            <span className="text-sm font-medium">Dashboard</span>
-          </Link>
+          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+            <Link
+              to="/dashboard"
+              className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
+                isActive("/dashboard")
+                  ? "bg-orange-50 text-orange-700 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+              style={{
+                borderColor: isActive("/dashboard") ? "#FFE4CC" : "transparent",
+                borderWidth: "1px",
+                transition: "border-color 0.2s ease",
+              }}
+            >
+              {/* Dashboard Icon */}
+              <Home className="w-5 h-5" strokeWidth={1.5} />
+              <span className="text-sm font-medium">Dashboard</span>
+            </Link>
+          </motion.div>
 
           <motion.div
             initial={{ x: -20, opacity: 0 }}

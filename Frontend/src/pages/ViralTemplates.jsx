@@ -67,45 +67,43 @@ function ViralTemplates() {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="p-6"
     >
+      {/* Sticky Header */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.05 }}
-        className="flex justify-between items-center mb-6"
+        className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
       >
-        <motion.h1
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-          className="text-2xl font-semibold text-gray-900"
-        >
-          Viral Templates
-        </motion.h1>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.15 }}
-        >
-          <button
-            onClick={() => setShowProductModal(true)}
-            className="bg-[#FF4500] text-white px-4 py-3 rounded-lg hover:bg-[#CC3700] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Viral Templates
+          </h1>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
           >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <button
+              onClick={() => setShowProductModal(true)}
+              className="bg-[#FF4500] text-white px-3 py-2 rounded-md hover:bg-[#CC3700] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-            Generate your own
-          </button>
-        </motion.div>
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+              Generate your own
+            </button>
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Filter Section */}
