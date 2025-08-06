@@ -1,17 +1,50 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useApi";
 import staticDataService from "../services/staticData";
 import { motion, AnimatePresence } from "framer-motion";
+import Snackbar from "@mui/material/Snackbar";
+import redditPng from "../assets/reddit.png";
 
 function ViralTemplates() {
   const navigate = useNavigate();
   const [showProductModal, setShowProductModal] = useState(false);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [showSubredditDropdown, setShowSubredditDropdown] = useState(false);
+  const subredditDropdownRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!showSubredditDropdown) return;
+    function handleClickOutside(event) {
+      if (
+        subredditDropdownRef.current &&
+        !subredditDropdownRef.current.contains(event.target)
+      ) {
+        setShowSubredditDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSubredditDropdown]);
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [engagementFilter, setEngagementFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+
+  // Template editing states
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedPostText, setEditedPostText] = useState("");
+  const [originalTitle, setOriginalTitle] = useState("");
+  const [originalPostText, setOriginalPostText] = useState("");
+
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   // Get all viral posts once - static data is immediately available
   const allPosts = useMemo(() => staticDataService.getViralPosts(), []);
@@ -51,6 +84,46 @@ function ViralTemplates() {
     navigate("/reddit-posts", { state: { product } });
   };
 
+  const handleOpenTemplateModal = (template) => {
+    setSelectedTemplate(template);
+    setEditedTitle(template.postTitle || template.title || "");
+    setEditedPostText(template.postText || template.originalPostText || "");
+    setOriginalTitle(template.postTitle || template.title || "");
+    setOriginalPostText(template.postText || template.originalPostText || "");
+    setShowTemplateModal(true);
+  };
+
+  const handleCloseTemplateModal = () => {
+    setShowTemplateModal(false);
+    setSelectedTemplate(null);
+    setEditedTitle("");
+    setEditedPostText("");
+    setOriginalTitle("");
+    setOriginalPostText("");
+  };
+
+  const handleCopyToClipboard = async () => {
+    const content = `${editedTitle}\n\n${editedPostText}`;
+    try {
+      await navigator.clipboard.writeText(content);
+      setSnackbarMessage("Template copied to clipboard!");
+      setSnackbarOpen(true);
+    } catch (err) {
+      console.error("Failed to copy to clipboard:", err);
+      setSnackbarMessage("Failed to copy to clipboard. Please try again.");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleResetChanges = () => {
+    setEditedTitle(originalTitle);
+    setEditedPostText(originalPostText);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const clearFilters = () => {
     setSearchTerm("");
     setEngagementFilter("all");
@@ -59,6 +132,13 @@ function ViralTemplates() {
 
   const hasActiveFilters =
     searchTerm || engagementFilter !== "all" || sortBy !== "newest";
+
+  // Helper to open Reddit create post in new tab
+  const handleOpenRedditPost = (subreddit) => {
+    if (!subreddit) return;
+    window.open(`https://www.reddit.com/r/${subreddit}/submit`, "_blank");
+    setShowSubredditDropdown(false);
+  };
 
   return (
     <motion.div
@@ -409,8 +489,8 @@ function ViralTemplates() {
                 {/* Card Actions */}
                 <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
                   <div className="flex space-x-3">
-                    <Link
-                      to={`/viral-templates/${post.id}`}
+                    <button
+                      onClick={() => handleOpenTemplateModal(post)}
                       className="text-[#FF4500] hover:text-[#CC3700] text-xs font-medium flex items-center space-x-1"
                     >
                       <svg
@@ -423,11 +503,11 @@ function ViralTemplates() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                         />
                       </svg>
-                      <span>Use as Template</span>
-                    </Link>
+                      <span>Edit Template</span>
+                    </button>
                     {post.originalPostUrl && (
                       <a
                         href={post.originalPostUrl}
@@ -510,6 +590,354 @@ function ViralTemplates() {
           <p className="text-gray-500">Check back later for new templates</p>
         </div>
       )}
+
+      {/* Template Editing Modal */}
+      <AnimatePresence>
+        {showTemplateModal && selectedTemplate && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={handleCloseTemplateModal}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-white rounded-xl w-full max-w-7xl mx-4 max-h-[95vh] overflow-y-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Only close button, no sticky header or divider */}
+              <div className="flex justify-end px-6 pt-6">
+                <button
+                  onClick={handleCloseTemplateModal}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-6 pt-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Editable Template Column */}
+                  <div className="bg-white p-0">
+                    {/* Title Textarea */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Template Title (Edit this section to make it your
+                          own)own ar
+                        </label>
+                        <motion.button
+                          onClick={() => {
+                            navigator.clipboard.writeText(editedTitle);
+                            setSnackbarMessage("Title copied to clipboard!");
+                            setSnackbarOpen(true);
+                          }}
+                          className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
+                          title="Copy title to clipboard"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </motion.button>
+                      </div>
+                      <textarea
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none leading-snug"
+                        placeholder="Enter your post title..."
+                        style={{ minHeight: "2.5rem", maxHeight: "4.5rem" }}
+                      />
+                    </div>
+                    {/* Post Textarea */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Template Content (Edit this section to make it your
+                          own)
+                        </label>
+                        <motion.button
+                          onClick={() => {
+                            navigator.clipboard.writeText(editedPostText);
+                            setSnackbarMessage("Content copied to clipboard!");
+                            setSnackbarOpen(true);
+                          }}
+                          className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
+                          title="Copy content to clipboard"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </motion.button>
+                      </div>
+                      <textarea
+                        value={editedPostText}
+                        onChange={(e) => setEditedPostText(e.target.value)}
+                        rows={18}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none"
+                        placeholder="Enter your post content..."
+                      />
+                    </div>
+                    {/* Action Buttons */}
+                    <div className="flex space-x-3">
+                      {/* Post to Reddit Button and Dropdown */}
+                      <div className="relative" ref={subredditDropdownRef}>
+                        <button
+                          type="button"
+                          className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium mr-1"
+                          onClick={(e) => {
+                            setShowSubredditDropdown((prev) => !prev);
+                          }}
+                        >
+                          {/* Reddit Icon as image */}
+                          <img
+                            src={redditPng}
+                            alt="Reddit"
+                            className="w-5 h-5 mr-2 object-contain"
+                            style={{ display: "inline-block" }}
+                          />
+                          Post to Reddit
+                          {/* Chevron Down Icon */}
+                          <svg
+                            className="w-4 h-4 ml-2 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </button>
+                        {/* Dropdown for recommended subreddits */}
+                        <AnimatePresence>
+                          {showSubredditDropdown &&
+                            selectedTemplate?.recommendedSubreddits && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.18, ease: "easeOut" }}
+                                className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                              >
+                                <div className="py-1">
+                                  {selectedTemplate.recommendedSubreddits.map(
+                                    (sub, idx) => (
+                                      <button
+                                        key={sub}
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-[#FF4500] transition-colors"
+                                        onClick={() =>
+                                          handleOpenRedditPost(
+                                            sub.replace(/^r\//, "")
+                                          )
+                                        }
+                                      >
+                                        {sub.startsWith("r/")
+                                          ? sub
+                                          : `r/${sub}`}
+                                      </button>
+                                    )
+                                  )}
+                                </div>
+                              </motion.div>
+                            )}
+                        </AnimatePresence>
+                      </div>
+                      {/* Reset Changes Button */}
+                      <button
+                        onClick={handleResetChanges}
+                        className="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium flex items-center"
+                      >
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                        Reset Changes
+                      </button>
+                    </div>
+                  </div>
+                  {/* Original Post Column */}
+                  <div className="bg-white p-0">
+                    {/* Title Textarea */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Original Title
+                        </label>
+                        <motion.button
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              selectedTemplate.originalPostTitle ||
+                                selectedTemplate.title
+                            );
+                            setSnackbarMessage("Title copied to clipboard!");
+                            setSnackbarOpen(true);
+                          }}
+                          className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
+                          title="Copy title to clipboard"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </motion.button>
+                      </div>
+                      <textarea
+                        value={
+                          selectedTemplate.originalPostTitle ||
+                          selectedTemplate.title
+                        }
+                        readOnly
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 resize-none leading-snug"
+                        style={{ minHeight: "2.5rem", maxHeight: "4.5rem" }}
+                      />
+                    </div>
+                    {/* Post Textarea */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Original Content
+                        </label>
+                        <motion.button
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              selectedTemplate.originalPostText ||
+                                selectedTemplate.postText
+                            );
+                            setSnackbarMessage("Content copied to clipboard!");
+                            setSnackbarOpen(true);
+                          }}
+                          className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
+                          title="Copy content to clipboard"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </motion.button>
+                      </div>
+                      <textarea
+                        value={
+                          selectedTemplate.originalPostText ||
+                          selectedTemplate.postText
+                        }
+                        readOnly
+                        rows={18}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 resize-none"
+                        style={{ whiteSpace: "pre-wrap" }}
+                      />
+                    </div>
+                    {/* How to use section */}
+                    <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                      <h4 className="text-base font-semibold text-orange-900 mb-1">
+                        How to use this template
+                      </h4>
+                      <ol className="list-decimal list-inside text-sm text-orange-900 space-y-1 pl-2">
+                        <li>Copy the template above.</li>
+                        <li>Edit it to fit your product or message.</li>
+                        <li>Post it to your favorite subreddit.</li>
+                        <li>
+                          Follow subreddit rules and engage with the community
+                          for best results.
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Snackbar for copy success/failure */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <div className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          {snackbarMessage}
+        </div>
+      </Snackbar>
     </motion.div>
   );
 }
