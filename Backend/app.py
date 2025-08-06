@@ -53,8 +53,10 @@ def create_app():
     # Register your blueprints here
     from src.routes.product import blp as product_blp
     from src.routes.reddit import blp as reddit_blp
+    from src.routes.leads import blp as leads_blp
     api.register_blueprint(product_blp)
     api.register_blueprint(reddit_blp)
+    api.register_blueprint(leads_blp)
 
     return app
 

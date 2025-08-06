@@ -338,19 +338,17 @@ curl -X POST http://localhost:5000/create_karma_post \
   -d '{}'
 ```
 
-## Lead Generation Operations
+## Lead Management Operations
 
-### POST /lead-generation
+### POST /lead-generation (Leads)
 
-Generate targeted leads by analyzing Reddit posts for marketing opportunities. This endpoint finds relevant posts where your product can provide genuine value and generates appropriate comments for lead generation.
+Generate and save targeted leads to the database by analyzing Reddit posts for marketing opportunities. (This endpoint is now handled by `leads.py`.)
 
 **Headers:**
-
 - `Content-Type: application/json`
 - `Authorization: Bearer <jwt-token>` (Required)
 
 **Request Body:**
-
 ```json
 {
   "product_id": "product-uuid"
@@ -358,48 +356,73 @@ Generate targeted leads by analyzing Reddit posts for marketing opportunities. T
 ```
 
 **Response:**
-
 ```json
 [
   {
+    "id": "uuid",
     "comment": "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue",
     "selftext": "Original post content",
     "title": "Original post title",
     "url": "https://www.reddit.com/r/subreddit/comments/abc123/title/",
-    "score": 150
+    "score": 150,
+    "read": false
   }
 ]
 ```
 
-**Process:**
-1. Retrieves product details and associated subreddits from database
-2. Fetches recent posts from relevant subreddits using Reddit API
-3. Uses AI to analyze posts for lead generation opportunities
-4. Generates value-driven comments (80% help, 20% promotion)
-5. Returns structured lead data with post context and generated comments
+---
 
-**Lead Generation Criteria:**
-- Perfect problem match with your product's solution
-- Active engagement (good upvotes and comments)
-- Help-seeking behavior from the original poster
-- Relevant context aligned with your product's value proposition
-- Comment-friendly posts that encourage discussion
+### GET /get-leads
 
-**Commenting Strategy:**
-- 80% Value: Provide genuine help, insights, or solutions
-- 20% Selling: Subtly mention your product as a relevant solution
-- Approach: "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue"
+Retrieve all leads generated for the authenticated user, ordered by creation date (newest first).
 
-**Example Usage:**
+**Headers:**
+- `Authorization: Bearer <jwt-token>` (Required)
 
-```bash
-curl -X POST http://localhost:5000/lead-generation \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-jwt-token>" \
-  -d '{
-    "product_id": "your-product-uuid"
-  }'
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "uid": "user-uuid",
+    "selftext": "Original post content",
+    "title": "Original post title",
+    "url": "https://www.reddit.com/r/subreddit/comments/abc123/title/",
+    "score": 150,
+    "read": false,
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+]
 ```
+
+---
+
+### POST /mark-lead-as-read
+
+Mark a specific lead as read for the authenticated user.
+
+**Headers:**
+- `Content-Type: application/json`
+- `Authorization: Bearer <jwt-token>` (Required)
+
+**Request Body:**
+```json
+{
+  "lead_id": "uuid"
+}
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "read": true
+  }
+]
+```
+
+---
 
 ## Error Responses
 

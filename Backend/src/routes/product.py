@@ -10,6 +10,7 @@ from src.utils.website_scraper import get_website_content
 from src.utils.reddit_helpers import lead_posts
 import os
 import json
+import uuid
 load_dotenv()
 
 blp = Blueprint('Product', __name__, description='Product Operations')
@@ -136,66 +137,111 @@ class GetProducts(MethodView):
             print(f"Error fetching products: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
 
-@blp.route('/lead-generation')
-class LeadGeneration(MethodView):
+@blp.route('/edit-product')
+class EditProduct(MethodView):
     @verify_supabase_token
     def post(self):
-        data = request.get_json()
-        product_id = data.get('product_id')
+        """Edit an existing product for the authenticated user"""
+        try:
+            data = request.get_json()
+            product_id = data.get('product_id')
 
-        supabase_url = current_app.config['SUPABASE_URL']
-        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
-        supabase: Client = create_client(supabase_url, supabase_key)
+            # Validate required fields
+            if not product_id:
+                return jsonify({'error': 'Missing required field: product_id'}), 400
+
+            # Get user ID from authenticated token
+            user_id = g.current_user['id']
+
+            supabase_url = current_app.config['SUPABASE_URL']
+            supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+            supabase: Client = create_client(supabase_url, supabase_key)
+
+            # Get current product data
+            product_result = supabase.table('products').select('*').eq('id', product_id).eq('user_id', user_id).execute()
+            
+            if not product_result.data:
+                return jsonify({'error': 'Product not found or access denied'}), 404
+
+            current_product = product_result.data[0]
+            new_url = data.get('url')
+            url_changed = new_url and new_url != current_product.get('url')
+
+            # Prepare updated product data
+            update_data = {}
+            if data.get('name'):
+                update_data['name'] = data['name']
+            if data.get('url'):
+                update_data['url'] = data['url']
+            if data.get('description'):
+                update_data['description'] = data['description']
+            if data.get('target_audience'):
+                update_data['target_audience'] = data['target_audience']
+            if data.get('problem_solved'):
+                update_data['problem_solved'] = data['problem_solved']
+
+            # Update product data
+            if update_data:
+                update_result = supabase.table('products').update(update_data).eq('id', product_id).execute()
+                if not update_result.data:
+                    return jsonify({'error': 'Failed to update product'}), 500
+
+            # If URL changed, regenerate subreddits
+            if url_changed:
+                # Delete old subreddits
+                supabase.table('lead_subreddits').delete().eq('product_id', product_id).execute()
+                
+                # Prepare product data for subreddit generation (use updated data)
+                product_data_for_subreddits = {
+                    'name': update_data.get('name', current_product['name']),
+                    'url': new_url,
+                    'description': update_data.get('description', current_product.get('description')),
+                    'target_audience': update_data.get('target_audience', current_product.get('target_audience')),
+                    'problem_solved': update_data.get('problem_solved', current_product.get('problem_solved'))
+                }
+
+                # Generate new subreddits
+                messages = lead_subreddits_for_product_prompt(product_data_for_subreddits)
+                model = Model()
+                response = model.gemini_chat_completion(messages)
+                
+                # Parse the AI response to extract subreddits
+                try:
+                    response_data = json.loads(response)
+                    subreddits = response_data.get('subreddits', [])
+                    
+                    # Save each subreddit as a lead
+                    leads_data = []
+                    for subreddit in subreddits:
+                        # Clean the subreddit name (remove 'r/' prefix if present)
+                        clean_subreddit = subreddit.replace('r/', '') if subreddit.startswith('r/') else subreddit
+                        
+                        leads_data.append({
+                            'product_id': product_id,
+                            'subreddit': clean_subreddit
+                        })
+                    
+                    # Insert all new leads
+                    if leads_data:
+                        leads_result = supabase.table('lead_subreddits').insert(leads_data).execute()
+                        print(f"Updated {len(leads_data)} leads for product {product_id}")
+                    
+                except json.JSONDecodeError as e:
+                    print(f"Failed to parse AI response: {e}")
+                    print(f"Raw response: {response}")
+                except Exception as e:
+                    print(f"Error saving new leads: {e}")
+
+            # Get updated product data
+            updated_product_result = supabase.table('products').select('*').eq('id', product_id).execute()
+            
+            return jsonify({
+                'message': 'Product updated successfully',
+                'product': updated_product_result.data[0],
+                'subreddits_regenerated': url_changed
+            }), 200
+                
+        except Exception as e:
+            print(f"Error updating product: {str(e)}")
+            return jsonify({'error': 'Internal server error'}), 500
         
-        result = supabase.table('lead_subreddits').select('*').eq('product_id', product_id).execute()
-        subreddits = [lead['subreddit'] for lead in result.data]
-
-        # Get product data
-        product_result = supabase.table('products').select('*').eq('id', product_id).execute()
-        product_data = product_result.data[0]
-
-        unformatted_posts, posts = lead_posts(subreddits)
-
-        # Process posts in batches of 10
-        batch_size = 10
-        selected_posts = []
-        
-        for i in range(0, len(posts), batch_size):
-            batch = posts[i:i + batch_size]
-            messages = lead_generation_prompt(product_data, batch)
-            model = Model()
-
-            response = model.gemini_lead_checking(messages)
-
-            try:
-                response_data = json.loads(response)
-                post_ids = response_data.get('post_ids', [])
-                print(post_ids)
-                for post_id in post_ids:
-                    selected_posts.append(posts[post_id])
-            except json.JSONDecodeError as e:
-                print(f"Failed to parse AI response: {e}")
-                print(f"Raw response: {response}")
-        
-        messages = lead_generation_prompt_2(product_data, selected_posts)
-
-        model = Model()
-        response = model.gemini_chat_completion(messages)
-        response_data = json.loads(response)
-        comments = response_data.get('comments', [])
-
-        generated_leads = []
-        for comment in comments:
-            for key, value in comment.items():
-                new_post = {}
-                unformatted_post = unformatted_posts[int(key)]
-                new_post['comment'] = value
-                new_post['selftext'] = unformatted_post['selftext']
-                new_post['title'] = unformatted_post['title']
-                new_post['url'] = unformatted_post['url']
-                new_post['score'] = unformatted_post['score']
-                generated_leads.append(new_post)
-
-        return jsonify(generated_leads)
-
-
