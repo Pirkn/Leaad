@@ -8,6 +8,7 @@ export const queryKeys = {
   productAnalysis: (url) => ["productAnalysis", url],
   health: ["health"],
   products: ["products"],
+  leads: ["leads"],
 };
 
 // Viral posts are now loaded as static data - no need for TanStack Query
@@ -288,6 +289,66 @@ export const useDeleteProduct = () => {
     },
     onError: (error) => {
       console.error("Failed to delete product:", error);
+    },
+  });
+};
+
+// Leads Query
+export const useLeads = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: queryKeys.leads,
+    queryFn: async () => {
+      const response = await apiService.getLeads();
+      return response; // Backend returns array of leads
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+};
+
+// Generate Leads Mutation
+export const useGenerateLeads = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (productId) => {
+      if (!user) {
+        throw new Error("User must be authenticated to generate leads");
+      }
+      const response = await apiService.generateLeads(productId);
+      return response; // Backend returns array of generated leads
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.leads });
+    },
+    onError: (error) => {
+      console.error("Failed to generate leads:", error);
+    },
+  });
+};
+
+// Mark Lead as Read Mutation
+export const useMarkLeadAsRead = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (leadId) => {
+      if (!user) {
+        throw new Error("User must be authenticated to mark leads as read");
+      }
+      const response = await apiService.markLeadAsRead(leadId);
+      return response; // Backend returns updated lead
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.leads });
+    },
+    onError: (error) => {
+      console.error("Failed to mark lead as read:", error);
     },
   });
 };

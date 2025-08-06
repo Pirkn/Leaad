@@ -44,7 +44,19 @@ class ApiService {
           // You could trigger a sign-out here if needed
           // await authService.signOut();
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
+
+        // Try to get error details from response
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (e) {
+          // If we can't parse the error response, use the default message
+        }
+
+        throw new Error(errorMessage);
       }
 
       return await response.json();
@@ -114,6 +126,29 @@ class ApiService {
   async deleteProduct(productId) {
     return this.request(`/products/${productId}`, {
       method: "DELETE",
+    });
+  }
+
+  // Lead endpoints
+  async generateLeads(productId) {
+    return this.request("/lead-generation", {
+      method: "POST",
+      body: JSON.stringify({
+        product_id: productId,
+      }),
+    });
+  }
+
+  async getLeads() {
+    return this.request("/get-leads");
+  }
+
+  async markLeadAsRead(leadId) {
+    return this.request("/mark-lead-as-read", {
+      method: "POST",
+      body: JSON.stringify({
+        lead_id: leadId,
+      }),
     });
   }
 }
