@@ -69,6 +69,12 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const signInWithGoogle = async () => {
+    const { data, error } = await authService.signInWithGoogle();
+    if (error) throw error;
+    return data;
+  };
+
   const signOut = async () => {
     const { error } = await authService.signOut();
     if (error) throw error;
@@ -85,6 +91,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     resetPassword,
   };
