@@ -438,6 +438,7 @@
             <div class="tabs">
                 <button class="tab active" onclick="showTab('product-management')">Product Management</button>
                 <button class="tab" onclick="showTab('reddit-marketing')">Reddit Marketing</button>
+                <button class="tab" onclick="showTab('lead-generation')">Lead Generation</button>
                 <button class="tab" onclick="showTab('karma-optimization')">Karma Optimization</button>
             </div>
 
@@ -496,6 +497,25 @@
                         <p>Generating Reddit post...</p>
                     </div>
                     <div id="reddit-result"></div>
+                </div>
+            </div>
+
+            <!-- Lead Generation Tab -->
+            <div id="lead-generation" class="tab-content">
+                <div class="section">
+                    <h2>🎯 Lead Generation</h2>
+                    <div class="form-group">
+                        <label for="lead-product-id">Select Product:</label>
+                        <select id="lead-product-id">
+                            <option value="">Choose a product...</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="generateLeads()">Generate Leads</button>
+                    <div id="lead-loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Generating leads...</p>
+                    </div>
+                    <div id="lead-result"></div>
                 </div>
             </div>
 
@@ -949,12 +969,20 @@
                 });
 
                 const data = await response.json();
-                const dropdown = document.getElementById('reddit-product-id');
-                dropdown.innerHTML = '<option value="">Choose a product...</option>';
+                
+                // Update Reddit Marketing dropdown
+                const redditDropdown = document.getElementById('reddit-product-id');
+                redditDropdown.innerHTML = '<option value="">Choose a product...</option>';
+                
+                // Update Lead Generation dropdown
+                const leadDropdown = document.getElementById('lead-product-id');
+                leadDropdown.innerHTML = '<option value="">Choose a product...</option>';
                 
                 if (data.products) {
                     data.products.forEach(product => {
-                        dropdown.innerHTML += `<option value="${product.id}">${product.name}</option>`;
+                        const option = `<option value="${product.id}">${product.name}</option>`;
+                        redditDropdown.innerHTML += option;
+                        leadDropdown.innerHTML += option;
                     });
                 }
             } catch (error) {
@@ -1009,6 +1037,86 @@
                             </div>
                         </div>
                     `;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                result.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Lead Generation
+        async function generateLeads() {
+            const productId = document.getElementById('lead-product-id').value;
+            if (!productId) {
+                alert('Please select a product');
+                return;
+            }
+
+            if (!currentUser) {
+                alert('Please sign in first');
+                return;
+            }
+
+            const loading = document.getElementById('lead-loading');
+            const result = document.getElementById('lead-result');
+            
+            loading.style.display = 'block';
+            result.innerHTML = '';
+
+            try {
+                const token = await getSessionToken();
+                
+                const response = await fetch(`${API_BASE_URL}/lead-generation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                });
+
+                const data = await response.json();
+                loading.style.display = 'none';
+                
+                if (data.error) {
+                    result.innerHTML = `<div class="result error">Error: ${data.message}</div>`;
+                } else {
+                    // Display the generated leads with comments
+                    let html = `
+                        <div class="result">
+                            <h3>🎯 Generated Leads</h3>
+                            <p><strong>Found ${data.length} potential leads with AI-generated comments:</strong></p>
+                    `;
+                    
+                    if (data.length > 0) {
+                        html += '<div class="karma-posts">';
+                        data.forEach((lead, index) => {
+                            html += `
+                                <div class="karma-post">
+                                    <h4>Lead ${index + 1}</h4>
+                                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                        <h5 style="color: #667eea; margin-bottom: 10px;">🤖 AI-Generated Comment:</h5>
+                                        <p style="white-space: pre-wrap; font-style: italic;">${lead.comment}</p>
+                                    </div>
+                                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
+                                        <h5 style="color: #28a745; margin-bottom: 10px;">📝 Original Post:</h5>
+                                        <p><strong>Title:</strong> ${lead.title}</p>
+                                        <p><strong>Content:</strong> ${lead.selftext || 'No content'}</p>
+                                        <p><strong>Score:</strong> ${lead.score}</p>
+                                        <p><strong>URL:</strong> <a href="${lead.url}" target="_blank">View Original Post</a></p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    } else {
+                        html += '<p>No leads found for this product.</p>';
+                    }
+                    
+                    html += '</div>';
+                    result.innerHTML = html;
                 }
             } catch (error) {
                 loading.style.display = 'none';

@@ -338,6 +338,69 @@ curl -X POST http://localhost:5000/create_karma_post \
   -d '{}'
 ```
 
+## Lead Generation Operations
+
+### POST /lead-generation
+
+Generate targeted leads by analyzing Reddit posts for marketing opportunities. This endpoint finds relevant posts where your product can provide genuine value and generates appropriate comments for lead generation.
+
+**Headers:**
+
+- `Content-Type: application/json`
+- `Authorization: Bearer <jwt-token>` (Required)
+
+**Request Body:**
+
+```json
+{
+  "product_id": "product-uuid"
+}
+```
+
+**Response:**
+
+```json
+[
+  {
+    "comment": "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue",
+    "selftext": "Original post content",
+    "title": "Original post title",
+    "url": "https://www.reddit.com/r/subreddit/comments/abc123/title/",
+    "score": 150
+  }
+]
+```
+
+**Process:**
+1. Retrieves product details and associated subreddits from database
+2. Fetches recent posts from relevant subreddits using Reddit API
+3. Uses AI to analyze posts for lead generation opportunities
+4. Generates value-driven comments (80% help, 20% promotion)
+5. Returns structured lead data with post context and generated comments
+
+**Lead Generation Criteria:**
+- Perfect problem match with your product's solution
+- Active engagement (good upvotes and comments)
+- Help-seeking behavior from the original poster
+- Relevant context aligned with your product's value proposition
+- Comment-friendly posts that encourage discussion
+
+**Commenting Strategy:**
+- 80% Value: Provide genuine help, insights, or solutions
+- 20% Selling: Subtly mention your product as a relevant solution
+- Approach: "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue"
+
+**Example Usage:**
+
+```bash
+curl -X POST http://localhost:5000/lead-generation \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-jwt-token>" \
+  -d '{
+    "product_id": "your-product-uuid"
+  }'
+```
+
 ## Error Responses
 
 ### 400 Bad Request
@@ -463,6 +526,13 @@ Backend/
 - `storage_path` (Text, Optional)
 - `created_at` (Timestamp)
 - `updated_at` (Timestamp)
+
+### Lead Subreddits Table
+
+- `id` (UUID, Primary Key)
+- `product_id` (UUID, Foreign Key to products)
+- `subreddit` (Text)
+- `created_at` (Timestamp)
 
 ## AI Integration Details
 

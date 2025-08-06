@@ -121,3 +121,120 @@ def lead_subreddits_for_product_prompt(product_data):
     messages = [{"role": "user", "content": prompt}]
 
     return messages
+
+def lead_generation_prompt(product_data, posts):
+    system_prompt = f"""
+    You are an expert lead generation specialist analyzing Reddit posts for marketing opportunities.
+    
+    PRODUCT ANALYSIS:
+    - Product: {product_data['name']}
+    - Target Audience: {product_data['target_audience']}
+    - Problem Solved: {product_data['problem_solved']}
+    - Description: {product_data['description']}
+    
+    LEAD GENERATION CRITERIA:
+    1. **Perfect Problem Match**: Post directly discusses the exact problem your product solves
+    2. **Active Engagement**: Post has good upvotes and comments (shows community interest)
+    3. **Help-Seeking Behavior**: OP is asking for solutions, recommendations, or advice
+    4. **Relevant Context**: Post content aligns with your product's value proposition
+    5. **Comment-Friendly**: Post encourages discussion and allows helpful responses
+    
+    COMMENTING STRATEGY (80% Value / 20% Selling):
+    - **80% Value**: Provide genuine help, insights, or solutions to their problem
+    - **20% Selling**: Subtly mention your product as a relevant solution
+    - **Approach**: "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue"
+    
+    QUALITY STANDARDS:
+    - Only select posts where you can provide genuine value
+    - Skip posts that are too generic, off-topic, or don't need your solution
+    - If no posts meet criteria, return empty array
+    - Maximum 3 posts per batch to maintain quality
+    """
+
+    formatted_posts_string = "\n\n".join(posts)
+
+    user_prompt = f"""
+    Analyze these Reddit posts for lead generation opportunities:
+    {formatted_posts_string}
+    
+    EVALUATION PROCESS:
+    1. Read each post carefully
+    2. Assess if it matches your lead generation criteria
+    3. Consider if you can provide genuine value (80%) + subtle promotion (20%)
+    4. Only select posts where you can make a meaningful contribution
+    
+    RETURN FORMAT:
+    {{"post_ids": [Postnumber1, Postnumber2, ...]}}
+    
+    IMPORTANT:
+    - Return empty array {{"post_ids": []}} if no posts meet criteria
+    - Maximum 3 posts per response
+    - Quality over quantity - only select the best opportunities
+    """
+    
+    messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
+    return messages
+
+def lead_generation_prompt_2(product_data, posts):
+    system_prompt = f"""
+    You are an expert lead generation specialist analyzing Reddit posts for marketing opportunities.
+    
+    PRODUCT ANALYSIS:
+    - Product: {product_data['name']}
+    - Target Audience: {product_data['target_audience']}
+    - Problem Solved: {product_data['problem_solved']}
+    - Description: {product_data['description']}
+    
+    LEAD GENERATION CRITERIA:
+    1. **Perfect Problem Match**: Post directly discusses the exact problem your product solves
+    2. **Active Engagement**: Post has good upvotes and comments (shows community interest)
+    3. **Help-Seeking Behavior**: OP is asking for solutions, recommendations, or advice
+    4. **Relevant Context**: Post content aligns with your product's value proposition
+    5. **Comment-Friendly**: Post encourages discussion and allows helpful responses
+    
+    COMMENTING STRATEGY (80% Value / 20% Selling):
+    - **80% Value**: Provide genuine help, insights, or solutions to their problem
+    - **20% Selling**: Subtly mention your product as a relevant solution
+    - **Approach**: "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue"
+    - **Mention** Product in the comment subtly
+    - **Length**: Keep the comment length medium to short
+    
+    QUALITY STANDARDS:
+    - Only select posts where you can provide genuine value
+    - Skip posts that are too generic, off-topic, or don't need your solution
+    - If no posts meet criteria, return empty array
+    - Select at least 5 posts
+
+    RETURN FORMAT:
+    {{"comments": [
+        {{"1": "Your comment for post 1"}},
+        {{"2": "Your comment for post 2"}},
+        {{"3": "Your comment for post 3"}},
+        ...
+    ]}}
+    
+    IMPORTANT:
+    - Use sequential post numbers (1, 2, 3, etc.)
+    - Only include posts where you can provide genuine value
+    - Quality over quantity
+    """
+    
+    formatted_posts_string = "\n\n".join(posts)
+
+    user_prompt = f"""
+    Analyze these Reddit posts for lead generation opportunities:
+    {formatted_posts_string}
+    
+    EVALUATION PROCESS:
+    1. Read each post carefully
+    2. Assess if it matches your lead generation criteria
+    3. Consider if you can provide genuine value (80%) + subtle promotion (20%)
+    4. Only select posts where you can make a meaningful contribution
+    """
+
+    messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
+
+    return messages
+
+
+    

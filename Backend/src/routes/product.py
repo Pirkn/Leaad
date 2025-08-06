@@ -3,16 +3,14 @@ from flask_smorest import Blueprint
 from flask import jsonify, request, g, current_app
 from dotenv import load_dotenv
 from src.utils.auth import verify_supabase_token
-from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt
+from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt, lead_generation_prompt, lead_generation_prompt_2
 from src.utils.models import Model
 from supabase import create_client, Client
 from src.utils.website_scraper import get_website_content
+from src.utils.reddit_helpers import lead_posts
 import os
-
+import json
 load_dotenv()
-
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY')
 
 blp = Blueprint('Product', __name__, description='Product Operations')
 
@@ -78,7 +76,6 @@ class CreateProduct(MethodView):
             
             # Parse the AI response to extract subreddits
             try:
-                import json
                 response_data = json.loads(response)
                 subreddits = response_data.get('subreddits', [])
                 
@@ -138,3 +135,67 @@ class GetProducts(MethodView):
         except Exception as e:
             print(f"Error fetching products: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
+
+@blp.route('/lead-generation')
+class LeadGeneration(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        product_id = data.get('product_id')
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+        
+        result = supabase.table('lead_subreddits').select('*').eq('product_id', product_id).execute()
+        subreddits = [lead['subreddit'] for lead in result.data]
+
+        # Get product data
+        product_result = supabase.table('products').select('*').eq('id', product_id).execute()
+        product_data = product_result.data[0]
+
+        unformatted_posts, posts = lead_posts(subreddits)
+
+        # Process posts in batches of 10
+        batch_size = 10
+        selected_posts = []
+        
+        for i in range(0, len(posts), batch_size):
+            batch = posts[i:i + batch_size]
+            messages = lead_generation_prompt(product_data, batch)
+            model = Model()
+
+            response = model.gemini_lead_checking(messages)
+
+            try:
+                response_data = json.loads(response)
+                post_ids = response_data.get('post_ids', [])
+                print(post_ids)
+                for post_id in post_ids:
+                    selected_posts.append(posts[post_id])
+            except json.JSONDecodeError as e:
+                print(f"Failed to parse AI response: {e}")
+                print(f"Raw response: {response}")
+        
+        messages = lead_generation_prompt_2(product_data, selected_posts)
+
+        model = Model()
+        response = model.gemini_chat_completion(messages)
+        response_data = json.loads(response)
+        comments = response_data.get('comments', [])
+
+        generated_leads = []
+        for comment in comments:
+            for key, value in comment.items():
+                new_post = {}
+                unformatted_post = unformatted_posts[int(key)]
+                new_post['comment'] = value
+                new_post['selftext'] = unformatted_post['selftext']
+                new_post['title'] = unformatted_post['title']
+                new_post['url'] = unformatted_post['url']
+                new_post['score'] = unformatted_post['score']
+                generated_leads.append(new_post)
+
+        return jsonify(generated_leads)
+
+

@@ -100,3 +100,63 @@ def get_product_lead_subreddits(product_id):
         }), 200
     else:
         return jsonify({'error': 'Failed to fetch leads'}), 500
+    
+def lead_posts(subreddits):
+    post_content = []
+    for subreddit in subreddits:
+        subreddit = reddit.subreddit(subreddit)
+        for post in subreddit.new(limit=10):
+            if post.over_18 == True:
+                continue
+            
+            comments = []
+            
+            # Construct the proper Reddit comment URL using post ID
+            # This ensures we get the comment page URL, not the direct image/media URL
+            comment_url = f"https://www.reddit.com/r/{subreddit}/comments/{post.id}/"
+            
+            # Get the post using the comment URL
+            post = reddit.submission(url=comment_url)
+            post.comment_sort = 'top'   
+
+            for comment in post.comments[:3]:
+                new_comment = {
+                    "comment": comment.body,
+                    "score": comment.score
+                }
+                comments.append(new_comment)
+
+            lead_post = {
+                "title": post.title,
+                "score": post.score,
+                "comments": post.num_comments,
+                "created": post.created,
+                "url": comment_url,
+                "selftext": post.selftext[:1000] if post.selftext else "No text",
+                "top_comments": comments
+            }
+            post_content.append(lead_post)
+
+    # ===== Format Posts Data for Better AI Understanding =====
+    formatted_posts = []
+    
+    for i, post in enumerate(post_content, 0):
+        formatted_post = f"""
+            === POST {i} ===
+            Title: {post['title']}
+            Score: {post['score']} upvotes
+            Total Comments: {post['comments']}
+            URL: {post['url']}
+            Content: {post['selftext']}
+
+            TOP COMMENTS:
+        """
+        
+        for j, comment in enumerate(post['top_comments'], 1):
+            formatted_post += f"{j}. Score: {comment['score']} | Comment: {comment['comment']}\n"
+        
+        formatted_post += "=" * 30
+        formatted_posts.append(formatted_post)
+    
+    return post_content, formatted_posts
+
