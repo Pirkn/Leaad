@@ -203,7 +203,7 @@ curl -X GET http://localhost:5000/products \
 
 ### POST /generate-reddit-post
 
-Generate Reddit marketing posts using AI based on product information stored in the database. Creates organic, value-driven posts that feel authentic rather than promotional.
+Generate Reddit marketing posts using AI based on product information stored in the database. Creates organic, value-driven posts that feel authentic rather than promotional and saves them to the posts table.
 
 **Headers:**
 
@@ -238,6 +238,12 @@ Generate Reddit marketing posts using AI based on product information stored in 
 2. Uses sophisticated prompt engineering to generate authentic Reddit posts
 3. Creates 5 different post variations for different subreddits
 4. Focuses on value-driven content with natural product mentions
+5. Saves all generated posts to the posts table with read status set to false
+
+**Database Storage:**
+- All generated posts are automatically saved to the `posts` table
+- Each post includes: user_id, product_id, subreddit, title, description, read (false)
+- Posts are associated with the authenticated user and specified product
 
 **Example Usage:**
 
@@ -247,6 +253,73 @@ curl -X POST http://localhost:5000/generate-reddit-post \
   -H "Authorization: Bearer <your-jwt-token>" \
   -d '{
     "product_id": "your-product-uuid"
+  }'
+```
+
+### GET /get-reddit-posts
+
+Retrieve all Reddit posts generated for the authenticated user, ordered by creation date (newest first).
+
+**Headers:**
+- `Authorization: Bearer <jwt-token>` (Required)
+
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "user_id": "user-uuid",
+    "product_id": "product-uuid",
+    "subreddit": "entrepreneur",
+    "title": "What I learned about validating startup ideas",
+    "description": "After spending 6 months building features nobody wanted...",
+    "read": false,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
+  }
+]
+```
+
+**Example Usage:**
+
+```bash
+curl -X GET http://localhost:5000/get-reddit-posts \
+  -H "Authorization: Bearer <your-jwt-token>"
+```
+
+### POST /mark-reddit-post-as-read
+
+Mark a specific Reddit post as read for the authenticated user.
+
+**Headers:**
+- `Content-Type: application/json`
+- `Authorization: Bearer <jwt-token>` (Required)
+
+**Request Body:**
+```json
+{
+  "post_id": "uuid"
+}
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "read": true
+  }
+]
+```
+
+**Example Usage:**
+
+```bash
+curl -X POST http://localhost:5000/mark-reddit-post-as-read \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-jwt-token>" \
+  -d '{
+    "post_id": "your-post-uuid"
   }'
 ```
 
@@ -556,6 +629,30 @@ Backend/
 - `product_id` (UUID, Foreign Key to products)
 - `subreddit` (Text)
 - `created_at` (Timestamp)
+
+### Posts Table
+
+- `id` (UUID, Primary Key)
+- `user_id` (UUID, Foreign Key to users)
+- `product_id` (UUID, Foreign Key to products)
+- `subreddit` (Text)
+- `title` (Text)
+- `description` (Text)
+- `read` (Boolean, default false)
+- `created_at` (Timestamp)
+- `updated_at` (Timestamp)
+
+### Leads Table
+
+- `id` (UUID, Primary Key)
+- `uid` (UUID, Foreign Key to users)
+- `selftext` (Text)
+- `title` (Text)
+- `url` (Text)
+- `score` (Integer)
+- `read` (Boolean, default false)
+- `created_at` (Timestamp)
+- `updated_at` (Timestamp)
 
 ## AI Integration Details
 
