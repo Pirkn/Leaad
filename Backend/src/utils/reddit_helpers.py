@@ -136,7 +136,8 @@ def lead_posts(subreddits):
                 "top_comments": comments,
                 "num_comments": post.num_comments,
                 "author": post.author.name if post.author else 'deleted',
-                "subreddit": subreddit_name
+                "subreddit": subreddit_name,
+                "date": post.created_utc
             }
             post_content.append(lead_post)
 

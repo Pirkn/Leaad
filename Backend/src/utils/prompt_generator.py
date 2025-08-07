@@ -163,7 +163,7 @@ def lead_generation_prompt(product_data, posts):
     3. Consider if you can provide genuine value (80%) + subtle promotion (20%)
     4. Only select posts where you can make a meaningful contribution
     
-    RETURN FORMAT:
+    RETURN JSON FORMAT:
     {{"post_ids": [Postnumber1, Postnumber2, ...]}}
     
     IMPORTANT:
@@ -205,7 +205,7 @@ def lead_generation_prompt_2(product_data, posts):
     - If no posts meet criteria, return empty array
     - Select at least 5 posts
 
-    RETURN FORMAT:
+    RETURN JSON FORMAT:
     {{"comments": [
         {{"[postnumber]": "Your comment for postnumber"}},
         {{"[postnumber]": "Your comment for postnumber"}},

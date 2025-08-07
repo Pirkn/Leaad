@@ -3,14 +3,14 @@ from flask_smorest import Blueprint
 from flask import jsonify, request, g, current_app
 from dotenv import load_dotenv
 from src.utils.auth import verify_supabase_token
-from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt, lead_generation_prompt, lead_generation_prompt_2
+from src.utils.prompt_generator import lead_generation_prompt, lead_generation_prompt_2
 from src.utils.models import Model
 from supabase import create_client, Client
-from src.utils.website_scraper import get_website_content
 from src.utils.reddit_helpers import lead_posts
 import os
 import json
 import uuid
+import datetime
 load_dotenv()
 
 blp = Blueprint('Leads', __name__, description='Lead Operations')
@@ -34,7 +34,6 @@ class LeadGeneration(MethodView):
         product_data = product_result.data[0]
 
         unformatted_posts, posts = lead_posts(subreddits)
-        
         # Creates a file with the posts
         with open('posts.json', 'w') as f:
             json.dump(posts, f)
@@ -84,12 +83,16 @@ class LeadGeneration(MethodView):
                 new_post['url'] = unformatted_post['url']
                 new_post['score'] = unformatted_post['score']
                 new_post['read'] = False
+                new_post['num_comments'] = unformatted_post['num_comments']
+                new_post['author'] = unformatted_post['author']
+                new_post['subreddit'] = unformatted_post['subreddit']
+                new_post['date'] = unformatted_post['date']
                 generated_leads.append(new_post)
 
         # Save generated leads to the leads table
         user_id = g.current_user['id']
         leads_to_insert = []
-        
+
         for lead in generated_leads:
             lead_data = {
                 'id': lead['id'],
@@ -99,7 +102,11 @@ class LeadGeneration(MethodView):
                 'title': lead['title'],
                 'url': lead['url'],
                 'score': lead['score'],
-                'read': lead['read']
+                'read': lead['read'],
+                'num_comments': lead['num_comments'],
+                'author': lead['author'],
+                'subreddit': lead['subreddit'],
+                'date': datetime.datetime.fromtimestamp(lead['date'])
             }
             leads_to_insert.append(lead_data)
         
@@ -140,4 +147,18 @@ class MarkLeadAsRead(MethodView):
         supabase: Client = create_client(supabase_url, supabase_key)
 
         result = supabase.table('leads').update({'read': True}).eq('id', lead_id).execute()
+        return jsonify(result.data)
+    
+@blp.route('/mark-lead-as-unread')
+class MarkLeadAsUnread(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        lead_id = data.get('lead_id')
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('leads').update({'read': False}).eq('id', lead_id).execute()
         return jsonify(result.data)
