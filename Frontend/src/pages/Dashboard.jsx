@@ -1,183 +1,644 @@
 import { useNavigate } from "react-router-dom";
-import { useHealthCheck } from "../hooks/useApi";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  useHealthCheck,
+  useLeads,
+  useRedditPosts,
+  useProducts,
+} from "../hooks/useApi";
+import staticDataService from "../services/staticData";
+import {
+  TrendingUp,
+  Users,
+  FileText,
+  Package,
+  MessageCircle,
+  Eye,
+  Clock,
+  ArrowRight,
+  CheckCircle,
+  AlertCircle,
+  Activity,
+  Sparkles,
+  Flame,
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Skeleton } from "../components/ui/skeleton";
 
 function Dashboard() {
   const navigate = useNavigate();
 
-  // TanStack Query hooks
+  // API hooks for real data
   const { data: healthData, isLoading: healthLoading } = useHealthCheck();
+  const { data: leads, isLoading: leadsLoading } = useLeads();
+  const { data: posts, isLoading: postsLoading } = useRedditPosts();
+  const { data: productsResponse, isLoading: productsLoading } = useProducts();
+
+  // Get viral templates count
+  const viralTemplates = staticDataService.getViralPosts();
+  const viralTemplatesCount = viralTemplates.length;
+
+  // Calculate real metrics
+  const totalLeads = leads?.length || 0;
+  const unreadLeads = leads?.filter((lead) => !lead.read)?.length || 0;
+  const totalPosts = posts?.length || 0;
+  const unreadPosts = posts?.filter((post) => !post.read)?.length || 0;
+  const hasProduct = productsResponse?.products?.length > 0;
+  const product = productsResponse?.products?.[0];
+
+  // Calculate engagement metrics
+  const totalUpvotes = viralTemplates.reduce(
+    (sum, template) => sum + (template.upvotes || 0),
+    0
+  );
+  const totalComments = viralTemplates.reduce(
+    (sum, template) => sum + (template.comments || 0),
+    0
+  );
+  const avgEngagement =
+    viralTemplates.length > 0
+      ? Math.round((totalUpvotes + totalComments) / viralTemplates.length)
+      : 0;
+
+  // Get recent activity (last 5 leads)
+  const recentLeads = leads?.slice(0, 5) || [];
+  const recentPosts = posts?.slice(0, 3) || [];
 
   const handleAnalyzeProduct = () => {
     navigate("/products");
   };
 
+  const handleViewLeads = () => {
+    navigate("/leads");
+  };
+
+  const handleViewPosts = () => {
+    navigate("/posts");
+  };
+
+  const handleViewTemplates = () => {
+    navigate("/viral-templates");
+  };
+
+  const handleViewKarma = () => {
+    navigate("/karma");
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      return "1 day ago";
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
+  };
+
+  const isNew = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    return diffDays < 1;
+  };
+
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <button
-          onClick={handleAnalyzeProduct}
-          className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm font-medium"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="p-6"
+    >
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600 mt-1">
+              Welcome back! Here's what's happening with your Reddit marketing.
+            </p>
+          </div>
+          <div className="flex items-center space-x-3">
+            {!productsLoading && !hasProduct && (
+              <Button
+                onClick={handleAnalyzeProduct}
+                className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+              >
+                <Package className="w-4 h-4 mr-2" />
+                Add Product
+              </Button>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="space-y-6"
         >
-          View Products
-        </button>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              onClick={handleViewLeads}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
+                    <Users className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                      Total Leads
+                    </p>
+                    {leadsLoading ? (
+                      <Skeleton className="h-6 w-8" />
+                    ) : (
+                      <p className="text-xl font-semibold text-gray-900">
+                        {totalLeads}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="mt-2">
+                {unreadLeads > 0 ? (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    {unreadLeads} new
+                  </span>
+                ) : (
+                  <span className="text-xs text-gray-500">
+                    {totalLeads === 0 ? "No leads yet" : "All caught up"}
+                  </span>
+                )}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.15 }}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              onClick={handleViewPosts}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
+                    <FileText className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                      Generated Posts
+                    </p>
+                    {postsLoading ? (
+                      <Skeleton className="h-6 w-8" />
+                    ) : (
+                      <p className="text-xl font-semibold text-gray-900">
+                        {totalPosts}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="mt-2">
+                {unreadPosts > 0 ? (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {unreadPosts} new
+                  </span>
+                ) : (
+                  <span className="text-xs text-gray-500">
+                    {totalPosts === 0 ? "No posts yet" : "All caught up"}
+                  </span>
+                )}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 }}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              onClick={handleViewTemplates}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 border border-orange-200 rounded-md bg-orange-50">
+                    <Flame className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                      Viral Templates
+                    </p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {viralTemplatesCount}
+                    </p>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="mt-2">
+                <span className="text-xs text-gray-500">
+                  Avg engagement: {avgEngagement}
+                </span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.25 }}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow cursor-pointer"
+              onClick={handleViewLeads}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 border border-blue-200 rounded-md bg-blue-50">
+                    <Activity className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                      This Week
+                    </p>
+                    {leadsLoading || postsLoading ? (
+                      <Skeleton className="h-6 w-8" />
+                    ) : (
+                      <p className="text-xl font-semibold text-gray-900">
+                        {(() => {
+                          const oneWeekAgo = new Date();
+                          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+                          const recentLeads =
+                            leads?.filter(
+                              (lead) => new Date(lead.created_at) >= oneWeekAgo
+                            )?.length || 0;
+
+                          const recentPosts =
+                            posts?.filter(
+                              (post) => new Date(post.created_at) >= oneWeekAgo
+                            )?.length || 0;
+
+                          return recentLeads + recentPosts;
+                        })()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="mt-2">
+                <span className="text-xs text-gray-500">New leads & posts</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Product Status */}
+          {productsLoading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 }}
+              className="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Skeleton className="w-10 h-10 rounded-lg" />
+                  <div>
+                    <Skeleton className="h-4 w-32 mb-1" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <Skeleton className="h-8 w-20 rounded-md" />
+              </div>
+            </motion.div>
+          ) : !hasProduct ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 }}
+              className="bg-orange-50 border border-orange-200 rounded-lg p-4"
+            >
+              <div className="flex items-start space-x-3">
+                <div className="w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <AlertCircle className="w-5 h-5 text-orange-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-orange-900 mb-1">
+                    No product configured
+                  </h3>
+                  <p className="text-sm text-orange-700 mb-3">
+                    Add your product to start generating leads and Reddit posts.
+                  </p>
+                  <Button
+                    onClick={handleAnalyzeProduct}
+                    className="bg-orange-600 hover:bg-orange-700 text-white text-sm"
+                  >
+                    <Package className="w-4 h-4 mr-2" />
+                    Add Your Product
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          ) : product ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 }}
+              className="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">
+                      Monitoring: {product.name}
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      Active since{" "}
+                      {new Date(product.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleAnalyzeProduct}
+                  variant="outline"
+                  className="text-sm"
+                >
+                  View Details
+                </Button>
+              </div>
+            </motion.div>
+          ) : null}
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: 0.35 }}
+            className="bg-white border border-gray-200 rounded-lg p-4"
+          >
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <Button
+                onClick={handleViewLeads}
+                variant="outline"
+                size="sm"
+                className="justify-start"
+                disabled={!hasProduct}
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Generate Leads
+              </Button>
+              <Button
+                onClick={handleViewPosts}
+                variant="outline"
+                size="sm"
+                className="justify-start"
+                disabled={!hasProduct}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Create Posts
+              </Button>
+              <Button
+                onClick={handleViewTemplates}
+                variant="outline"
+                size="sm"
+                className="justify-start"
+              >
+                <Flame className="w-4 h-4 mr-2" />
+                Browse Templates
+              </Button>
+              <Button
+                onClick={handleViewKarma}
+                variant="outline"
+                size="sm"
+                className="justify-start"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Build Karma
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Recent Activity */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Leads */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.4 }}
+              className="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Recent Leads
+                </h2>
+                <Button
+                  onClick={handleViewLeads}
+                  variant="ghost"
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  View All
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+              <div className="space-y-3">
+                {leadsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
+                      >
+                        <Skeleton className="w-2 h-2 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-full" />
+                          <div className="flex items-center space-x-2">
+                            <Skeleton className="h-3 w-16" />
+                            <Skeleton className="h-3 w-20" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : recentLeads.length > 0 ? (
+                  recentLeads.map((lead, index) => (
+                    <div
+                      key={lead.id}
+                      className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          lead.read ? "bg-gray-400" : "bg-orange-500"
+                        }`}
+                      ></div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {lead.title}
+                        </p>
+                        <div className="flex items-center space-x-2 text-xs text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          <span>{formatDate(lead.created_at)}</span>
+                          {isNew(lead.created_at) && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              New
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <Users className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-500">No leads yet</p>
+                    {hasProduct && (
+                      <Button
+                        onClick={handleViewLeads}
+                        size="sm"
+                        className="mt-2 bg-gray-800 hover:bg-gray-700 text-white"
+                      >
+                        Generate Leads
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Recent Posts */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.45 }}
+              className="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Recent Posts
+                </h2>
+                <Button
+                  onClick={handleViewPosts}
+                  variant="ghost"
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  View All
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+              <div className="space-y-3">
+                {postsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
+                      >
+                        <Skeleton className="w-2 h-2 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-full" />
+                          <div className="flex items-center space-x-2">
+                            <Skeleton className="h-3 w-16" />
+                            <Skeleton className="h-3 w-20" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : recentPosts.length > 0 ? (
+                  recentPosts.map((post, index) => (
+                    <div
+                      key={post.id}
+                      className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          post.read ? "bg-gray-400" : "bg-blue-500"
+                        }`}
+                      ></div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {post.title}
+                        </p>
+                        <div className="flex items-center space-x-2 text-xs text-gray-500">
+                          <MessageCircle className="w-3 h-3" />
+                          <span>r/{post.subreddit}</span>
+                          <Clock className="w-3 h-3" />
+                          <span>{formatDate(post.created_at)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <FileText className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-500">No posts yet</p>
+                    {hasProduct && (
+                      <Button
+                        onClick={handleViewPosts}
+                        size="sm"
+                        className="mt-2 bg-gray-800 hover:bg-gray-700 text-white"
+                      >
+                        Create Posts
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Insights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: 0.5 }}
+            className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4"
+          >
+            <div className="flex items-start space-x-3">
+              <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Activity className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-blue-900 mb-1">
+                  Pro Tips
+                </h3>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li>• Generate leads regularly to find new opportunities</li>
+                  <li>• Use viral templates to create engaging Reddit posts</li>
+                  <li>
+                    • Build karma with our AI-generated comments and posts
+                  </li>
+                  <li>• Monitor your product mentions across Reddit</li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
-
-      {/* Health Status */}
-      {healthData && (
-        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-sm text-green-700">
-              API Status: {healthData.status}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
-              <svg
-                className="w-5 h-5 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Total Leads
-              </p>
-              <p className="text-xl font-semibold text-gray-900">1,234</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
-              <svg
-                className="w-5 h-5 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Converted
-              </p>
-              <p className="text-xl font-semibold text-gray-900">567</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="p-2 border border-gray-200 rounded-md bg-gray-50">
-              <svg
-                className="w-5 h-5 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Templates
-              </p>
-              <p className="text-xl font-semibold text-gray-900">89</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="p-2 border border-orange-200 rounded-md bg-orange-50">
-              <svg
-                className="w-5 h-5 text-orange-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Viral Posts
-              </p>
-              <p className="text-xl font-semibold text-gray-900">234</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Recent Activity
-        </h2>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                New lead generated from viral template
-              </p>
-              <p className="text-xs text-gray-500">2 minutes ago</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                Campaign "Summer Sale" completed
-              </p>
-              <p className="text-xs text-gray-500">1 hour ago</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                New viral template created
-              </p>
-              <p className="text-xs text-gray-500">3 hours ago</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </motion.div>
   );
 }
 

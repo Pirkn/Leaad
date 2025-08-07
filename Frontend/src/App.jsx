@@ -9,6 +9,7 @@ import ViralTemplateEdit from "./pages/ViralTemplateEdit";
 import Products from "./pages/Products";
 import ProductAnalysis from "./pages/ProductAnalysis";
 import RedditPosts from "./pages/RedditPosts";
+import Posts from "./pages/Posts";
 import Settings from "./pages/Settings";
 import Karma from "./pages/Karma";
 import SignIn from "./pages/SignIn";
@@ -122,6 +123,19 @@ function App() {
                   <Sidebar />
                   <div className="flex-1 overflow-auto">
                     <RedditPosts />
+                  </div>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/posts"
+            element={
+              <ProtectedRoute>
+                <div className="flex h-screen bg-gray-50">
+                  <Sidebar />
+                  <div className="flex-1 overflow-auto">
+                    <Posts />
                   </div>
                 </div>
               </ProtectedRoute>

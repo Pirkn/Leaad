@@ -352,3 +352,19 @@ export const useMarkLeadAsRead = () => {
     },
   });
 };
+
+// Reddit Posts Query
+export const useRedditPosts = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ["redditPosts"],
+    queryFn: async () => {
+      const response = await apiService.getRedditPosts();
+      return response; // Backend returns array of posts
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+};

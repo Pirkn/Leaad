@@ -305,7 +305,7 @@ function Leads() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="bg-white border border-gray-200 rounded-lg p-6"
+            className="bg-white border border-gray-200 rounded-lg p-4"
           >
             <div className="flex items-center justify-between">
               {/* Left side - Action buttons */}

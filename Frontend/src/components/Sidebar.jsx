@@ -1,7 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
-import { Home, Package, Users, Flame, Sparkles, Settings } from "lucide-react";
+import {
+  Home,
+  Package,
+  Users,
+  Flame,
+  Sparkles,
+  Settings,
+  FileText,
+} from "lucide-react";
 
 function Sidebar() {
   const location = useLocation();
@@ -140,6 +148,32 @@ function Sidebar() {
           >
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
               <Link
+                to="/posts"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
+                  isActive("/posts")
+                    ? "bg-orange-50 text-orange-700 border border-orange-200"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+                style={{
+                  borderColor: isActive("/posts") ? "#FFE4CC" : "transparent",
+                  borderWidth: "1px",
+                  transition: "border-color 0.2s ease",
+                }}
+              >
+                {/* Posts Icon */}
+                <FileText className="w-5 h-5" strokeWidth={1.5} />
+                <span className="text-sm font-medium">Posts</span>
+              </Link>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.8 }}
+          >
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+              <Link
                 to="/viral-templates"
                 className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                   isActive("/viral-templates")
@@ -164,7 +198,7 @@ function Sidebar() {
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.8 }}
+            transition={{ duration: 0.3, delay: 0.9 }}
           >
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
               <Link
@@ -190,7 +224,7 @@ function Sidebar() {
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.8 }}
+            transition={{ duration: 0.3, delay: 1.0 }}
           >
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
               <Link

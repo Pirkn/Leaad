@@ -91,6 +91,10 @@ class ApiService {
     });
   }
 
+  async getRedditPosts() {
+    return this.request("/get-reddit-posts");
+  }
+
   // Karma endpoints
   async generateKarmaComment() {
     return this.request("/create_karma_comment", {
