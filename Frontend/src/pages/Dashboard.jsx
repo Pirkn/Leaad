@@ -61,7 +61,7 @@ function Dashboard() {
       : 0;
 
   // Get recent activity (last 5 leads)
-  const recentLeads = leads?.slice(0, 5) || [];
+  const recentLeads = leads?.slice(0, 3) || [];
   const recentPosts = posts?.slice(0, 3) || [];
 
   const handleAnalyzeProduct = () => {
@@ -484,32 +484,40 @@ function Dashboard() {
                     ))}
                   </div>
                 ) : recentLeads.length > 0 ? (
-                  recentLeads.map((lead, index) => (
-                    <div
-                      key={lead.id}
-                      className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
-                    >
+                  <div className="relative">
+                    {recentLeads.map((lead, index) => (
                       <div
-                        className={`w-2 h-2 rounded-full ${
-                          lead.read ? "bg-gray-400" : "bg-orange-500"
-                        }`}
-                      ></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {lead.title}
-                        </p>
-                        <div className="flex items-center space-x-2 text-xs text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          <span>{formatDate(lead.created_at)}</span>
-                          {isNew(lead.created_at) && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              New
-                            </span>
-                          )}
+                        key={lead.id}
+                        className={`flex items-center space-x-3 p-3 cursor-pointer hover:bg-gray-50 transition-colors ${
+                          index === 2 ? "opacity-75 hover:opacity-90" : ""
+                        } ${index < 2 ? "border-b border-gray-100" : ""}`}
+                        onClick={() => handleViewLeads()}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            lead.read ? "bg-gray-400" : "bg-orange-500"
+                          }`}
+                        ></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {lead.title}
+                          </p>
+                          <div className="flex items-center space-x-2 text-xs text-gray-500">
+                            <Clock className="w-3 h-3" />
+                            <span>{formatDate(lead.created_at)}</span>
+                            {isNew(lead.created_at) && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                New
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+                    {recentLeads.length === 3 && (
+                      <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+                    )}
+                  </div>
                 ) : (
                   <div className="text-center py-4">
                     <Users className="w-8 h-8 mx-auto text-gray-400 mb-2" />
@@ -551,7 +559,7 @@ function Dashboard() {
               <div className="space-y-3">
                 {postsLoading ? (
                   <div className="space-y-3">
-                    {[1, 2].map((i) => (
+                    {[1, 2, 3].map((i) => (
                       <div
                         key={i}
                         className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
@@ -568,29 +576,37 @@ function Dashboard() {
                     ))}
                   </div>
                 ) : recentPosts.length > 0 ? (
-                  recentPosts.map((post, index) => (
-                    <div
-                      key={post.id}
-                      className="flex items-center space-x-3 p-3 border border-gray-100 rounded-md bg-gray-50"
-                    >
+                  <div className="relative">
+                    {recentPosts.map((post, index) => (
                       <div
-                        className={`w-2 h-2 rounded-full ${
-                          post.read ? "bg-gray-400" : "bg-blue-500"
-                        }`}
-                      ></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {post.title}
-                        </p>
-                        <div className="flex items-center space-x-2 text-xs text-gray-500">
-                          <MessageCircle className="w-3 h-3" />
-                          <span>r/{post.subreddit}</span>
-                          <Clock className="w-3 h-3" />
-                          <span>{formatDate(post.created_at)}</span>
+                        key={post.id}
+                        className={`flex items-center space-x-3 p-3 cursor-pointer hover:bg-gray-50 transition-colors ${
+                          index === 2 ? "opacity-75 hover:opacity-90" : ""
+                        } ${index < 2 ? "border-b border-gray-100" : ""}`}
+                        onClick={() => handleViewPosts()}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            post.read ? "bg-gray-400" : "bg-blue-500"
+                          }`}
+                        ></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {post.title}
+                          </p>
+                          <div className="flex items-center space-x-2 text-xs text-gray-500">
+                            <MessageCircle className="w-3 h-3" />
+                            <span>r/{post.subreddit}</span>
+                            <Clock className="w-3 h-3" />
+                            <span>{formatDate(post.created_at)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+                    {recentPosts.length === 3 && (
+                      <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+                    )}
+                  </div>
                 ) : (
                   <div className="text-center py-4">
                     <FileText className="w-8 h-8 mx-auto text-gray-400 mb-2" />
