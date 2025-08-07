@@ -1,6 +1,8 @@
 import os
+import time
 from dotenv import load_dotenv
 from openai import OpenAI
+from openai import InternalServerError
 from src.utils.cost_calculator import GeminiCostCalculator
 
 load_dotenv() 
@@ -17,17 +19,34 @@ class Model:
             api_key=self.gemini_api_key,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
         )
+    
+    def _make_api_call_with_retry(self, messages):
+        delays = [5, 10, 15, 20]  # Delays in seconds for each retry
+        
+        for attempt in range(5):  # 3 retries + 1 initial attempt
+            try:
+                response = self.gemini_client.chat.completions.create(
+                    model="gemini-2.5-flash",
+                    messages=messages,
+                    temperature=0.0,
+                    stream=False,
+                    response_format={"type": "json_object"}
+                )
+                return response
+            except Exception:
+                if attempt < 4:  # Still have retries left
+                    delay = delays[attempt]
+                    print(f"Model overloaded (attempt {attempt + 1}/4). Waiting {delay} seconds before retry...")
+                    time.sleep(delay)
+                    continue
+                else:
+                    print("Max retries reached. Giving up.")
+                    raise Exception("The AI model is currently overloaded. Please try again in a few minutes.")
 
     def gemini_chat_completion(self, messages): 
-        # ===== Generate Response =====
-        response = self.gemini_client.chat.completions.create(
-            model="gemini-2.5-flash",
-            messages=messages,
-            temperature=0.0,
-            stream=False,
-            response_format={"type": "json_object"}
-        )
-
+        # ===== Generate Response with Retry Logic =====
+        response = self._make_api_call_with_retry(messages)
+        print(type(response))
         # ===== Calculate actual cost =====
         actual_cost = self.cost_calculator.calculate_cost(
             messages=messages,
@@ -40,13 +59,16 @@ class Model:
         return response.choices[0].message.content
     
     def gemini_lead_checking(self, messages):
-        response = self.gemini_client.chat.completions.create(
-            model="gemini-2.0-flash-lite",
-            messages=messages,
-            temperature=0.0,
-            stream=False,
-            response_format={"type": "json_object"}
-        )
+        def api_call():
+            return self.gemini_client.chat.completions.create(
+                model="gemini-2.0-flash-lite",
+                messages=messages,
+                temperature=0.0,
+                stream=False,
+                response_format={"type": "json_object"}
+            )
+        
+        response = self._make_api_call_with_retry(api_call)
 
         actual_cost = self.cost_calculator.calculate_cost(
             messages=messages,

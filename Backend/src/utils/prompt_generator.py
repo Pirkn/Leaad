@@ -207,11 +207,11 @@ def lead_generation_prompt_2(product_data, posts):
 
     RETURN FORMAT:
     {{"comments": [
-        {{"1": "Your comment for post 1"}},
-        {{"2": "Your comment for post 2"}},
-        {{"3": "Your comment for post 3"}},
+        {{"[postnumber]": "Your comment for postnumber"}},
+        {{"[postnumber]": "Your comment for postnumber"}},
         ...
     ]}}
+    - Use the EXACT post number from ===== POST [postnumber] ===== as the key for JSONs
     
     IMPORTANT:
     - Use sequential post numbers (1, 2, 3, etc.)

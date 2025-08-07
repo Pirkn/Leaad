@@ -34,15 +34,21 @@ class LeadGeneration(MethodView):
         product_data = product_result.data[0]
 
         unformatted_posts, posts = lead_posts(subreddits)
+        
+        # Creates a file with the posts
+        with open('posts.json', 'w') as f:
+            json.dump(posts, f)
 
         # Process posts in batches of 10
         batch_size = 10
         selected_posts = []
         
+        # Create one Model instance to reuse for all batches
+        model = Model()
+        
         for i in range(0, len(posts), batch_size):
             batch = posts[i:i + batch_size]
             messages = lead_generation_prompt(product_data, batch)
-            model = Model()
 
             response = model.gemini_lead_checking(messages)
 
@@ -58,10 +64,13 @@ class LeadGeneration(MethodView):
         
         messages = lead_generation_prompt_2(product_data, selected_posts)
 
-        model = Model()
         response = model.gemini_chat_completion(messages)
         response_data = json.loads(response)
         comments = response_data.get('comments', [])
+
+        # Creates a file with the comments
+        with open('comments.json', 'w') as f:
+            json.dump(comments, f)
 
         generated_leads = []
         for comment in comments:
@@ -85,6 +94,7 @@ class LeadGeneration(MethodView):
             lead_data = {
                 'id': lead['id'],
                 'uid': user_id,
+                'comment': lead['comment'],
                 'selftext': lead['selftext'],
                 'title': lead['title'],
                 'url': lead['url'],
@@ -99,7 +109,6 @@ class LeadGeneration(MethodView):
                 print(f"Successfully saved {len(leads_to_insert)} leads to database")
             except Exception as e:
                 print(f"Error saving leads to database: {e}")
-                # Continue with the response even if database save fails
 
         return jsonify(generated_leads)
     

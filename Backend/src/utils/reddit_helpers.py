@@ -114,7 +114,7 @@ def lead_posts(subreddits):
             # Construct the proper Reddit comment URL using post ID
             # This ensures we get the comment page URL, not the direct image/media URL
             comment_url = f"https://www.reddit.com/r/{subreddit}/comments/{post.id}/"
-            
+            subreddit_name = str(subreddit)
             # Get the post using the comment URL
             post = reddit.submission(url=comment_url)
             post.comment_sort = 'top'   
@@ -133,7 +133,10 @@ def lead_posts(subreddits):
                 "created": post.created,
                 "url": comment_url,
                 "selftext": post.selftext[:1000] if post.selftext else "No text",
-                "top_comments": comments
+                "top_comments": comments,
+                "num_comments": post.num_comments,
+                "author": post.author.name if post.author else 'deleted',
+                "subreddit": subreddit_name
             }
             post_content.append(lead_post)
 
