@@ -15,6 +15,8 @@ import {
   Rocket,
   Shield,
   Award,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +25,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -104,6 +106,7 @@ const slideInFromRight = {
 
 export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -127,6 +130,20 @@ export default function HomePage() {
     }
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -138,70 +155,54 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-32 relative">
           <div className="flex justify-between items-center h-16">
             <motion.div
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 cursor-pointer"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
                 <Target className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">
-                LeadGen AI
-              </span>
+              <span className="text-xl font-bold text-gray-900">Leaad</span>
             </motion.div>
-            <div className="hidden md:flex items-center justify-center flex-1">
-              <div className="flex items-center space-x-8 ml-8">
-                <motion.a
-                  href="#features"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Features
-                </motion.a>
-                <motion.a
-                  href="#how-it-works"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  How it Works
-                </motion.a>
-                <motion.a
-                  href="#pricing"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Pricing
-                </motion.a>
-                <motion.a
-                  href="#faq"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  FAQ
-                </motion.a>
-              </div>
-            </div>
-            <div className="hidden md:flex items-center space-x-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <motion.button
+                onClick={() => scrollToSection("features")}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
               >
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-orange-200 text-orange-600 hover:bg-orange-50 bg-transparent"
-                  onClick={() => handleAuthAction("/signin")}
-                >
-                  {user ? "Dashboard" : "Sign In"}
-                </Button>
-              </motion.div>
+                Features
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection("how-it-works")}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+              >
+                How it Works
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection("pricing")}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+              >
+                Pricing
+              </motion.button>
+              <motion.button
+                onClick={() => scrollToSection("faq")}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+              >
+                FAQ
+              </motion.button>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -209,13 +210,145 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
-                  onClick={() => handleAuthAction("/signup")}
+                  onClick={() => handleAuthAction("/signin")}
                 >
                   {user ? "Dashboard" : "Get Started"}
                 </Button>
               </motion.div>
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <motion.button
+                onClick={toggleMobileMenu}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="button"
+              >
+                <motion.div
+                  animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="w-6 h-6 text-gray-600" />
+                  ) : (
+                    <Menu className="w-6 h-6 text-gray-600" />
+                  )}
+                </motion.div>
+              </motion.button>
+            </div>
           </div>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div
+                className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40 rounded-b-lg"
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                <motion.div
+                  className="py-4 px-4 space-y-4"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.05,
+                        delayChildren: 0.05,
+                      },
+                    },
+                  }}
+                >
+                  <motion.button
+                    onClick={() => {
+                      scrollToSection("features");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block text-gray-600 hover:text-gray-900 transition-colors py-2 w-full text-left"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                  >
+                    Features
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {
+                      scrollToSection("how-it-works");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block text-gray-600 hover:text-gray-900 transition-colors py-2 w-full text-left"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                  >
+                    How it Works
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {
+                      scrollToSection("pricing");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block text-gray-600 hover:text-gray-900 transition-colors py-2 w-full text-left"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                  >
+                    Pricing
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {
+                      scrollToSection("faq");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block text-gray-600 hover:text-gray-900 transition-colors py-2 w-full text-left"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                  >
+                    FAQ
+                  </motion.button>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="pt-2"
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                  >
+                    <Button
+                      size="lg"
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                      onClick={() => {
+                        handleAuthAction("/signin");
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      {user ? "Dashboard" : "Get Started"}
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.nav>
 
@@ -237,7 +370,7 @@ export default function HomePage() {
                 AI-Powered Lead Generation
               </motion.div>
               <motion.h1
-                className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
                 variants={itemVariants}
               >
                 Get Your Product in Front of the Right People{" "}
@@ -247,7 +380,7 @@ export default function HomePage() {
                 </span>
               </motion.h1>
               <motion.p
-                className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+                className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed px-4"
                 variants={itemVariants}
               >
                 We help you show up where it matters. From product analysis to
@@ -286,7 +419,7 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
               <motion.div
-                className="flex items-center justify-center space-x-6 text-sm text-gray-500"
+                className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-500"
                 variants={itemVariants}
               >
                 <motion.div
@@ -332,7 +465,7 @@ export default function HomePage() {
           <div className="text-center relative">
             <motion.img
               src="/src/assets/macbook-air-medium.png"
-              alt="LeadGen AI Platform Demo"
+              alt="Leaad AI Platform Demo"
               className="mx-auto max-w-full h-auto"
               style={{ maxHeight: "800px" }}
               whileHover={{ scale: 1.02 }}
@@ -354,13 +487,13 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4"
               variants={itemVariants}
             >
               Everything you need to reach your audience
             </motion.h2>
             <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4"
               variants={itemVariants}
             >
               From content creation to community building, we've got you covered
@@ -553,7 +686,6 @@ export default function HomePage() {
                 className="bg-white rounded-xl border border-gray-200 hover:border-orange-300 transition-all duration-300 group p-8 shadow-sm hover:shadow-xl relative overflow-hidden"
                 variants={itemVariants}
               >
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-bl-full"></div>
                 <motion.div
                   className="w-12 h-12 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
                   whileHover={{ rotate: 360 }}
@@ -885,7 +1017,10 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white relative">
+      <section
+        id="faq"
+        className="py-28 px-4 sm:px-6 lg:px-8 bg-white relative"
+      >
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-100 to-transparent pointer-events-none"></div>
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -912,7 +1047,7 @@ export default function HomePage() {
               className="text-sm text-gray-600 max-w-2xl mx-auto"
               variants={itemVariants}
             >
-              Everything you need to know about using LeadGen for effective
+              Everything you need to know about using Leaad for effective
               marketing
             </motion.p>
           </motion.div>
@@ -928,14 +1063,14 @@ export default function HomePage() {
                 className="border border-gray-200 rounded-lg mb-4"
               >
                 <AccordionTrigger className="px-6 py-4 text-left text-lg font-semibold text-gray-900 hover:no-underline">
-                  What is social media lead generation and how can LeadGen AI
+                  What is social media lead generation and how can Leaad AI
                   help?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <p className="text-gray-600 leading-relaxed">
                     Social media lead generation involves finding and engaging
                     with potential customers on platforms like Reddit and
-                    Twitter. LeadGen AI automates this process by analyzing your
+                    Twitter. Leaad AI automates this process by analyzing your
                     product, finding relevant posts where your solution
                     naturally fits, and generating authentic comments that don't
                     look like spam. This helps you build genuine relationships
@@ -948,7 +1083,7 @@ export default function HomePage() {
                 className="border border-gray-200 rounded-lg mb-4"
               >
                 <AccordionTrigger className="px-6 py-4 text-left text-lg font-semibold text-gray-900 hover:no-underline">
-                  How does LeadGen AI's karma building system work?
+                  How does Leaad AI's karma building system work?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <p className="text-gray-600 leading-relaxed">
@@ -967,7 +1102,7 @@ export default function HomePage() {
                 className="border border-gray-200 rounded-lg mb-4"
               >
                 <AccordionTrigger className="px-6 py-4 text-left text-lg font-semibold text-gray-900 hover:no-underline">
-                  Can LeadGen AI generate comments for my specific product and
+                  Can Leaad AI generate comments for my specific product and
                   posts?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
@@ -1024,7 +1159,7 @@ export default function HomePage() {
                 className="border border-gray-200 rounded-lg mb-4"
               >
                 <AccordionTrigger className="px-6 py-4 text-left text-lg font-semibold text-gray-900 hover:no-underline">
-                  Is my lead generation data secure with LeadGen AI?
+                  Is my lead generation data secure with Leaad AI?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <p className="text-gray-600 leading-relaxed">
