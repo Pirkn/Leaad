@@ -473,6 +473,7 @@
                     </div>
                     <button class="btn btn-success" onclick="createProduct()">Create Product</button>
                     <button class="btn btn-secondary" onclick="loadProducts()">Load My Products</button>
+                    <button class="btn btn-warning" onclick="openEditProductModal()">Edit Product</button>
                     <div id="products-loading" class="loading">
                         <div class="spinner"></div>
                         <p>Loading products...</p>
@@ -551,6 +552,48 @@
                     <p>Analyzing product with AI...</p>
                 </div>
                 <div id="product-analysis-result"></div>
+            </div>
+        </div>
+
+        <!-- Edit Product Modal -->
+        <div id="edit-product-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditProductModal()">&times;</span>
+                <h2>✏️ Edit Product</h2>
+                <div class="form-group">
+                    <label for="edit-product-select">Select Product to Edit:</label>
+                    <select id="edit-product-select" onchange="loadProductForEdit()">
+                        <option value="">Choose a product...</option>
+                    </select>
+                </div>
+                <div id="edit-product-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name:</label>
+                        <input type="text" id="edit-product-name" placeholder="Enter product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-url">Product URL:</label>
+                        <input type="url" id="edit-product-url" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-description">Description:</label>
+                        <textarea id="edit-product-description" placeholder="Product description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-target-audience">Target Audience:</label>
+                        <textarea id="edit-target-audience" placeholder="Target audience description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-problem-solved">Problem Solved:</label>
+                        <textarea id="edit-problem-solved" placeholder="Problem this product solves"></textarea>
+                    </div>
+                    <button class="btn btn-success" onclick="updateProduct()">Update Product</button>
+                </div>
+                <div id="edit-product-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Updating product...</p>
+                </div>
+                <div id="edit-product-result"></div>
             </div>
         </div>
     </div>
@@ -785,8 +828,12 @@
         // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('analysis-modal');
+            const editModal = document.getElementById('edit-product-modal');
             if (event.target === modal) {
                 closeAnalysisModal();
+            }
+            if (event.target === editModal) {
+                closeEditProductModal();
             }
         }
 
@@ -846,6 +893,184 @@
                             <button class="btn btn-success" onclick="closeAnalysisModal()">Close & Continue</button>
                         </div>
                     `;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                result.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Edit Product Modal Functions
+        function openEditProductModal() {
+            const modal = document.getElementById('edit-product-modal');
+            modal.style.display = 'block';
+            
+            // Load products for the dropdown
+            loadProductsForEditDropdown();
+        }
+
+        function closeEditProductModal() {
+            const modal = document.getElementById('edit-product-modal');
+            modal.style.display = 'none';
+            
+            // Clear the form
+            document.getElementById('edit-product-select').value = '';
+            document.getElementById('edit-product-form').style.display = 'none';
+            document.getElementById('edit-product-result').innerHTML = '';
+            
+            // Clear form fields
+            document.getElementById('edit-product-name').value = '';
+            document.getElementById('edit-product-url').value = '';
+            document.getElementById('edit-product-description').value = '';
+            document.getElementById('edit-target-audience').value = '';
+            document.getElementById('edit-problem-solved').value = '';
+        }
+
+        async function loadProductsForEditDropdown() {
+            if (!currentUser) {
+                alert('Please sign in first');
+                return;
+            }
+
+            try {
+                const token = await getSessionToken();
+                
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                const editDropdown = document.getElementById('edit-product-select');
+                editDropdown.innerHTML = '<option value="">Choose a product...</option>';
+                
+                if (data.products) {
+                    data.products.forEach(product => {
+                        const option = `<option value="${product.id}">${product.name}</option>`;
+                        editDropdown.innerHTML += option;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading products for edit dropdown:', error);
+            }
+        }
+
+        async function loadProductForEdit() {
+            const productId = document.getElementById('edit-product-select').value;
+            if (!productId) {
+                document.getElementById('edit-product-form').style.display = 'none';
+                return;
+            }
+
+            if (!currentUser) {
+                alert('Please sign in first');
+                return;
+            }
+
+            try {
+                const token = await getSessionToken();
+                
+                const response = await fetch(`${API_BASE_URL}/products`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.products) {
+                    const product = data.products.find(p => p.id == productId);
+                    if (product) {
+                        // Populate the form with product data
+                        document.getElementById('edit-product-name').value = product.name || '';
+                        document.getElementById('edit-product-url').value = product.url || '';
+                        document.getElementById('edit-product-description').value = product.description || '';
+                        document.getElementById('edit-target-audience').value = product.target_audience || '';
+                        document.getElementById('edit-problem-solved').value = product.problem_solved || '';
+                        
+                        // Show the form
+                        document.getElementById('edit-product-form').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading product for edit:', error);
+                alert('Error loading product data');
+            }
+        }
+
+        async function updateProduct() {
+            const productId = document.getElementById('edit-product-select').value;
+            if (!productId) {
+                alert('Please select a product to edit');
+                return;
+            }
+
+            if (!currentUser) {
+                alert('Please sign in first');
+                return;
+            }
+
+            const productData = {
+                product_id: productId,
+                name: document.getElementById('edit-product-name').value,
+                url: document.getElementById('edit-product-url').value,
+                description: document.getElementById('edit-product-description').value,
+                target_audience: document.getElementById('edit-target-audience').value,
+                problem_solved: document.getElementById('edit-problem-solved').value
+            };
+
+            if (!productData.name) {
+                alert('Please enter a product name');
+                return;
+            }
+
+            const loading = document.getElementById('edit-product-loading');
+            const result = document.getElementById('edit-product-result');
+            
+            loading.style.display = 'block';
+            result.innerHTML = '';
+
+            try {
+                const token = await getSessionToken();
+                
+                const response = await fetch(`${API_BASE_URL}/edit-product`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                const data = await response.json();
+                loading.style.display = 'none';
+                
+                if (data.error) {
+                    result.innerHTML = `<div class="result error">Error: ${data.message}</div>`;
+                } else {
+                    let message = `<div class="result">
+                        <h3>✅ Product Updated Successfully!</h3>
+                        <p><strong>Product:</strong> ${data.product.name}</p>
+                        <p><strong>URL:</strong> ${data.product.url || 'N/A'}</p>
+                        <p><strong>Description:</strong> ${data.product.description || 'N/A'}</p>
+                        <p><strong>Target Audience:</strong> ${data.product.target_audience || 'N/A'}</p>
+                        <p><strong>Problem Solved:</strong> ${data.product.problem_solved || 'N/A'}</p>`;
+                    
+                    if (data.subreddits_regenerated) {
+                        message += `<p style="color: #28a745; font-weight: bold;">🔄 Subreddits have been regenerated due to URL change!</p>`;
+                    }
+                    
+                    message += `<button class="btn btn-success" onclick="closeEditProductModal()">Close</button></div>`;
+                    
+                    result.innerHTML = message;
+                    
+                    // Refresh the products list
+                    loadProducts();
+                    updateProductDropdown();
                 }
             } catch (error) {
                 loading.style.display = 'none';
