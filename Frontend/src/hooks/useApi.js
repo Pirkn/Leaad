@@ -333,7 +333,6 @@ export const useGenerateLeads = () => {
 
 // Mark Lead as Read Mutation
 export const useMarkLeadAsRead = () => {
-  const queryClient = useQueryClient();
   const { user } = useAuth();
 
   return useMutation({
@@ -343,9 +342,6 @@ export const useMarkLeadAsRead = () => {
       }
       const response = await apiService.markLeadAsRead(leadId);
       return response; // Backend returns updated lead
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.leads });
     },
     onError: (error) => {
       console.error("Failed to mark lead as read:", error);

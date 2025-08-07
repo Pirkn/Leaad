@@ -2,9 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   useLeads,
-  useGenerateLeads,
   useMarkLeadAsRead,
   useProducts,
+  useGenerateLeads,
 } from "../hooks/useApi";
 import {
   Filter,
@@ -18,6 +18,7 @@ import {
   ThumbsUp,
   MessageCircle,
   Clock,
+  EyeOff,
   RotateCcw,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
@@ -26,12 +27,13 @@ function Leads() {
   const [postedFilter, setPostedFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [viewFilter, setViewFilter] = useState("all");
+  const [optimisticReads, setOptimisticReads] = useState(new Set());
 
   // API hooks
   const { data: leads, isLoading, error } = useLeads();
   const { data: productsResponse } = useProducts();
-  const generateLeadsMutation = useGenerateLeads();
   const markAsReadMutation = useMarkLeadAsRead();
+  const generateLeadsMutation = useGenerateLeads();
 
   const products = productsResponse?.products || [];
   const product = products[0]; // Assuming single product setup
@@ -59,10 +61,19 @@ function Leads() {
   };
 
   const handleMarkAsRead = async (leadId) => {
+    // Optimistically update the UI
+    setOptimisticReads((prev) => new Set([...prev, leadId]));
+
     try {
       await markAsReadMutation.mutateAsync(leadId);
     } catch (error) {
       console.error("Failed to mark lead as read:", error);
+      // Revert optimistic update on error
+      setOptimisticReads((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(leadId);
+        return newSet;
+      });
     }
   };
 
@@ -100,9 +111,13 @@ function Leads() {
 
   const filteredLeads =
     leads?.filter((lead) => {
-      if (viewFilter === "read") return lead.read;
-      if (viewFilter === "unread") return !lead.read;
-      return true; // "all"
+      // Apply optimistic updates to the lead data
+      const isOptimisticallyRead = optimisticReads.has(lead.id);
+      const effectiveReadStatus = lead.read || isOptimisticallyRead;
+
+      if (viewFilter === "read") return effectiveReadStatus;
+      if (viewFilter === "unread") return !effectiveReadStatus;
+      return true; // "all" - show all leads regardless of read status
     }) || [];
 
   const sortedLeads = [...filteredLeads].sort((a, b) => {
@@ -134,9 +149,8 @@ function Leads() {
         >
           <h1 className="text-2xl font-semibold text-gray-900">Your Leads</h1>
           <p className="text-gray-600 mt-2">
-            View leads that AI found based on your product. Click "Generate
-            Leads" to find more potential customers and engagement
-            opportunities.
+            View leads that AI found based on your product. These are leads from
+            your lead history.
           </p>
         </motion.div>
 
@@ -287,8 +301,8 @@ function Leads() {
       >
         <h1 className="text-2xl font-semibold text-gray-900">Your Leads</h1>
         <p className="text-gray-600 mt-2">
-          View leads that AI found based on your product. Click "Generate Leads"
-          to find more potential customers and engagement opportunities.
+          View leads that AI found based on your product. These are leads from
+          your lead history.
         </p>
       </motion.div>
 
@@ -450,85 +464,102 @@ function Leads() {
 
           {/* Leads Grid */}
           <div className="grid grid-cols-1 gap-4">
-            {sortedLeads.map((lead, index) => (
-              <motion.div
-                key={lead.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow"
-              >
-                {/* Header with New tag */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-                      {lead.title}
-                    </h3>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <div className="flex items-center space-x-1">
-                        <User className="w-4 h-4" />
-                        <span>Reddit User</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>{formatDate(lead.created_at)}</span>
+            {sortedLeads.map((lead, index) => {
+              const isOptimisticallyRead = optimisticReads.has(lead.id);
+              const isRead = lead.read || isOptimisticallyRead;
+
+              return (
+                <motion.div
+                  key={lead.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow"
+                >
+                  {/* Header with New tag */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
+                        {lead.title}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <User className="w-4 h-4" />
+                          <span>Reddit User</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="w-4 h-4" />
+                          <span>{formatDate(lead.created_at)}</span>
+                        </div>
                       </div>
                     </div>
+                    {isNew(lead.created_at) && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        New
+                      </span>
+                    )}
                   </div>
-                  {isNew(lead.created_at) && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      New
-                    </span>
-                  )}
-                </div>
 
-                {/* Description */}
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {lead.selftext}
-                </p>
+                  {/* Description */}
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {lead.selftext}
+                  </p>
 
-                {/* Stats */}
-                <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
-                  <div className="flex items-center space-x-1">
-                    <ThumbsUp className="w-4 h-4" />
-                    <span>{lead.score || 0}</span>
+                  {/* Stats */}
+                  <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
+                    <div className="flex items-center space-x-1">
+                      <ThumbsUp className="w-4 h-4" />
+                      <span>{lead.score || 0}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Comments</span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Comments</span>
-                  </div>
-                </div>
 
-                {/* Action Buttons */}
-                <div className="flex space-x-2">
-                  <Button
-                    onClick={() => handleViewOnReddit(lead.url)}
-                    className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>View on Reddit</span>
-                  </Button>
-                  <Button
-                    onClick={() => handleViewReply(lead)}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>View Reply</span>
-                  </Button>
-                  <Button
-                    onClick={() => handleMarkAsRead(lead.id)}
-                    disabled={markAsReadMutation.isPending}
-                    variant="outline"
-                    className="px-3 py-2"
-                    title="Mark as read"
-                  >
-                    <Check className="w-4 h-4" />
-                    <span>Mark as read</span>
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2">
+                    <Button
+                      onClick={() => handleViewOnReddit(lead.url)}
+                      className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>View on Reddit</span>
+                    </Button>
+                    <Button
+                      onClick={() => handleViewReply(lead)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>View Reply</span>
+                    </Button>
+                    <Button
+                      onClick={() => handleMarkAsRead(lead.id)}
+                      variant="outline"
+                      className={`px-3 py-2 transition-all duration-200 ${
+                        isRead
+                          ? "bg-green-50 border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400"
+                          : "hover:bg-gray-50"
+                      }`}
+                      title={isRead ? "Marked as read" : "Mark as read"}
+                    >
+                      {isRead ? (
+                        <>
+                          <EyeOff className="w-4 h-4" />
+                          <span>Marked as read</span>
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-4 h-4" />
+                          <span>Mark as read</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Empty State */}

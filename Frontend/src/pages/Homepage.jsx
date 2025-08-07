@@ -240,9 +240,9 @@ export default function HomePage() {
                 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
                 variants={itemVariants}
               >
-                Everything You Need to{" "}
+                Get Your Product in Front of the Right People{" "}
                 <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent relative">
-                  Generate Leads
+                  Without Guessing
                   {/* <div className="absolute bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-60"></div> */}
                 </span>
               </motion.h1>
@@ -250,9 +250,9 @@ export default function HomePage() {
                 className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
                 variants={itemVariants}
               >
-                From product analysis to comment generation, we handle the
-                entire lead generation process so you can focus on closing
-                deals. Turn social platforms into your personal sales funnel.
+                We help you show up where it matters. From product analysis to
+                comment generation, we handle the entire process so you can
+                focus on building.
               </motion.p>
               <motion.div
                 className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
@@ -267,7 +267,7 @@ export default function HomePage() {
                     className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                     onClick={() => handleAuthAction("/signup")}
                   >
-                    {user ? "Go to Dashboard" : "Start Generating Leads"}
+                    {user ? "Go to Dashboard" : "Find your next users"}
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </motion.div>
@@ -327,6 +327,7 @@ export default function HomePage() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto">
           <div className="text-center relative">
             <motion.img
@@ -340,6 +341,136 @@ export default function HomePage() {
           </div>
         </div>
       </motion.section>
+
+      {/* Core Features Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 relative">
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.h2
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+              variants={itemVariants}
+            >
+              Everything you need to reach your audience
+            </motion.h2>
+            <motion.p
+              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              variants={itemVariants}
+            >
+              From content creation to community building, we've got you covered
+            </motion.p>
+          </motion.div>
+
+          <div className="space-y-24">
+            {[
+              {
+                icon: MessageSquare,
+                title: "Say the right thing, the first time",
+                description:
+                  "We turn your product into scroll-stopping content that feels native and hits the right pain points—every time.",
+                bullets: [
+                  "Custom-written posts based on your audience and product",
+                  "Crafted to resonate—not just fill space",
+                  "Built to drive replies, clicks, and conversions",
+                ],
+                demoPlaceholder: "Post Generation Demo",
+              },
+              {
+                icon: TrendingUp,
+                title: "Steal the structure of what already works",
+                description:
+                  "We studied the posts that take off—and turned them into plug-and-play templates that don't miss.",
+                bullets: [
+                  "Format, tone, and flow based on proven hits",
+                  "Just fill in your product and hit go",
+                  "Optimized to be shareable and actionable",
+                ],
+                demoPlaceholder: "Viral Templates Demo",
+              },
+              {
+                icon: Shield,
+                title: "Fit in before you stand out",
+                description:
+                  "We help you build a credible, active presence—so when you post, people listen.",
+                bullets: [
+                  "Organic activity that earns trust, not suspicion",
+                  "Avoid low-effort bans and buried posts",
+                  "Show up like someone worth listening to",
+                ],
+                demoPlaceholder: "Karma Builder Demo",
+              },
+              {
+                icon: Zap,
+                title: "The internet talks. We listen.",
+                description:
+                  "We scan Reddit 24/7 to surface buying signals, pain points, and leads you can act on right now.",
+                bullets: [
+                  "Real-time alerts when someone needs what you're building",
+                  "Targeted threads you can reply to—or use for messaging",
+                  "Find high-intent users before your competitors do",
+                ],
+                demoPlaceholder: "Lead Engine Demo",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className={`grid lg:grid-cols-2 gap-12 items-center ${
+                  index % 2 === 1 ? "lg:grid-flow-col-dense" : ""
+                }`}
+                variants={fadeInUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+              >
+                {/* Content */}
+                <div className={index % 2 === 1 ? "lg:col-start-2" : ""}>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                    {feature.description}
+                  </p>
+                  <ul className="space-y-3">
+                    {feature.bullets.map((bullet, bulletIndex) => (
+                      <li key={bulletIndex} className="flex items-start">
+                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-700">{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Demo Placeholder */}
+                <div className={index % 2 === 1 ? "lg:col-start-1" : ""}>
+                  <motion.div
+                    className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 h-80 flex items-center justify-center"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <feature.icon className="w-8 h-8 text-orange-500" />
+                      </div>
+                      <p className="text-gray-500 font-medium">
+                        {feature.demoPlaceholder}
+                      </p>
+                      <p className="text-sm text-gray-400 mt-2">
+                        Demo GIF placeholder
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Features Section with Enhanced Cards */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
@@ -754,7 +885,8 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white relative">
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-100 to-transparent pointer-events-none"></div>
         <div className="max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -919,8 +1051,7 @@ export default function HomePage() {
         viewport={{ once: true, margin: "-100px" }}
       >
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5"></div>
-
+        <div className="absolute inset-0 bg-white"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
             className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 border border-orange-200 rounded-full text-sm font-medium shadow-sm"
@@ -933,14 +1064,14 @@ export default function HomePage() {
             className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
             variants={itemVariants}
           >
-            Boost Your Lead Generation
+            Start reaching the right people
           </motion.h2>
           <motion.p
             className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
             variants={itemVariants}
           >
-            Discover how we can significantly enhance your lead generation
-            efforts, resulting in faster growth and increased sales.
+            Transform your growth strategy with smart, targeted distribution
+            that actually works.
           </motion.p>
           <motion.div className="flex justify-center" variants={itemVariants}>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -951,18 +1082,35 @@ export default function HomePage() {
                 onClick={() => handleAuthAction("/signup")}
               >
                 <button className="flex items-center justify-center">
-                  Start Free Trial
+                  Get your traction strategy
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </button>
               </Button>
             </motion.div>
+          </motion.div>
+          <motion.div
+            className="flex items-center justify-center space-x-6 text-sm text-gray-500 mt-8"
+            variants={itemVariants}
+          >
+            <div className="flex items-center">
+              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+              Free 3-day trial
+            </div>
+            <div className="flex items-center">
+              <Shield className="w-4 h-4 text-green-500 mr-2" />
+              Cancel anytime
+            </div>
+            <div className="flex items-center">
+              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+              24/7 support included
+            </div>
           </motion.div>
         </div>
       </motion.section>
 
       {/* Footer */}
       <motion.footer
-        className="bg-white py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-200"
+        className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-200"
         variants={fadeInUp}
         initial="hidden"
         whileInView="visible"

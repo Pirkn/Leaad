@@ -409,7 +409,7 @@ function Dashboard() {
                 disabled={!hasProduct}
               >
                 <Users className="w-4 h-4 mr-2" />
-                Generate Leads
+                View Leads
               </Button>
               <Button
                 onClick={handleViewPosts}
