@@ -179,7 +179,6 @@ class EditProduct(MethodView):
                 update_data['target_audience'] = data['target_audience']
             if data.get('problem_solved'):
                 update_data['problem_solved'] = data['problem_solved']
-
             # Update product data
             if update_data:
                 update_result = supabase.table('products').update(update_data).eq('id', product_id).execute()
@@ -225,6 +224,7 @@ class EditProduct(MethodView):
                     if leads_data:
                         leads_result = supabase.table('lead_subreddits').insert(leads_data).execute()
                         print(f"Updated {len(leads_data)} leads for product {product_id}")
+
                     
                 except json.JSONDecodeError as e:
                     print(f"Failed to parse AI response: {e}")
@@ -244,4 +244,3 @@ class EditProduct(MethodView):
         except Exception as e:
             print(f"Error updating product: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
-        

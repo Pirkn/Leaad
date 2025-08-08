@@ -164,3 +164,19 @@ class MarkLeadAsUnread(MethodView):
 
         result = supabase.table('leads').update({'read': False}).eq('id', lead_id).execute()
         return jsonify(result.data)
+    
+@blp.route('/delete-lead')
+class DeleteLead(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        lead_id = data.get('lead_id')
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('leads').delete().eq('id', lead_id).execute()
+        return jsonify(result.data)
+
+

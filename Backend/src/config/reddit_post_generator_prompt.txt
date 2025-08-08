@@ -61,6 +61,7 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 ```
 
 ## Example Elements to Incorporate:
+- Informative: "Solo Founder printing $23K/Month with water rating app" (sharing case studies, success stories, or industry insights that naturally lead to product mentions)
 - Personal experience: "I've been experimenting with..."
 - Industry observation: "The landscape is shifting because..."
 - Helpful comparison: "If you're choosing between X, Y, and Z..."

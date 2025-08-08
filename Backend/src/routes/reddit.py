@@ -178,4 +178,49 @@ class CreateKarmaPost(MethodView):
         except Exception as e:
             print(f"Error in create_karma_post: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
-    
+
+
+@blp.route('/mark-reddit-post-as-read')
+class MarkRedditPostAsRead(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        post_id = data.get('post_id')
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('posts').update({'read': True}).eq('id', post_id).execute()
+        return jsonify(result.data)
+
+
+
+@blp.route('/mark-reddit-post-as-unread')
+class MarkRedditPostAsUnread(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        post_id = data.get('post_id')
+        
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('posts').update({'read': False}).eq('id', post_id).execute()
+        return jsonify(result.data)
+
+
+@blp.route('/delete-reddit-post')
+class DeleteRedditPost(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        post_id = data.get('post_id')
+        
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('posts').delete().eq('id', post_id).execute()
+        return jsonify(result.data)
