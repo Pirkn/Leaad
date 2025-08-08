@@ -17,10 +17,20 @@ class Model:
         self.gemini_api_key = GEMINI_API_KEY
         self.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-        self.openai_client = openai.OpenAI(
-            base_url="https://api.groq.com/openai/v1",
-            api_key=GROQ_API_KEY
-        )
+        # Initialize OpenAI client for Groq
+        try:
+            self.openai_client = openai.OpenAI(
+                base_url="https://api.groq.com/openai/v1",
+                api_key=GROQ_API_KEY
+            )
+        except TypeError:
+            # Fallback if httpx removed the proxies kwarg in current environment
+            http_client = httpx.Client()
+            self.openai_client = openai.OpenAI(
+                base_url="https://api.groq.com/openai/v1",
+                api_key=GROQ_API_KEY,
+                http_client=http_client
+            )
         
         self.cost_calculator = GeminiCostCalculator("gemini-2.5-flash")
 
