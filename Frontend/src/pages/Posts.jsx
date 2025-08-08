@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   useRedditPosts,
@@ -19,8 +19,12 @@ import {
   Search,
 } from "lucide-react";
 import Snackbar from "@mui/material/Snackbar";
+import { useSearchParams } from "react-router-dom";
 
 function Posts() {
+  const [searchParams] = useSearchParams();
+  const highlightId = searchParams.get("highlight");
+  const postRefs = useRef({});
   const { data: posts, isLoading, error } = useRedditPosts();
   const { data: productsResponse } = useProducts();
   const generatePostMutation = useGenerateRedditPost();
@@ -200,6 +204,35 @@ function Posts() {
     subredditFilter !== "all" ||
     dateFilter !== "all" ||
     sortBy !== "newest";
+
+  // Handle scrolling to specific post from URL parameter
+  useEffect(() => {
+    if (highlightId && postRefs.current[highlightId]) {
+      setTimeout(() => {
+        if (postRefs.current[highlightId]) {
+          postRefs.current[highlightId].scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          // Add highlight effect
+          postRefs.current[highlightId].classList.add(
+            "ring-2",
+            "ring-orange-500",
+            "ring-opacity-50"
+          );
+          setTimeout(() => {
+            if (postRefs.current[highlightId]) {
+              postRefs.current[highlightId].classList.remove(
+                "ring-2",
+                "ring-orange-500",
+                "ring-opacity-50"
+              );
+            }
+          }, 3000);
+        }
+      }, 500);
+    }
+  }, [highlightId, sortedPosts]);
 
   return (
     <motion.div
@@ -390,6 +423,7 @@ function Posts() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: 0.3 + index * 0.05 }}
                     className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-sm transition-shadow flex flex-col justify-between"
+                    ref={(el) => (postRefs.current[post.id] = el)}
                   >
                     <div>
                       <div className="flex items-center space-x-2 mb-2">

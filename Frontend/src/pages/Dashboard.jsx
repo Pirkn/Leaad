@@ -135,12 +135,20 @@ function Dashboard() {
     navigate("/products");
   };
 
-  const handleViewLeads = () => {
-    navigate("/leads");
+  const handleViewLeads = (leadId = null) => {
+    if (leadId) {
+      navigate(`/leads?highlight=${leadId}`);
+    } else {
+      navigate("/leads");
+    }
   };
 
-  const handleViewPosts = () => {
-    navigate("/posts");
+  const handleViewPosts = (postId = null) => {
+    if (postId) {
+      navigate(`/posts?highlight=${postId}`);
+    } else {
+      navigate("/posts");
+    }
   };
 
   const handleViewTemplates = () => {
@@ -248,8 +256,8 @@ function Dashboard() {
               </div>
               <div className="mt-2">
                 {unreadLeads > 0 ? (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                    {unreadLeads} new
+                  <span className="text-xs text-gray-500">
+                    {unreadLeads} new leads
                   </span>
                 ) : (
                   <span className="text-xs text-gray-500">
@@ -288,8 +296,8 @@ function Dashboard() {
               </div>
               <div className="mt-2">
                 {unreadPosts > 0 ? (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {unreadPosts} new
+                  <span className="text-xs text-gray-500">
+                    {unreadPosts} new posts
                   </span>
                 ) : (
                   <span className="text-xs text-gray-500">
@@ -558,7 +566,7 @@ function Dashboard() {
                         className={`flex items-center space-x-3 p-3 cursor-pointer hover:bg-gray-50 transition-colors ${
                           index === 2 ? "opacity-75 hover:opacity-90" : ""
                         } ${index < 2 ? "border-b border-gray-100" : ""}`}
-                        onClick={() => handleViewLeads()}
+                        onClick={() => handleViewLeads(lead.id)}
                       >
                         <div
                           className={`w-2 h-2 rounded-full ${
@@ -650,7 +658,7 @@ function Dashboard() {
                         className={`flex items-center space-x-3 p-3 cursor-pointer hover:bg-gray-50 transition-colors ${
                           index === 2 ? "opacity-75 hover:opacity-90" : ""
                         } ${index < 2 ? "border-b border-gray-100" : ""}`}
-                        onClick={() => handleViewPosts()}
+                        onClick={() => handleViewPosts(post.id)}
                       >
                         <div
                           className={`w-2 h-2 rounded-full ${

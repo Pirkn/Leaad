@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   useLeads,
@@ -24,8 +24,12 @@ import {
   Copy,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { useSearchParams } from "react-router-dom";
 
 function Leads() {
+  const [searchParams] = useSearchParams();
+  const highlightId = searchParams.get("highlight");
+  const leadRefs = useRef({});
   const [postedFilter, setPostedFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [viewFilter, setViewFilter] = useState("all");
@@ -172,6 +176,35 @@ function Leads() {
     }
     return 0;
   });
+
+  // Handle scrolling to specific lead from URL parameter
+  useEffect(() => {
+    if (highlightId && leadRefs.current[highlightId]) {
+      setTimeout(() => {
+        if (leadRefs.current[highlightId]) {
+          leadRefs.current[highlightId].scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          // Add highlight effect
+          leadRefs.current[highlightId].classList.add(
+            "ring-2",
+            "ring-orange-500",
+            "ring-opacity-50"
+          );
+          setTimeout(() => {
+            if (leadRefs.current[highlightId]) {
+              leadRefs.current[highlightId].classList.remove(
+                "ring-2",
+                "ring-orange-500",
+                "ring-opacity-50"
+              );
+            }
+          }, 3000);
+        }
+      }, 500);
+    }
+  }, [highlightId, sortedLeads]);
 
   // Loading State
   if (isLoading) {
@@ -517,6 +550,7 @@ function Leads() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
                   className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow"
+                  ref={(el) => (leadRefs.current[lead.id] = el)}
                 >
                   {/* Header with New tag and Subreddit */}
                   <div className="flex items-start justify-between mb-4">
