@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/button";
+import { Toaster, toast } from "sonner";
 
 function Karma() {
   const { user } = useAuth();
@@ -26,6 +27,7 @@ function Karma() {
   const [copiedCommentStates, setCopiedCommentStates] = useState({});
   const [copiedPostState, setCopiedPostState] = useState(false);
   const [copiedImageState, setCopiedImageState] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
 
   // API hooks for generating karma content
   const generateCommentMutation = useGenerateKarmaComment();
@@ -48,6 +50,11 @@ function Karma() {
   }, []);
 
   const handleCopyText = (text, type) => {
+    // Prevent spam clicking
+    if (isCopying) return;
+
+    setIsCopying(true);
+
     // Convert markdown to plain text for copying
     const plainText = text
       .replace(/\*\*(.*?)\*\*/g, "$1") // Remove bold markdown
@@ -62,6 +69,15 @@ function Karma() {
 
     navigator.clipboard.writeText(plainText);
 
+    // Show toast notification
+    const typeNames = {
+      title: "Title",
+      post: "Post",
+      comment: "Comment",
+    };
+    const typeName = typeNames[type] || type;
+    toast(`${typeName} copied to clipboard`, { duration: 2000 });
+
     // Set individual copy states
     if (type.startsWith("comment-")) {
       setCopiedCommentStates((prev) => ({ ...prev, [type]: true }));
@@ -72,9 +88,17 @@ function Karma() {
       setCopiedPostState(true);
       setTimeout(() => setCopiedPostState(false), 2000);
     }
+
+    // Reset copying state after 2 seconds
+    setTimeout(() => setIsCopying(false), 2000);
   };
 
   const handleCopyImage = async (imageUrl, type) => {
+    // Prevent spam clicking
+    if (isCopying) return;
+
+    setIsCopying(true);
+
     // Optimistically update UI immediately
     setCopiedImageState(true);
     setTimeout(() => setCopiedImageState(false), 2000);
@@ -91,6 +115,9 @@ function Karma() {
 
       // Copy to clipboard
       await navigator.clipboard.write([clipboardItem]);
+
+      // Show success toast
+      toast("Image copied to clipboard", { duration: 2000 });
     } catch (error) {
       console.error("Failed to copy image:", error);
       // Fallback: try to copy the image using a different approach
@@ -110,10 +137,12 @@ function Karma() {
                 [blob.type]: blob,
               });
               await navigator.clipboard.write([clipboardItem]);
+              toast("Image copied to clipboard", { duration: 2000 });
             } catch (err) {
               console.error("Failed to copy image blob:", err);
               // Final fallback: copy URL
               navigator.clipboard.writeText(imageUrl);
+              toast("Image URL copied to clipboard", { duration: 2000 });
             }
           });
         };
@@ -122,8 +151,12 @@ function Karma() {
         console.error("Fallback image copy failed:", fallbackError);
         // Final fallback: copy URL
         navigator.clipboard.writeText(imageUrl);
+        toast("Image URL copied to clipboard", { duration: 2000 });
       }
     }
+
+    // Reset copying state after 2 seconds
+    setTimeout(() => setIsCopying(false), 2000);
   };
 
   const handleGenerateComment = async () => {
@@ -375,10 +408,12 @@ function Karma() {
                               >
                                 <div className="space-y-4">
                                   <div className="flex justify-between items-start">
-                                    <div>
-                                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                                        Target Post
-                                      </h3>
+                                    <div className="flex-1">
+                                      <div className="flex items-center space-x-2 mb-2">
+                                        <h3 className="text-lg font-semibold text-gray-900">
+                                          Target Post
+                                        </h3>
+                                      </div>
                                       <a
                                         href={commentData.post_url}
                                         target="_blank"
@@ -389,36 +424,50 @@ function Karma() {
                                         <ExternalLink className="w-4 h-4 ml-1" />
                                       </a>
                                     </div>
-                                    <Button
-                                      onClick={() =>
-                                        handleCopyText(
-                                          commentData.comment,
+                                    <div className="flex items-center space-x-2 ml-4">
+                                      <Button
+                                        onClick={() =>
+                                          handleCopyText(
+                                            commentData.comment,
+                                            `comment-${index}`
+                                          )
+                                        }
+                                        variant="outline"
+                                        className="px-3 py-2"
+                                      >
+                                        {copiedCommentStates[
                                           `comment-${index}`
-                                        )
-                                      }
-                                      variant="outline"
-                                      className="px-3 py-2"
-                                    >
-                                      {copiedCommentStates[
-                                        `comment-${index}`
-                                      ] ? (
-                                        <>
-                                          <Check className="w-4 h-4 mr-2" />
-                                          <span>Copied!</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Copy className="w-4 h-4 mr-2" />
-                                          <span>Copy Comment</span>
-                                        </>
-                                      )}
-                                    </Button>
-                                  </div>
-
-                                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                    <div className="flex items-center space-x-1">
-                                      <MessageCircle className="w-4 h-4" />
-                                      <span>r/{commentData.subreddit}</span>
+                                        ] ? (
+                                          <>
+                                            <Check className="w-4 h-4 mr-2" />
+                                            <span>Copied!</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Copy className="w-4 h-4 mr-2" />
+                                            <span>Copy Comment</span>
+                                          </>
+                                        )}
+                                      </Button>
+                                      <Button
+                                        onClick={() =>
+                                          window.open(
+                                            `https://www.reddit.com/r/${commentData.subreddit}/submit`,
+                                            "_blank"
+                                          )
+                                        }
+                                        variant="outline"
+                                        className="px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                                      >
+                                        <svg
+                                          className="w-4 h-4 mr-2"
+                                          fill="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
+                                        </svg>
+                                        Post to r/{commentData.subreddit}
+                                      </Button>
                                     </div>
                                   </div>
 
@@ -580,53 +629,53 @@ function Karma() {
                         className="space-y-4"
                       >
                         <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow">
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="flex justify-between items-center mb-6">
                             <h3 className="text-lg font-semibold text-gray-900">
                               Generated Post
                             </h3>
                             <Button
                               onClick={() =>
-                                handleCopyText(
-                                  `${generatedPost.title}\n\n${
-                                    generatedPost.description || ""
-                                  }`,
-                                  "post"
+                                window.open(
+                                  `https://www.reddit.com/r/${generatedPost.subreddit}/submit`,
+                                  "_blank"
                                 )
                               }
                               variant="outline"
-                              className="px-3 py-2"
+                              className="px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
                             >
-                              {copiedPostState ? (
-                                <>
-                                  <Check className="w-4 h-4 mr-2" />
-                                  <span>Copied!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-4 h-4 mr-2" />
-                                  <span>Copy</span>
-                                </>
-                              )}
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
+                              </svg>
+                              Post to r/{generatedPost.subreddit}
                             </Button>
                           </div>
 
                           <div className="space-y-4">
                             <div>
-                              <h4 className="font-medium text-gray-900 mb-2">
+                              <h4 className="font-medium text-gray-900 mb-1">
                                 Title:
                               </h4>
-                              <p className="text-gray-700 bg-gray-50 p-3 rounded border border-gray-200">
-                                {generatedPost.title}
-                              </p>
-                            </div>
-
-                            <div>
-                              <h4 className="font-medium text-gray-900 mb-2">
-                                Subreddit:
-                              </h4>
-                              <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                                r/{generatedPost.subreddit}
-                              </span>
+                              <div className="relative">
+                                <p className="text-gray-700 bg-gray-50 p-3 pr-10 rounded border border-gray-200">
+                                  {generatedPost.title}
+                                </p>
+                                <button
+                                  onClick={() =>
+                                    handleCopyText(generatedPost.title, "title")
+                                  }
+                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                  {copiedPostState ? (
+                                    <Check className="w-5 h-5" />
+                                  ) : (
+                                    <Copy className="w-5 h-5" />
+                                  )}
+                                </button>
+                              </div>
                             </div>
 
                             {generatedPost.description && (
@@ -642,39 +691,32 @@ function Karma() {
 
                             {generatedPost.image_url && (
                               <div>
-                                <div className="flex justify-between items-start mb-3">
-                                  <h4 className="font-medium text-gray-900">
-                                    Generated Image:
-                                  </h4>
-                                  <Button
+                                <h4 className="font-medium text-gray-900 mb-1">
+                                  Generated Image:
+                                </h4>
+                                <div className="relative">
+                                  <div className="bg-gray-50 p-3 pr-12 rounded border border-gray-200">
+                                    <img
+                                      src={generatedPost.image_url}
+                                      alt="Generated post image"
+                                      className="max-w-full h-auto rounded block"
+                                    />
+                                  </div>
+                                  <button
                                     onClick={() =>
                                       handleCopyImage(
                                         generatedPost.image_url,
                                         "image"
                                       )
                                     }
-                                    variant="outline"
-                                    className="px-3 py-2"
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
                                   >
                                     {copiedImageState ? (
-                                      <>
-                                        <Check className="w-4 h-4 mr-2" />
-                                        <span>Copied!</span>
-                                      </>
+                                      <Check className="w-5 h-5" />
                                     ) : (
-                                      <>
-                                        <Copy className="w-4 h-4 mr-2" />
-                                        <span>Copy Image</span>
-                                      </>
+                                      <Copy className="w-5 h-5" />
                                     )}
-                                  </Button>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded border border-gray-200">
-                                  <img
-                                    src={generatedPost.image_url}
-                                    alt="Generated post image"
-                                    className="max-w-full h-auto rounded"
-                                  />
+                                  </button>
                                 </div>
                               </div>
                             )}
@@ -780,6 +822,18 @@ function Karma() {
           </AnimatePresence>
         </motion.div>
       </div>
+
+      {/* Sonner Toaster */}
+      <Toaster
+        position="bottom-right"
+        theme="light"
+        toastOptions={{
+          classNames: {
+            toast: "max-w-xs p-3",
+            closeButton: "hidden",
+          },
+        }}
+      />
     </motion.div>
   );
 }

@@ -4,6 +4,7 @@ import {
   useProducts,
   useUpdateProduct,
   useDeleteProduct,
+  useAnalyzeProduct,
 } from "../hooks/useApi";
 import {
   Package,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "sonner";
+import { Button } from "../components/ui/button";
 
 function Products() {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ function Products() {
   const products = productsResponse?.products || [];
   const updateProductMutation = useUpdateProduct();
   const deleteProductMutation = useDeleteProduct();
+  const analyzeProductMutation = useAnalyzeProduct();
 
   // Get the first product (assuming single product setup)
   const product = products[0];
@@ -87,6 +90,54 @@ function Products() {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const handleReanalyzeProduct = async () => {
+    if (!product?.url) {
+      toast("No product URL available for reanalysis", { duration: 2500 });
+      return;
+    }
+
+    try {
+      console.log("Starting reanalysis for URL:", product.url);
+      const result = await analyzeProductMutation.mutateAsync(product.url);
+      console.log("Analysis result:", result);
+
+      // Use the returned values from generate-product-details
+      if (result) {
+        console.log("New data to save:", result);
+
+        // Immediately update form values to display the new data
+        setFormValues({
+          name: product.name, // Keep existing name
+          url: product.url, // Keep existing URL
+          description: result.description,
+          target_audience: result.target_audience,
+          problem_solved: result.problem_solved,
+        });
+
+        // Call edit-product endpoint with the new analysis data
+        const updateResult = await updateProductMutation.mutateAsync({
+          productId: product.id,
+          productData: {
+            name: product.name, // Keep existing name
+            url: product.url, // Keep existing URL
+            description: result.description,
+            target_audience: result.target_audience,
+            problem_solved: result.problem_solved,
+          },
+        });
+        console.log("Update result:", updateResult);
+
+        toast("Product reanalyzed and saved successfully", { duration: 2000 });
+      } else {
+        console.log("No product_details in result:", result);
+        toast("No product details received from analysis", { duration: 2500 });
+      }
+    } catch (error) {
+      console.error("Reanalysis error:", error);
+      toast(error.message || "Failed to reanalyze product", { duration: 2500 });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -125,7 +176,7 @@ function Products() {
         {isLoading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#FF4500] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 mx-auto mb-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
               <p className="text-gray-600">Loading product details...</p>
             </div>
           </div>
@@ -215,43 +266,6 @@ function Products() {
                     </p>
                   </div>
                 </div>
-                {editingProduct === product.id ? (
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={handleSave}
-                      disabled={updateProductMutation.isPending}
-                      className="flex items-center px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs disabled:opacity-50"
-                    >
-                      {updateProductMutation.isPending ? "Saving..." : "Save"}
-                    </button>
-                    <button
-                      onClick={handleCancel}
-                      className="flex items-center px-3 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-xs"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleEdit(product)}
-                    className="flex items-center px-3 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors text-xs"
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
-                    </svg>
-                    Edit
-                  </button>
-                )}
               </div>
             </motion.div>
 
@@ -263,12 +277,90 @@ function Products() {
               className="bg-white border border-gray-200 rounded-lg p-6"
             >
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-1">
-                  Product Information
-                </h2>
-                <p className="text-gray-600 text-sm">
-                  The details of your monitored product
-                </p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                      Product Information
+                    </h2>
+                    <p className="text-gray-600 text-sm">
+                      The details of your monitored product
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {editingProduct !== product.id && (
+                      <button
+                        onClick={handleReanalyzeProduct}
+                        disabled={analyzeProductMutation.isPending}
+                        className="border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {analyzeProductMutation.isPending ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                            <span>Analyzing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                            <span>Reanalyze Product</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                    {editingProduct === product.id ? (
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          onClick={handleSave}
+                          disabled={updateProductMutation.isPending}
+                          variant="outline"
+                          className="border-green-500 hover:border-green-600 bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 h-9 text-sm"
+                        >
+                          {updateProductMutation.isPending
+                            ? "Saving..."
+                            : "Save"}
+                        </Button>
+                        <Button
+                          onClick={handleCancel}
+                          variant="outline"
+                          className="border-red-300 hover:border-red-400 bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2 h-9 text-sm"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2"
+                      >
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                        Edit
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-4">

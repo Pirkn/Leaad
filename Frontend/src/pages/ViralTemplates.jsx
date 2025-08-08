@@ -337,7 +337,7 @@ function ViralTemplates() {
 
               {productsLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF4500] mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
                   <p className="text-gray-500 mt-2">Loading products...</p>
                 </div>
               ) : productsData?.products && productsData.products.length > 0 ? (

@@ -6,6 +6,7 @@ import {
   useProducts,
   useGenerateLeads,
 } from "../hooks/useApi";
+import { useLeadsContext } from "../contexts/LeadsContext";
 import {
   Filter,
   SortAsc,
@@ -15,11 +16,12 @@ import {
   ExternalLink,
   Calendar,
   User,
-  ThumbsUp,
+  ArrowUp,
   MessageCircle,
   Clock,
   EyeOff,
   RotateCcw,
+  Copy,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 
@@ -28,12 +30,15 @@ function Leads() {
   const [sortBy, setSortBy] = useState("newest");
   const [viewFilter, setViewFilter] = useState("all");
   const [optimisticReads, setOptimisticReads] = useState(new Set());
+  const [expandedReplies, setExpandedReplies] = useState(new Set());
+  const [copiedReplyId, setCopiedReplyId] = useState(null);
 
   // API hooks
   const { data: leads, isLoading, error } = useLeads();
   const { data: productsResponse } = useProducts();
   const markAsReadMutation = useMarkLeadAsRead();
   const generateLeadsMutation = useGenerateLeads();
+  const { newlyGeneratedLeads, addNewlyGeneratedLeads } = useLeadsContext();
 
   const products = productsResponse?.products || [];
   const product = products[0]; // Assuming single product setup
@@ -45,7 +50,18 @@ function Leads() {
     }
 
     try {
-      await generateLeadsMutation.mutateAsync(product.id);
+      const result = await generateLeadsMutation.mutateAsync(product.id);
+
+      // Add newly generated leads to context
+      if (result && Array.isArray(result)) {
+        const transformedLeads = result.map((lead, index) => ({
+          ...lead,
+          id: `new-${Date.now()}-${index}`,
+          created_at: new Date().toISOString(),
+          isNew: true,
+        }));
+        addNewlyGeneratedLeads(transformedLeads);
+      }
     } catch (error) {
       console.error("Failed to generate leads:", error);
 
@@ -81,9 +97,26 @@ function Leads() {
     window.open(url, "_blank");
   };
 
-  const handleViewReply = (lead) => {
-    // TODO: Implement view reply functionality
-    console.log("View reply for lead:", lead);
+  const handleViewReply = (leadId) => {
+    setExpandedReplies((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(leadId)) {
+        newSet.delete(leadId);
+      } else {
+        newSet.add(leadId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleCopyReply = async (replyText, leadId) => {
+    try {
+      await navigator.clipboard.writeText(replyText);
+      setCopiedReplyId(leadId);
+      setTimeout(() => setCopiedReplyId(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy reply:", err);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -109,8 +142,11 @@ function Leads() {
     return diffDays < 1;
   };
 
+  // Combine existing leads with newly generated leads
+  const allLeads = [...(leads || []), ...newlyGeneratedLeads];
+
   const filteredLeads =
-    leads?.filter((lead) => {
+    allLeads.filter((lead) => {
       // Apply optimistic updates to the lead data
       const isOptimisticallyRead = optimisticReads.has(lead.id);
       const effectiveReadStatus = lead.read || isOptimisticallyRead;
@@ -259,7 +295,7 @@ function Leads() {
             {/* Loading State */}
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#FF4500] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 mx-auto mb-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-gray-600">Loading leads...</p>
               </div>
             </div>
@@ -318,7 +354,7 @@ function Leads() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
             className="bg-white border border-gray-200 rounded-lg p-4"
           >
             <div className="flex items-center justify-between">
@@ -473,10 +509,10 @@ function Leads() {
                   key={lead.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
                   className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow"
                 >
-                  {/* Header with New tag */}
+                  {/* Header with New tag and Subreddit */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
@@ -485,7 +521,7 @@ function Leads() {
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center space-x-1">
                           <User className="w-4 h-4" />
-                          <span>Reddit User</span>
+                          <span>{lead.author}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
@@ -493,11 +529,16 @@ function Leads() {
                         </div>
                       </div>
                     </div>
-                    {isNew(lead.created_at) && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        New
+                    <div className="flex items-center space-x-2">
+                      <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
+                        r/{lead.subreddit}
                       </span>
-                    )}
+                      {isNew(lead.created_at) && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          New
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Description */}
@@ -508,12 +549,12 @@ function Leads() {
                   {/* Stats */}
                   <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
-                      <ThumbsUp className="w-4 h-4" />
-                      <span>{lead.score || 0}</span>
+                      <ArrowUp className="w-4 h-4" />
+                      <span>{lead.score || 0} upvotes</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <MessageCircle className="w-4 h-4" />
-                      <span>Comments</span>
+                      <span>{lead.num_comments || 0} comments</span>
                     </div>
                   </div>
 
@@ -527,12 +568,16 @@ function Leads() {
                       <span>View on Reddit</span>
                     </Button>
                     <Button
-                      onClick={() => handleViewReply(lead)}
+                      onClick={() => handleViewReply(lead.id)}
                       variant="outline"
                       className="flex-1"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      <span>View Reply</span>
+                      <span>
+                        {expandedReplies.has(lead.id)
+                          ? "Hide Reply"
+                          : "View Reply"}
+                      </span>
                     </Button>
                     <Button
                       onClick={() => handleMarkAsRead(lead.id)}
@@ -557,6 +602,67 @@ function Leads() {
                       )}
                     </Button>
                   </div>
+
+                  {/* Reply Section */}
+                  {expandedReplies.has(lead.id) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="mt-4 pt-4 border-t border-gray-200"
+                    >
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-start space-x-3 mb-4">
+                          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <MessageSquare className="w-4 h-4 text-gray-600" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h4 className="text-sm font-medium text-gray-900">
+                                AI Generated Reply
+                              </h4>
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                                Suggested
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                              {lead.comment}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-3">
+                          <Button
+                            onClick={() =>
+                              handleCopyReply(lead.comment, lead.id)
+                            }
+                            variant="outline"
+                            className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium"
+                          >
+                            {copiedReplyId === lead.id ? (
+                              <Check className="w-4 h-4 mr-2" />
+                            ) : (
+                              <Copy className="w-4 h-4 mr-2" />
+                            )}
+                            Copy Reply
+                          </Button>
+                          <Button
+                            onClick={() => window.open(`${lead.url}`, "_blank")}
+                            className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium"
+                          >
+                            <svg
+                              className="w-5 h-5 mr-2 text-[#FF4500]"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
+                            </svg>
+                            Reply on Reddit
+                          </Button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               );
             })}

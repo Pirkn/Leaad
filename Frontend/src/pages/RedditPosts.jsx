@@ -126,7 +126,7 @@ function RedditPosts() {
       {/* Loading State */}
       {isLoading && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-          <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#FF4500] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 mx-auto mb-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600">Generating Reddit posts...</p>
           <p className="text-sm text-gray-500 mt-2">
             This may take a few moments

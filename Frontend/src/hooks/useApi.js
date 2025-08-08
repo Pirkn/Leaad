@@ -54,11 +54,8 @@ export const useGenerateRedditPost = () => {
     },
     retry: false, // Disable retries to prevent multiple requests
     onSuccess: (data, variables) => {
-      // Viral posts are now static data, no need to invalidate
-      // You could also add the generated post to a local cache
-      // queryClient.setQueryData(['generatedPosts'], (old) => {
-      //   return old ? [...old, data] : [data];
-      // });
+      // Posts are now handled locally in the component
+      // No need to invalidate queries
     },
     onError: (error, variables, context) => {
       console.error("Failed to generate Reddit post:", error);
@@ -250,7 +247,7 @@ export const useCreateProduct = () => {
   });
 };
 
-// Update Product Mutation - TODO: Implement functionality
+// Update Product Mutation
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -263,11 +260,38 @@ export const useUpdateProduct = () => {
       const response = await apiService.updateProduct(productId, productData);
       return response; // Backend returns {message: "...", product: {...}}
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.products });
+    onMutate: async ({ productId, productData }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: queryKeys.products });
+
+      // Snapshot the previous value
+      const previousProducts = queryClient.getQueryData(queryKeys.products);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(queryKeys.products, (old) => {
+        if (!old || !old.products) return old;
+
+        return {
+          ...old,
+          products: old.products.map((product) =>
+            product.id === productId ? { ...product, ...productData } : product
+          ),
+        };
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousProducts };
     },
-    onError: (error) => {
-      console.error("Failed to update product:", error);
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousProducts) {
+        queryClient.setQueryData(queryKeys.products, context.previousProducts);
+      }
+      console.error("Failed to update product:", err);
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure cache consistency
+      queryClient.invalidateQueries({ queryKey: queryKeys.products });
     },
   });
 };
@@ -323,8 +347,9 @@ export const useGenerateLeads = () => {
       const response = await apiService.generateLeads(productId);
       return response; // Backend returns array of generated leads
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.leads });
+    onSuccess: (data, variables) => {
+      // Leads are now handled locally in the component
+      // No need to invalidate queries
     },
     onError: (error) => {
       console.error("Failed to generate leads:", error);

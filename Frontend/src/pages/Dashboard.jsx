@@ -6,6 +6,8 @@ import {
   useRedditPosts,
   useProducts,
 } from "../hooks/useApi";
+import { usePostsContext } from "../contexts/PostsContext";
+import { useLeadsContext } from "../contexts/LeadsContext";
 import staticDataService from "../services/staticData";
 import {
   TrendingUp,
@@ -33,18 +35,34 @@ function Dashboard() {
   const { data: leads, isLoading: leadsLoading } = useLeads();
   const { data: posts, isLoading: postsLoading } = useRedditPosts();
   const { data: productsResponse, isLoading: productsLoading } = useProducts();
+  const { newlyGeneratedPosts } = usePostsContext();
+  const { newlyGeneratedLeads } = useLeadsContext();
 
   // Get viral templates count
   const viralTemplates = staticDataService.getViralPosts();
   const viralTemplatesCount = viralTemplates.length;
 
   // Calculate real metrics
-  const totalLeads = leads?.length || 0;
-  const unreadLeads = leads?.filter((lead) => !lead.read)?.length || 0;
-  const totalPosts = posts?.length || 0;
-  const unreadPosts = posts?.filter((post) => !post.read)?.length || 0;
+  const allLeads = [...(leads || []), ...newlyGeneratedLeads];
+  const totalLeads = allLeads.length;
+  const unreadLeads = allLeads.filter((lead) => !lead.read)?.length || 0;
+  const allPosts = [...(posts || []), ...newlyGeneratedPosts];
+  const totalPosts = allPosts.length;
+  const unreadPosts = allPosts.filter((post) => !post.read)?.length || 0;
   const hasProduct = productsResponse?.products?.length > 0;
   const product = productsResponse?.products?.[0];
+
+  // Debug logging
+  console.log("Dashboard Data:", {
+    leads: leads?.length || 0,
+    newlyGeneratedLeads: newlyGeneratedLeads?.length || 0,
+    allLeads: allLeads?.length || 0,
+    posts: posts?.length || 0,
+    newlyGeneratedPosts: newlyGeneratedPosts?.length || 0,
+    allPosts: allPosts?.length || 0,
+    recentLeads: allLeads.slice(0, 3),
+    recentPosts: allPosts.slice(0, 3),
+  });
 
   // Calculate engagement metrics
   const totalUpvotes = viralTemplates.reduce(
@@ -60,9 +78,15 @@ function Dashboard() {
       ? Math.round((totalUpvotes + totalComments) / viralTemplates.length)
       : 0;
 
-  // Get recent activity (last 5 leads)
-  const recentLeads = leads?.slice(0, 3) || [];
-  const recentPosts = posts?.slice(0, 3) || [];
+  // Get recent activity (last 3 leads and posts, sorted by created_at)
+  const recentLeads =
+    allLeads
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 3) || [];
+  const recentPosts =
+    allPosts
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 3) || [];
 
   const handleAnalyzeProduct = () => {
     navigate("/products");
@@ -500,7 +524,7 @@ function Dashboard() {
                         ></div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
-                            {lead.title}
+                            {lead.title || lead.selftext || "Lead"}
                           </p>
                           <div className="flex items-center space-x-2 text-xs text-gray-500">
                             <Clock className="w-3 h-3" />
