@@ -55,35 +55,55 @@ class GenerateRedditPost(MethodView):
             model = Model()
             response = model.gemini_chat_completion(messages)
 
-            # Parse the AI response to extract post data
+            # Parse the AI response to extract post data (handle multiple shapes)
             try:
-                response_data = json.loads(response)
-                posts_to_insert = []
-                
-                for post_data in response_data.get('response', []):
-                    post_entry = {
-                        'id': str(uuid.uuid4()),
-                        'user_id': user_id,
-                        'product_id': product_id,
-                        'subreddit': post_data.get('r/subreddit', '').replace('r/', ''),
-                        'title': post_data.get('Title', ''),
-                        'description': post_data.get('Post', ''),
-                        'read': False
-                    }
-                    posts_to_insert.append(post_entry)
-                
-                # Save the generated posts to the posts table
-                if posts_to_insert:
-                    supabase.table('posts').insert(posts_to_insert).execute()
-                    print(f"Successfully saved {len(posts_to_insert)} posts to database")
-                
-                
+                parsed = json.loads(response)
             except json.JSONDecodeError as e:
                 print(f"Failed to parse AI response: {e}")
                 print(f"Raw response: {response}")
-            except Exception as e:
-                print(f"Error saving posts to database: {e}")
-                # Continue with the response even if database save fails
+                parsed = None
+
+            # Determine posts list from parsed structure
+            posts_list = []
+            if isinstance(parsed, dict):
+                maybe_posts = parsed.get('response')
+                if isinstance(maybe_posts, list):
+                    posts_list = maybe_posts
+                elif isinstance(maybe_posts, str):
+                    # Some models return the posts array as a JSON string
+                    try:
+                        posts_list = json.loads(maybe_posts)
+                    except Exception:
+                        posts_list = []
+            elif isinstance(parsed, list):
+                posts_list = parsed
+
+            posts_to_insert = []
+            for item in posts_list:
+                if not isinstance(item, dict):
+                    continue
+                subreddit_value = item.get('r/subreddit', '') or ''
+                if isinstance(subreddit_value, str):
+                    subreddit_value = subreddit_value.replace('r/', '')
+                post_entry = {
+                    'id': str(uuid.uuid4()),
+                    'user_id': user_id,
+                    'product_id': product_id,
+                    'subreddit': subreddit_value,
+                    'title': item.get('Title', '') or '',
+                    'description': item.get('Post', '') or '',
+                    'read': False
+                }
+                posts_to_insert.append(post_entry)
+
+            # Save the generated posts to the posts table
+            if posts_to_insert:
+                try:
+                    supabase.table('posts').insert(posts_to_insert).execute()
+                    print(f"Successfully saved {len(posts_to_insert)} posts to database")
+                except Exception as e:
+                    print(f"Error saving posts to database: {e}")
+                    # Continue even if database save fails
 
             return jsonify({'response': response})
             
