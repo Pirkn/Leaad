@@ -244,32 +244,3 @@ class EditProduct(MethodView):
         except Exception as e:
             print(f"Error updating product: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
-        
-@blp.route('/mark-product-as-read')
-class MarkProductAsRead(MethodView):
-    @verify_supabase_token
-    def post(self):
-        data = request.get_json()
-        product_id = data.get('product_id')
-
-        supabase_url = current_app.config['SUPABASE_URL']
-        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
-        supabase: Client = create_client(supabase_url, supabase_key)
-
-        result = supabase.table('products').update({'read': True}).eq('id', product_id).execute()
-        return jsonify(result.data)
-
-
-@blp.route('/mark-product-as-unread')
-class MarkProductAsUnread(MethodView):
-    @verify_supabase_token
-    def post(self):
-        data = request.get_json()
-        product_id = data.get('product_id')
-
-        supabase_url = current_app.config['SUPABASE_URL']
-        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
-        supabase: Client = create_client(supabase_url, supabase_key)
-
-        result = supabase.table('products').update({'read': False}).eq('id', product_id).execute()
-        return jsonify(result.data)
