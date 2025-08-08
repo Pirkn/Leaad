@@ -64,6 +64,45 @@ function Dashboard() {
     recentPosts: allPosts.slice(0, 3),
   });
 
+  // Debug individual lead structure
+  if (allLeads.length > 0) {
+    console.log("Sample lead structure:", allLeads[0]);
+    console.log("Lead date fields:", {
+      date: allLeads[0].date, // Actual Reddit post date
+      created_at: allLeads[0].created_at, // When lead was generated
+      hasDate: !!allLeads[0].date,
+      hasCreatedAt: !!allLeads[0].created_at,
+    });
+
+    // Debug sorting
+    const sampleLeads = allLeads.slice(0, 3);
+    console.log(
+      "Sample leads before sorting:",
+      sampleLeads.map((l) => ({
+        id: l.id,
+        date: l.date, // Reddit post date
+        created_at: l.created_at, // Lead generation date
+        finalDate: l.created_at, // Using created_at for sorting
+      }))
+    );
+
+    const sortedSample = sampleLeads.sort((a, b) => {
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return dateB - dateA;
+    });
+
+    console.log(
+      "Sample leads after sorting:",
+      sortedSample.map((l) => ({
+        id: l.id,
+        date: l.date, // Reddit post date
+        created_at: l.created_at, // Lead generation date
+        finalDate: l.created_at, // Using created_at for sorting
+      }))
+    );
+  }
+
   // Calculate engagement metrics
   const totalUpvotes = viralTemplates.reduce(
     (sum, template) => sum + (template.upvotes || 0),
@@ -78,10 +117,14 @@ function Dashboard() {
       ? Math.round((totalUpvotes + totalComments) / viralTemplates.length)
       : 0;
 
-  // Get recent activity (last 3 leads and posts, sorted by created_at)
+  // Get recent activity (last 3 leads and posts, sorted by created_at for leads)
   const recentLeads =
     allLeads
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .sort((a, b) => {
+        const dateA = new Date(a.created_at);
+        const dateB = new Date(b.created_at);
+        return dateB - dateA;
+      })
       .slice(0, 3) || [];
   const recentPosts =
     allPosts

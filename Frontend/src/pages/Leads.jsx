@@ -158,9 +158,15 @@ function Leads() {
 
   const sortedLeads = [...filteredLeads].sort((a, b) => {
     if (sortBy === "newest") {
-      return new Date(b.created_at) - new Date(a.created_at);
+      // Sort by when the lead was generated (created_at)
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return dateB - dateA;
     } else if (sortBy === "oldest") {
-      return new Date(a.created_at) - new Date(b.created_at);
+      // Sort by when the lead was generated (created_at)
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return dateA - dateB;
     } else if (sortBy === "score") {
       return (b.score || 0) - (a.score || 0);
     }
@@ -516,12 +522,12 @@ function Leads() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-                        {lead.title}
+                        {lead.title || "Lead"}
                       </h3>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center space-x-1">
                           <User className="w-4 h-4" />
-                          <span>{lead.author}</span>
+                          <span>{lead.author || "Unknown"}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
@@ -543,7 +549,7 @@ function Leads() {
 
                   {/* Description */}
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                    {lead.selftext}
+                    {lead.selftext || lead.title || "No description available"}
                   </p>
 
                   {/* Stats */}
@@ -627,7 +633,7 @@ function Leads() {
                               </span>
                             </div>
                             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                              {lead.comment}
+                              {lead.comment || "No reply available"}
                             </p>
                           </div>
                         </div>

@@ -87,7 +87,7 @@ class LeadGeneration(MethodView):
                 new_post['author'] = unformatted_post['author']
                 new_post['subreddit'] = unformatted_post['subreddit']
                 new_post['date'] = unformatted_post['date']
-                new_post['created_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+                new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                 generated_leads.append(new_post)
 
         # Save generated leads to the leads table
