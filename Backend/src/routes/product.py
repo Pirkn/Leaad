@@ -179,7 +179,6 @@ class EditProduct(MethodView):
                 update_data['target_audience'] = data['target_audience']
             if data.get('problem_solved'):
                 update_data['problem_solved'] = data['problem_solved']
-
             # Update product data
             if update_data:
                 update_result = supabase.table('products').update(update_data).eq('id', product_id).execute()
@@ -225,6 +224,7 @@ class EditProduct(MethodView):
                     if leads_data:
                         leads_result = supabase.table('lead_subreddits').insert(leads_data).execute()
                         print(f"Updated {len(leads_data)} leads for product {product_id}")
+
                     
                 except json.JSONDecodeError as e:
                     print(f"Failed to parse AI response: {e}")
@@ -245,3 +245,31 @@ class EditProduct(MethodView):
             print(f"Error updating product: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
         
+@blp.route('/mark-product-as-read')
+class MarkProductAsRead(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        product_id = data.get('product_id')
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('products').update({'read': True}).eq('id', product_id).execute()
+        return jsonify(result.data)
+
+
+@blp.route('/mark-product-as-unread')
+class MarkProductAsUnread(MethodView):
+    @verify_supabase_token
+    def post(self):
+        data = request.get_json()
+        product_id = data.get('product_id')
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        result = supabase.table('products').update({'read': False}).eq('id', product_id).execute()
+        return jsonify(result.data)
