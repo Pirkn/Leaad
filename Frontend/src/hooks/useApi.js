@@ -260,7 +260,8 @@ export const useUpdateProduct = () => {
       if (!user) {
         throw new Error("User must be authenticated to update products");
       }
-      throw new Error("Update product functionality not implemented yet");
+      const response = await apiService.updateProduct(productId, productData);
+      return response; // Backend returns {message: "...", product: {...}}
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products });

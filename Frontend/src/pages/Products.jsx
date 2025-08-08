@@ -15,10 +15,18 @@ import {
   CircleAlert,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Toaster, toast } from "sonner";
 
 function Products() {
   const navigate = useNavigate();
   const [editingProduct, setEditingProduct] = useState(null);
+  const [formValues, setFormValues] = useState({
+    name: "",
+    url: "",
+    description: "",
+    target_audience: "",
+    problem_solved: "",
+  });
   const [showDeleteModal, setShowDeleteModal] = useState(null);
 
   // API hooks
@@ -35,13 +43,28 @@ function Products() {
   };
 
   const handleEdit = (product) => {
-    // TODO: Implement edit functionality
-    alert("Edit functionality not implemented yet. Coming soon!");
+    setEditingProduct(product.id);
+    setFormValues({
+      name: product.name || "",
+      url: product.url || "",
+      description: product.description || "",
+      target_audience: product.target_audience || "",
+      problem_solved: product.problem_solved || "",
+    });
   };
 
-  const handleSave = async (updatedProduct) => {
-    // TODO: Implement save functionality
-    alert("Save functionality not implemented yet. Coming soon!");
+  const handleSave = async () => {
+    if (!product?.id) return;
+    try {
+      await updateProductMutation.mutateAsync({
+        productId: product.id,
+        productData: { ...formValues },
+      });
+      setEditingProduct(null);
+      toast("Product saved", { duration: 2000 });
+    } catch (error) {
+      toast(error.message || "Failed to save product", { duration: 2500 });
+    }
   };
 
   const handleCancel = () => {
@@ -71,6 +94,25 @@ function Products() {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="p-6"
     >
+      <Toaster
+        position="bottom-right"
+        theme="light"
+        toastOptions={{
+          classNames: {
+            toast:
+              "bg-white text-gray-900 border border-gray-200 shadow-lg rounded-lg px-3 py-2 max-w-xs",
+            content: "text-gray-900 text-sm",
+            title: "text-gray-900 text-sm",
+            description: "text-gray-700 text-xs",
+            icon: "hidden",
+            successIcon: "hidden",
+            infoIcon: "hidden",
+            warningIcon: "hidden",
+            errorIcon: "hidden",
+            loadingIcon: "hidden",
+          },
+        }}
+      />
       {/* Sticky Header */}
       <div className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6">
         <h1 className="text-2xl font-semibold text-gray-900">
@@ -173,25 +215,43 @@ function Products() {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleEdit(product)}
-                  className="flex items-center px-3 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors text-xs"
-                >
-                  <svg
-                    className="w-4 h-4 mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                {editingProduct === product.id ? (
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={handleSave}
+                      disabled={updateProductMutation.isPending}
+                      className="flex items-center px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs disabled:opacity-50"
+                    >
+                      {updateProductMutation.isPending ? "Saving..." : "Save"}
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="flex items-center px-3 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-xs"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleEdit(product)}
+                    className="flex items-center px-3 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors text-xs"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                  Edit
-                </button>
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                    Edit
+                  </button>
+                )}
               </div>
             </motion.div>
 
@@ -221,9 +281,20 @@ function Products() {
                     <label className="text-sm font-medium text-gray-700">
                       Product Name
                     </label>
-                    <p className="text-gray-900">
-                      {product.name || "WaitlistNow"}
-                    </p>
+                    {editingProduct === product.id ? (
+                      <input
+                        type="text"
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
+                        value={formValues.name}
+                        onChange={(e) =>
+                          setFormValues((v) => ({ ...v, name: e.target.value }))
+                        }
+                      />
+                    ) : (
+                      <p className="text-gray-900">
+                        {product.name || "WaitlistNow"}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -239,16 +310,27 @@ function Products() {
                     <label className="text-sm font-medium text-gray-700">
                       Website URL
                     </label>
-                    <div className="mt-1">
-                      <a
-                        href={product.url || "https://www.waitlistsnow.com"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700 underline"
-                      >
-                        {product.url || "https://www.waitlistsnow.com"}
-                      </a>
-                    </div>
+                    {editingProduct === product.id ? (
+                      <input
+                        type="url"
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
+                        value={formValues.url}
+                        onChange={(e) =>
+                          setFormValues((v) => ({ ...v, url: e.target.value }))
+                        }
+                      />
+                    ) : (
+                      <div className="mt-1">
+                        <a
+                          href={product.url || "https://www.waitlistsnow.com"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 underline"
+                        >
+                          {product.url || "https://www.waitlistsnow.com"}
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -264,10 +346,24 @@ function Products() {
                     <label className="text-sm font-medium text-gray-700">
                       Product Description
                     </label>
-                    <p className="text-gray-900 text-sm leading-relaxed">
-                      {product.description ||
-                        "WaitlistNow is a no-code platform that allows you to create and launch professional waitlist pages in minutes. With its powerful customization tools, you can design a unique waitlist page that perfectly fits your brand and start building your future audience instantly. Avoid wasting time coding waitlist pages and instead focus on growing your main product. WaitlistNow offers advanced analytics, real-time updates, and a limited launch offer, making it the perfect solution to validate your SaaS idea and grow your email list."}
-                    </p>
+                    {editingProduct === product.id ? (
+                      <textarea
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
+                        rows={4}
+                        value={formValues.description}
+                        onChange={(e) =>
+                          setFormValues((v) => ({
+                            ...v,
+                            description: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <p className="text-gray-900 text-sm leading-relaxed">
+                        {product.description ||
+                          "WaitlistNow is a no-code platform that allows you to create and launch professional waitlist pages in minutes. With its powerful customization tools, you can design a unique waitlist page that perfectly fits your brand and start building your future audience instantly. Avoid wasting time coding waitlist pages and instead focus on growing your main product. WaitlistNow offers advanced analytics, real-time updates, and a limited launch offer, making it the perfect solution to validate your SaaS idea and grow your email list."}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -295,10 +391,24 @@ function Products() {
                     <label className="text-sm font-medium text-gray-700">
                       Problem Solved
                     </label>
-                    <p className="text-gray-900 text-sm leading-relaxed">
-                      {product.problem_solved ||
-                        "Addresses the challenge of validating new product or SaaS ideas and building an early audience without requiring coding skills or significant development time."}
-                    </p>
+                    {editingProduct === product.id ? (
+                      <textarea
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
+                        rows={3}
+                        value={formValues.problem_solved}
+                        onChange={(e) =>
+                          setFormValues((v) => ({
+                            ...v,
+                            problem_solved: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <p className="text-gray-900 text-sm leading-relaxed">
+                        {product.problem_solved ||
+                          "Addresses the challenge of validating new product or SaaS ideas and building an early audience without requiring coding skills or significant development time."}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -326,10 +436,24 @@ function Products() {
                     <label className="text-sm font-medium text-gray-700">
                       Target Audience
                     </label>
-                    <p className="text-gray-900 text-sm leading-relaxed">
-                      {product.target_audience ||
-                        "Entrepreneurs, SaaS founders, and individuals launching new product ideas."}
-                    </p>
+                    {editingProduct === product.id ? (
+                      <textarea
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
+                        rows={3}
+                        value={formValues.target_audience}
+                        onChange={(e) =>
+                          setFormValues((v) => ({
+                            ...v,
+                            target_audience: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <p className="text-gray-900 text-sm leading-relaxed">
+                        {product.target_audience ||
+                          "Entrepreneurs, SaaS founders, and individuals launching new product ideas."}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

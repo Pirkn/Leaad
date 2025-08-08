@@ -124,7 +124,13 @@ class ApiService {
 
   // TODO: Implement update product functionality
   async updateProduct(productId, productData) {
-    throw new Error("Update product functionality not implemented yet");
+    return this.request("/edit-product", {
+      method: "POST",
+      body: JSON.stringify({
+        product_id: productId,
+        ...productData,
+      }),
+    });
   }
 
   async deleteProduct(productId) {
