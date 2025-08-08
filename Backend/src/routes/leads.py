@@ -87,6 +87,7 @@ class LeadGeneration(MethodView):
                 new_post['author'] = unformatted_post['author']
                 new_post['subreddit'] = unformatted_post['subreddit']
                 new_post['date'] = unformatted_post['date']
+                new_post['created_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                 generated_leads.append(new_post)
 
         # Save generated leads to the leads table
@@ -106,7 +107,6 @@ class LeadGeneration(MethodView):
                 'num_comments': lead['num_comments'],
                 'author': lead['author'],
                 'subreddit': lead['subreddit'],
-                # store as ISO date string compatible with Postgres date column
                 'date': lead['date']
             }
             leads_to_insert.append(lead_data)

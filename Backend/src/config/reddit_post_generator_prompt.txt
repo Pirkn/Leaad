@@ -56,7 +56,7 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 "Post": "<Body focusing on valuable insight/experience with casual product mentions woven in naturally. Start directly with your main point - NO greetings like 'Hey everyone' or 'Hello'>",
 "Reasoning": "<Brief explanation of why this subreddit and approach would work>"
 }, 
-(total 5 different approaches/subreddits)
+(total 3 different approaches/subreddits)
 ]
 ```
 
