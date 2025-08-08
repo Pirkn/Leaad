@@ -86,7 +86,6 @@ class LeadGeneration(MethodView):
                 new_post['num_comments'] = unformatted_post['num_comments']
                 new_post['author'] = unformatted_post['author']
                 new_post['subreddit'] = unformatted_post['subreddit']
-                # `date` is already an ISO string (YYYY-MM-DD) from reddit_helpers
                 new_post['date'] = unformatted_post['date']
                 generated_leads.append(new_post)
 

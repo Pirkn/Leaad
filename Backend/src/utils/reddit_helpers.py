@@ -127,8 +127,8 @@ def lead_posts(subreddits):
                 }
                 comments.append(new_comment)
 
-            # Convert epoch to ISO date string (YYYY-MM-DD) for Postgres date column using timezone-aware UTC
-            created_iso_date = datetime.datetime.fromtimestamp(post.created_utc, tz=datetime.timezone.utc).date().isoformat()
+            # Convert epoch to ISO datetime string (YYYY-MM-DDTHH:MM:SS) for Postgres timestamp column using timezone-aware UTC
+            created_iso_date = datetime.datetime.fromtimestamp(post.created_utc, tz=datetime.timezone.utc).isoformat()
 
             lead_post = {
                 "title": post.title,
