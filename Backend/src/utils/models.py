@@ -6,21 +6,24 @@ from google.genai import types
 from src.utils.cost_calculator import GeminiCostCalculator
 import openai
 import os
+import httpx
 
 load_dotenv() 
-
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 class Model:
     def __init__(self):
-        self.gemini_api_key = os.getenv('GEMINI_API_KEY', '')
-        self.gemini_client = genai.Client()
+        self.gemini_api_key = GEMINI_API_KEY
+        self.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
         self.openai_client = openai.OpenAI(
-                    base_url="https://api.groq.com/openai/v1",
-                    api_key=os.getenv("GROQ_API_KEY")
-                )
+            base_url="https://api.groq.com/openai/v1",
+            api_key=GROQ_API_KEY
+        )
         
         self.cost_calculator = GeminiCostCalculator("gemini-2.5-flash")
+
 
     def _format_messages_for_gemini(self, messages):
         """Convert messages from OpenAI format to Gemini format"""

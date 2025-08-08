@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import random
 import requests
+import datetime
 from src.utils.image_handling import convert_to_webp
 from src.utils.prompt_generator import post_karma_prompt
 from flask import jsonify, current_app
@@ -126,6 +127,9 @@ def lead_posts(subreddits):
                 }
                 comments.append(new_comment)
 
+            # Convert epoch to ISO date string (YYYY-MM-DD) for Postgres date column using timezone-aware UTC
+            created_iso_date = datetime.datetime.fromtimestamp(post.created_utc, tz=datetime.timezone.utc).date().isoformat()
+
             lead_post = {
                 "title": post.title,
                 "score": post.score,
@@ -137,7 +141,7 @@ def lead_posts(subreddits):
                 "num_comments": post.num_comments,
                 "author": post.author.name if post.author else 'deleted',
                 "subreddit": subreddit_name,
-                "date": post.created_utc
+                "date": created_iso_date
             }
             post_content.append(lead_post)
 
