@@ -124,8 +124,11 @@ export default function HomePage() {
     if (user) {
       // If user is authenticated, redirect to dashboard
       navigate("/dashboard");
+    } else if (action === "/signup" || action === "/signin") {
+      // For signup/signin CTAs, redirect to onboarding first
+      navigate("/onboarding");
     } else {
-      // If user is not authenticated, proceed with the original action
+      // For other actions, proceed with the original action
       navigate(action);
     }
   };
@@ -370,13 +373,12 @@ export default function HomePage() {
                 AI-Powered Lead Generation
               </motion.div>
               <motion.h1
-                className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight max-w-5xl mx-auto"
                 variants={itemVariants}
               >
-                Get Your Product in Front of the Right People{" "}
+                Your Users are Waiting. We Know <br />
                 <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent relative">
-                  Without Guessing
-                  {/* <div className="absolute bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-60"></div> */}
+                  Where to find them.
                 </span>
               </motion.h1>
               <motion.p
@@ -388,33 +390,20 @@ export default function HomePage() {
                 focus on building.
               </motion.p>
               <motion.div
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+                className="flex justify-center items-center mb-12"
                 variants={itemVariants}
               >
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-12 py-6 text-xl"
                     onClick={() => handleAuthAction("/signup")}
                   >
                     {user ? "Go to Dashboard" : "Find your next users"}
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50 shadow-sm hover:shadow-md transition-all duration-300 bg-transparent"
-                  >
-                    <button className="px-8 py-5 text-lg">Watch Demo</button>
+                    <ArrowRight className="ml-2 w-6 h-6" />
                   </Button>
                 </motion.div>
               </motion.div>

@@ -10,10 +10,8 @@ import {
   Package,
   Link,
   FileText,
-  Activity,
-  ShieldCheck,
+  Clock,
   TriangleAlert,
-  CircleAlert,
   CircleCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -301,6 +299,12 @@ function Products() {
                       relevant leads and discussions.
                     </p>
                   </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
+                    <Clock className="w-3 h-3 mr-1" />
+                    Monitoring
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -608,78 +612,6 @@ function Products() {
                           "Entrepreneurs, SaaS founders, and individuals launching new product ideas."}
                       </p>
                     )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Monitoring Details Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.4 }}
-              className="bg-white border border-gray-200 rounded-lg p-6"
-            >
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-1">
-                  Monitoring Details
-                </h2>
-                <p className="text-gray-600 text-sm">
-                  Information about the monitoring process
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Divider */}
-                <div className="col-span-1 md:col-span-2 border-t border-gray-200 -mx-6 px-6"></div>
-
-                {/* Started Monitoring */}
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Activity className="w-5 h-5 text-gray-600" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      Started monitoring
-                    </label>
-                    <p className="text-gray-900">
-                      {formatDate(product.created_at || new Date())}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Status */}
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <ShieldCheck className="w-5 h-5 text-gray-600" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      Status
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Active Monitoring
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* How it works information tip */}
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CircleAlert className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-blue-900 text-sm">
-                      <strong>How it works:</strong> Leaad continuously monitors
-                      Reddit for mentions of your product, relevant discussions,
-                      and potential leads. When it finds relevant content, it
-                      will notify you and provide insights to help you engage
-                      with the community effectively.
-                    </p>
                   </div>
                 </div>
               </div>

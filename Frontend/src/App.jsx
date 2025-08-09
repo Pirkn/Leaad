@@ -5,6 +5,7 @@ import { KarmaProvider } from "./contexts/KarmaContext";
 import { LeadsProvider } from "./contexts/LeadsContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
+import ScrollToTop from "./components/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import ViralTemplates from "./pages/ViralTemplates";
@@ -19,6 +20,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import Homepage from "./pages/Homepage";
+import Onboarding from "./pages/Onboarding";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
@@ -35,9 +37,11 @@ function App() {
         <LeadsProvider>
           <KarmaProvider>
             <Router>
+              <ScrollToTop />
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<RootRedirect />} />
+                <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
