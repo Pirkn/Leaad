@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGenerateRedditPost } from "../hooks/useApi";
+import { CircleCheck } from "lucide-react";
+import { toast } from "sonner";
 
 function RedditPosts() {
   const navigate = useNavigate();
@@ -72,11 +74,14 @@ function RedditPosts() {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        // You could add a toast notification here
-        console.log("Copied to clipboard");
+        toast("Copied to clipboard", {
+          duration: 2000,
+          icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+        });
       })
       .catch((err) => {
         console.error("Failed to copy to clipboard:", err);
+        toast("Failed to copy to clipboard", { duration: 2500 });
       });
   };
 

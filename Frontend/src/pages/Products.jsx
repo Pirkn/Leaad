@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   TriangleAlert,
   CircleAlert,
+  CircleCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "sonner";
@@ -64,7 +65,10 @@ function Products() {
         productData: { ...formValues },
       });
       setEditingProduct(null);
-      toast("Product saved", { duration: 2000 });
+      toast("Product saved", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (error) {
       toast(error.message || "Failed to save product", { duration: 2500 });
     }
@@ -127,7 +131,10 @@ function Products() {
         });
         console.log("Update result:", updateResult);
 
-        toast("Product reanalyzed and saved successfully", { duration: 2000 });
+        toast("Product reanalyzed and saved successfully", {
+          duration: 2000,
+          icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+        });
       } else {
         console.log("No product_details in result:", result);
         toast("No product details received from analysis", { duration: 2500 });

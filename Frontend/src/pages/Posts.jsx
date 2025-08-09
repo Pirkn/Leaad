@@ -301,11 +301,15 @@ function Posts() {
     }
   }, [highlightId, sortedPosts]);
 
+  const shouldAnimate = !isGeneratingPosts;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      transition={
+        shouldAnimate ? { duration: 0.3, ease: "easeOut" } : { duration: 0 }
+      }
       className="p-6"
     >
       {/* Sticky Header */}
@@ -341,16 +345,20 @@ function Posts() {
           </div>
         ) : (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={
+              shouldAnimate ? { duration: 0.3, delay: 0.1 } : { duration: 0 }
+            }
             className="space-y-6"
           >
             {/* Action Card */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              transition={
+                shouldAnimate ? { duration: 0.3, delay: 0.1 } : { duration: 0 }
+              }
               className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
             >
               <div>
@@ -394,9 +402,11 @@ function Posts() {
 
             {/* Filter Card */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
+              transition={
+                shouldAnimate ? { duration: 0.3, delay: 0.2 } : { duration: 0 }
+              }
               className="bg-white border border-gray-200 rounded-lg p-4"
             >
               <div className="flex items-center justify-between mb-4">
@@ -511,9 +521,13 @@ function Posts() {
                 sortedPosts.map((post, index) => (
                   <motion.div
                     key={post.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2, delay: 0.3 + index * 0.05 }}
+                    transition={
+                      shouldAnimate
+                        ? { duration: 0.2, delay: 0.3 + index * 0.05 }
+                        : { duration: 0 }
+                    }
                     className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-sm transition-shadow flex flex-col justify-between"
                     ref={(el) => (postRefs.current[post.id] = el)}
                   >
@@ -625,6 +639,36 @@ function Posts() {
           </motion.div>
         )}
       </div>
+
+      {/* Generation Overlay Loader (cover content area only) */}
+      <AnimatePresence>
+        {isGeneratingPosts && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center"
+            style={{ clipPath: "inset(0 0 0 16rem)" }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white border border-gray-200 rounded-xl shadow-lg p-6 w-full max-w-sm text-center"
+            >
+              <div className="w-10 h-10 mx-auto mb-4 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+              <h3 className="text-base font-medium text-gray-900 mb-1">
+                Generating your post...
+              </h3>
+              <p className="text-sm text-gray-500">
+                This may take ~15–30 seconds.
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Post View/Edit Modal */}
       <AnimatePresence>

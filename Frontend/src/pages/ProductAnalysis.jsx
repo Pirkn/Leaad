@@ -4,6 +4,8 @@ import {
   useProductAnalysis,
   useCreateProduct,
 } from "../hooks/useApi";
+import { CircleCheck } from "lucide-react";
+import { toast } from "sonner";
 
 function ProductAnalysis() {
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -61,8 +63,11 @@ function ProductAnalysis() {
       setWebsiteUrl("");
       analyzeMutation.reset();
 
-      // You could add a success toast here
-      alert("Product saved successfully!");
+      // Success toast with icon
+      toast("Product saved successfully!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (error) {
       console.error("Failed to save product:", error);
       alert(`Failed to save product: ${error.message || "Please try again."}`);

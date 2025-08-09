@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PostsProvider } from "./contexts/PostsContext";
+import { KarmaProvider } from "./contexts/KarmaContext";
 import { LeadsProvider } from "./contexts/LeadsContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
@@ -32,147 +33,149 @@ function App() {
     <AuthProvider>
       <PostsProvider>
         <LeadsProvider>
-          <Router>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<RootRedirect />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
+          <KarmaProvider>
+            <Router>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<RootRedirect />} />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
-              {/* Protected routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <Dashboard />
+                {/* Protected routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <Dashboard />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/leads"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <Leads />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/leads"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <Leads />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/viral-templates"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <ViralTemplates />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/viral-templates"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <ViralTemplates />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/viral-templates/:templateId"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <ViralTemplateEdit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/viral-templates/:templateId"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <ViralTemplateEdit />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/products"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <Products />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/products"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <Products />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/product-analysis"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <ProductAnalysis />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/product-analysis"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <ProductAnalysis />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/reddit-posts"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <RedditPosts />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/reddit-posts"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <RedditPosts />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/posts"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <Posts />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/posts"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <Posts />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/karma"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <Karma />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/karma"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <Karma />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <div className="flex h-screen bg-gray-50">
-                      <Sidebar />
-                      <div className="flex-1 overflow-auto">
-                        <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <div className="flex h-screen bg-gray-50">
+                        <Sidebar />
+                        <div className="flex-1 overflow-auto">
+                          <Settings />
+                        </div>
                       </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </Router>
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </Router>
+          </KarmaProvider>
         </LeadsProvider>
       </PostsProvider>
     </AuthProvider>

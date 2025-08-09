@@ -12,13 +12,21 @@ import {
   ExternalLink,
   Lightbulb,
   RotateCcw,
+  CircleCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/button";
+import { useKarmaContext } from "../contexts/KarmaContext";
 import { Toaster, toast } from "sonner";
 
 function Karma() {
   const { user } = useAuth();
+  const {
+    isKarmaGenerating,
+    karmaGeneratingMode,
+    startKarmaGeneration,
+    stopKarmaGeneration,
+  } = useKarmaContext();
   const [activeTab, setActiveTab] = useState("comments");
   const [copiedText, setCopiedText] = useState("");
   const [isBackgroundGenerating, setIsBackgroundGenerating] = useState(false);
@@ -26,6 +34,7 @@ function Karma() {
   // Individual copy states for each button
   const [copiedCommentStates, setCopiedCommentStates] = useState({});
   const [copiedPostState, setCopiedPostState] = useState(false);
+  const [copiedTitleState, setCopiedTitleState] = useState(false);
   const [copiedImageState, setCopiedImageState] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
 
@@ -37,7 +46,7 @@ function Karma() {
   const [generatedComment, setGeneratedComment] = useState(null);
   const [generatedPost, setGeneratedPost] = useState(null);
 
-  // Load stored data from karma service on component mount
+  // Load stored data on component mount
   useEffect(() => {
     const storedContent = karmaService.getStoredKarmaContent();
 
@@ -70,13 +79,10 @@ function Karma() {
     navigator.clipboard.writeText(plainText);
 
     // Show toast notification
-    const typeNames = {
-      title: "Title",
-      post: "Post",
-      comment: "Comment",
-    };
-    const typeName = typeNames[type] || type;
-    toast(`${typeName} copied to clipboard`, { duration: 2000 });
+    toast("Copied to clipboard", {
+      duration: 2000,
+      icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+    });
 
     // Set individual copy states
     if (type.startsWith("comment-")) {
@@ -87,6 +93,9 @@ function Karma() {
     } else if (type === "post") {
       setCopiedPostState(true);
       setTimeout(() => setCopiedPostState(false), 2000);
+    } else if (type === "title") {
+      setCopiedTitleState(true);
+      setTimeout(() => setCopiedTitleState(false), 2000);
     }
 
     // Reset copying state after 2 seconds
@@ -117,7 +126,10 @@ function Karma() {
       await navigator.clipboard.write([clipboardItem]);
 
       // Show success toast
-      toast("Image copied to clipboard", { duration: 2000 });
+      toast("Copied to clipboard", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (error) {
       console.error("Failed to copy image:", error);
       // Fallback: try to copy the image using a different approach
@@ -137,12 +149,18 @@ function Karma() {
                 [blob.type]: blob,
               });
               await navigator.clipboard.write([clipboardItem]);
-              toast("Image copied to clipboard", { duration: 2000 });
+              toast("Copied to clipboard", {
+                duration: 2000,
+                icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+              });
             } catch (err) {
               console.error("Failed to copy image blob:", err);
               // Final fallback: copy URL
               navigator.clipboard.writeText(imageUrl);
-              toast("Image URL copied to clipboard", { duration: 2000 });
+              toast("Copied to clipboard", {
+                duration: 2000,
+                icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+              });
             }
           });
         };
@@ -151,7 +169,10 @@ function Karma() {
         console.error("Fallback image copy failed:", fallbackError);
         // Final fallback: copy URL
         navigator.clipboard.writeText(imageUrl);
-        toast("Image URL copied to clipboard", { duration: 2000 });
+        toast("Copied to clipboard", {
+          duration: 2000,
+          icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+        });
       }
     }
 
@@ -184,6 +205,7 @@ function Karma() {
   const handleRefreshComments = async () => {
     try {
       setIsBackgroundGenerating(true);
+      startKarmaGeneration("comments");
       const result = await karmaService.generateComment();
 
       // Update state with the new result
@@ -195,12 +217,14 @@ function Karma() {
       console.error("Failed to refresh karma comments:", error);
     } finally {
       setIsBackgroundGenerating(false);
+      stopKarmaGeneration();
     }
   };
 
   const handleRefreshPosts = async () => {
     try {
       setIsBackgroundGenerating(true);
+      startKarmaGeneration("posts");
       const result = await karmaService.generatePost();
 
       // Update state with the new result
@@ -212,6 +236,7 @@ function Karma() {
       console.error("Failed to refresh karma posts:", error);
     } finally {
       setIsBackgroundGenerating(false);
+      stopKarmaGeneration();
     }
   };
 
@@ -219,18 +244,24 @@ function Karma() {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const shouldAnimate = !(isBackgroundGenerating || isKarmaGenerating);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      transition={
+        shouldAnimate ? { duration: 0.3, ease: "easeOut" } : { duration: 0 }
+      }
       className="p-6"
     >
       {/* Sticky Header */}
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={shouldAnimate ? { opacity: 0 } : false}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.05 }}
+        transition={
+          shouldAnimate ? { duration: 0.3, delay: 0.05 } : { duration: 0 }
+        }
         className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
       >
         <h1 className="text-2xl font-semibold text-gray-900">Karma Builder</h1>
@@ -243,23 +274,29 @@ function Karma() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
+          transition={
+            shouldAnimate ? { duration: 0.3, delay: 0.1 } : { duration: 0 }
+          }
           className="space-y-6"
         >
           {/* Filter Card */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
+            transition={
+              shouldAnimate ? { duration: 0.3, delay: 0.2 } : { duration: 0 }
+            }
             className="bg-white border border-gray-200 rounded-lg p-4"
           >
             <div className="flex items-center justify-between">
               {/* Left side - Action buttons */}
               <div className="flex items-center space-x-2">
                 <Button
-                  onClick={() => setActiveTab("comments")}
+                  onClick={() => {
+                    setActiveTab("comments");
+                  }}
                   variant="ghost"
                   className={
                     activeTab === "comments"
@@ -271,7 +308,9 @@ function Karma() {
                 </Button>
 
                 <Button
-                  onClick={() => setActiveTab("posts")}
+                  onClick={() => {
+                    setActiveTab("posts");
+                  }}
                   variant="ghost"
                   className={
                     activeTab === "posts"
@@ -324,54 +363,15 @@ function Karma() {
             </div>
           </motion.div>
 
-          {/* Background Generation Notification */}
-          <AnimatePresence>
-            {isBackgroundGenerating && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="bg-blue-50 border border-blue-200 rounded-lg p-4"
-              >
-                <div className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-4 w-4 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  <span className="text-sm text-blue-800">
-                    Refreshing karma content... This may take 15-30 seconds.
-                  </span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Comments Tab */}
           <AnimatePresence mode="wait">
             {activeTab === "comments" && (
               <motion.div
                 key="comments"
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
+                transition={shouldAnimate ? { duration: 0.3 } : { duration: 0 }}
                 className="space-y-6"
               >
                 {generatedComment ? (
@@ -607,10 +607,10 @@ function Karma() {
             {activeTab === "posts" && (
               <motion.div
                 key="posts"
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
+                transition={shouldAnimate ? { duration: 0.3 } : { duration: 0 }}
                 className="space-y-6"
               >
                 {generatedPost ? (
@@ -669,7 +669,7 @@ function Karma() {
                                   }
                                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                 >
-                                  {copiedPostState ? (
+                                  {copiedTitleState ? (
                                     <Check className="w-5 h-5" />
                                   ) : (
                                     <Copy className="w-5 h-5" />
@@ -822,6 +822,49 @@ function Karma() {
           </AnimatePresence>
         </motion.div>
       </div>
+
+      {/* Background Generation Overlay */}
+      <AnimatePresence>
+        {(isBackgroundGenerating || isKarmaGenerating) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center"
+            style={{ clipPath: "inset(0 0 0 16rem)" }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white border border-gray-200 rounded-xl shadow-lg p-6 w-full max-w-sm text-center"
+            >
+              <div className="w-10 h-10 mx-auto mb-4 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+              {(karmaGeneratingMode || activeTab) === "comments" ? (
+                <>
+                  <h3 className="text-base font-medium text-gray-900 mb-1">
+                    Generating your comments...
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    This may take ~15–30 seconds.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-base font-medium text-gray-900 mb-1">
+                    Generating your post...
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    This may take ~15–30 seconds.
+                  </p>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Sonner Toaster */}
       <Toaster
