@@ -174,21 +174,35 @@ function Leads() {
       const isOptimisticallyRead = optimisticReads.has(lead.id);
       const effectiveReadStatus = lead.read || isOptimisticallyRead;
 
-      if (viewFilter === "read") return effectiveReadStatus;
-      if (viewFilter === "unread") return !effectiveReadStatus;
-      return true; // "all" - show all leads regardless of read status
+      // Apply view filter (read/unread)
+      if (viewFilter === "read" && !effectiveReadStatus) return false;
+      if (viewFilter === "unread" && effectiveReadStatus) return false;
+
+      // Apply posted date filter
+      if (postedFilter !== "all") {
+        const postDate = new Date(lead.date || lead.created_at);
+        const now = new Date();
+        const diffTime = Math.abs(now - postDate);
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+        if (postedFilter === "today" && diffDays > 1) return false;
+        if (postedFilter === "week" && diffDays > 7) return false;
+        if (postedFilter === "month" && diffDays > 30) return false;
+      }
+
+      return true;
     }) || [];
 
   const sortedLeads = [...filteredLeads].sort((a, b) => {
     if (sortBy === "newest") {
-      // Sort by when the lead was generated (created_at)
-      const dateA = new Date(a.created_at);
-      const dateB = new Date(b.created_at);
+      // Sort by when the Reddit post was posted (date)
+      const dateA = new Date(a.date || a.created_at);
+      const dateB = new Date(b.date || b.created_at);
       return dateB - dateA;
     } else if (sortBy === "oldest") {
-      // Sort by when the lead was generated (created_at)
-      const dateA = new Date(a.created_at);
-      const dateB = new Date(b.created_at);
+      // Sort by when the Reddit post was posted (date)
+      const dateA = new Date(a.date || a.created_at);
+      const dateB = new Date(b.date || b.created_at);
       return dateA - dateB;
     } else if (sortBy === "score") {
       return (b.score || 0) - (a.score || 0);
@@ -250,114 +264,12 @@ function Leads() {
 
         {/* Main Content - Wider Layout */}
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="space-y-6"
-          >
-            {/* Filter Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              className="bg-white border border-gray-200 rounded-lg p-4"
-            >
-              <div className="flex items-center justify-between">
-                {/* Left side - Action buttons */}
-                <div className="flex items-center space-x-2">
-                  <Button
-                    onClick={handleGenerateLeads}
-                    disabled={generateLeadsMutation.isPending || !product}
-                    className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    <span>
-                      {generateLeadsMutation.isPending
-                        ? "Generating..."
-                        : "Generate Leads"}
-                    </span>
-                  </Button>
-
-                  <Button
-                    onClick={() => setViewFilter("all")}
-                    variant="ghost"
-                    className={
-                      viewFilter === "all"
-                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                        : "hover:bg-gray-100"
-                    }
-                  >
-                    All Leads
-                  </Button>
-
-                  <Button
-                    onClick={() => setViewFilter("unread")}
-                    variant="ghost"
-                    className={
-                      viewFilter === "unread"
-                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                        : "hover:bg-gray-100"
-                    }
-                  >
-                    Unread
-                  </Button>
-
-                  <Button
-                    onClick={() => setViewFilter("read")}
-                    variant="ghost"
-                    className={
-                      viewFilter === "read"
-                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                        : "hover:bg-gray-100"
-                    }
-                  >
-                    Read
-                  </Button>
-                </div>
-
-                {/* Right side - Filters */}
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Filter className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Posted:</span>
-                    <select
-                      value={postedFilter}
-                      onChange={(e) => setPostedFilter(e.target.value)}
-                      className="w-32 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                    >
-                      <option value="all">All Time</option>
-                      <option value="today">Today</option>
-                      <option value="week">This Week</option>
-                      <option value="month">This Month</option>
-                    </select>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <SortAsc className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Sort by:</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="w-32 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                    >
-                      <option value="newest">Newest</option>
-                      <option value="oldest">Oldest</option>
-                      <option value="score">Score</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Loading State */}
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="w-8 h-8 mx-auto mb-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-gray-600">Loading leads...</p>
-              </div>
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="w-8 h-8 mx-auto mb-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-gray-600">Loading leads...</p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     );
@@ -471,7 +383,7 @@ function Leads() {
               {/* Right side - Filters */}
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <Filter className="w-4 h-4 text-gray-500" />
+                  <Calendar className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Posted:</span>
                   <select
                     value={postedFilter}
@@ -584,7 +496,9 @@ function Leads() {
                         </div>
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
-                          <span>{formatDate(lead.created_at)}</span>
+                          <span>
+                            Posted {formatDate(lead.date || lead.created_at)}
+                          </span>
                         </div>
                       </div>
                     </div>
