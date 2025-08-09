@@ -12,6 +12,7 @@ export const usePostsContext = () => {
 
 export const PostsProvider = ({ children }) => {
   const [newlyGeneratedPosts, setNewlyGeneratedPosts] = useState([]);
+  const [isGeneratingPosts, setIsGeneratingPosts] = useState(false);
 
   const addNewlyGeneratedPosts = (posts) => {
     setNewlyGeneratedPosts((prev) => [...posts, ...prev]);
@@ -21,12 +22,18 @@ export const PostsProvider = ({ children }) => {
     setNewlyGeneratedPosts([]);
   };
 
+  const setGeneratingPosts = (isGenerating) => {
+    setIsGeneratingPosts(isGenerating);
+  };
+
   return (
     <PostsContext.Provider
       value={{
         newlyGeneratedPosts,
         addNewlyGeneratedPosts,
         clearNewlyGeneratedPosts,
+        isGeneratingPosts,
+        setGeneratingPosts,
       }}
     >
       {children}

@@ -375,6 +375,24 @@ export const useMarkLeadAsRead = () => {
   });
 };
 
+// Mark Lead as Unread Mutation
+export const useMarkLeadAsUnread = () => {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (leadId) => {
+      if (!user) {
+        throw new Error("User must be authenticated to mark leads as unread");
+      }
+      const response = await apiService.markLeadAsUnread(leadId);
+      return response; // Backend returns updated lead
+    },
+    onError: (error) => {
+      console.error("Failed to mark lead as unread:", error);
+    },
+  });
+};
+
 // Reddit Posts Query
 export const useRedditPosts = () => {
   const { user } = useAuth();
@@ -388,5 +406,41 @@ export const useRedditPosts = () => {
     enabled: !!user,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+};
+
+// Mark Reddit Post as Saved Mutation
+export const useMarkRedditPostAsSaved = () => {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (postId) => {
+      if (!user) {
+        throw new Error("User must be authenticated to save posts");
+      }
+      const response = await apiService.markRedditPostAsSaved(postId);
+      return response; // Backend returns updated post
+    },
+    onError: (error) => {
+      console.error("Failed to save Reddit post:", error);
+    },
+  });
+};
+
+// Mark Reddit Post as Unsaved Mutation
+export const useMarkRedditPostAsUnsaved = () => {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (postId) => {
+      if (!user) {
+        throw new Error("User must be authenticated to unsave posts");
+      }
+      const response = await apiService.markRedditPostAsUnsaved(postId);
+      return response; // Backend returns updated post
+    },
+    onError: (error) => {
+      console.error("Failed to unsave Reddit post:", error);
+    },
   });
 };

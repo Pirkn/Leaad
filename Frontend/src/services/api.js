@@ -161,6 +161,34 @@ class ApiService {
       }),
     });
   }
+
+  async markLeadAsUnread(leadId) {
+    return this.request("/mark-lead-as-unread", {
+      method: "POST",
+      body: JSON.stringify({
+        lead_id: leadId,
+      }),
+    });
+  }
+
+  // Reddit post save/unsave endpoints
+  async markRedditPostAsSaved(postId) {
+    return this.request("/mark-reddit-post-as-read", {
+      method: "POST",
+      body: JSON.stringify({
+        post_id: postId,
+      }),
+    });
+  }
+
+  async markRedditPostAsUnsaved(postId) {
+    return this.request("/mark-reddit-post-as-unread", {
+      method: "POST",
+      body: JSON.stringify({
+        post_id: postId,
+      }),
+    });
+  }
 }
 
 export default new ApiService();

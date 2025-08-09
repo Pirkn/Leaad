@@ -4,6 +4,8 @@ import {
   useRedditPosts,
   useGenerateRedditPost,
   useProducts,
+  useMarkRedditPostAsSaved,
+  useMarkRedditPostAsUnsaved,
 } from "../hooks/useApi";
 import { usePostsContext } from "../contexts/PostsContext";
 import { Button } from "../components/ui/button";
@@ -17,6 +19,7 @@ import {
   Filter,
   SortAsc,
   Search,
+  Flag,
 } from "lucide-react";
 import Snackbar from "@mui/material/Snackbar";
 import { useSearchParams } from "react-router-dom";
@@ -28,9 +31,16 @@ function Posts() {
   const { data: posts, isLoading, error } = useRedditPosts();
   const { data: productsResponse } = useProducts();
   const generatePostMutation = useGenerateRedditPost();
+  const markAsSavedMutation = useMarkRedditPostAsSaved();
+  const markAsUnsavedMutation = useMarkRedditPostAsUnsaved();
   const [copiedPostId, setCopiedPostId] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const { newlyGeneratedPosts, addNewlyGeneratedPosts } = usePostsContext();
+  const {
+    newlyGeneratedPosts,
+    addNewlyGeneratedPosts,
+    isGeneratingPosts,
+    setGeneratingPosts,
+  } = usePostsContext();
   const [showPostModal, setShowPostModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
@@ -45,6 +55,10 @@ function Posts() {
   const [subredditFilter, setSubredditFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [saveFilter, setSaveFilter] = useState("all"); // "all" or "saved"
+
+  // Save functionality states
+  const [optimisticSaves, setOptimisticSaves] = useState(new Set());
 
   const products = productsResponse?.products || [];
   const product = products[0]; // Assuming single product setup
@@ -54,6 +68,10 @@ function Posts() {
       alert("No product configured. Please add a product first.");
       return;
     }
+
+    // Set persistent loading state
+    setGeneratingPosts(true);
+
     try {
       const result = await generatePostMutation.mutateAsync({
         product_id: product.id,
@@ -99,6 +117,9 @@ function Posts() {
       setTimeout(() => setShowSuccess(false), 2000);
     } catch (error) {
       // Error handled by mutation
+    } finally {
+      // Clear persistent loading state
+      setGeneratingPosts(false);
     }
   };
 
@@ -141,6 +162,40 @@ function Posts() {
     setSnackbarOpen(false);
   };
 
+  const handleSavePost = async (postId) => {
+    // Optimistically update the UI
+    setOptimisticSaves((prev) => new Set([...prev, postId]));
+
+    try {
+      await markAsSavedMutation.mutateAsync(postId);
+    } catch (error) {
+      console.error("Failed to save post:", error);
+      // Revert optimistic update on error
+      setOptimisticSaves((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(postId);
+        return newSet;
+      });
+    }
+  };
+
+  const handleUnsavePost = async (postId) => {
+    // Optimistically update the UI
+    setOptimisticSaves((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(postId);
+      return newSet;
+    });
+
+    try {
+      await markAsUnsavedMutation.mutateAsync(postId);
+    } catch (error) {
+      console.error("Failed to unsave post:", error);
+      // Revert optimistic update on error
+      setOptimisticSaves((prev) => new Set([...prev, postId]));
+    }
+  };
+
   // Combine existing posts with newly generated posts
   const allPosts = [...(posts || []), ...newlyGeneratedPosts];
 
@@ -173,6 +228,16 @@ function Posts() {
       if (dateFilter === "month" && diffDays > 30) return false;
     }
 
+    // Save filter
+    if (saveFilter !== "all") {
+      const isOptimisticallySaved = optimisticSaves.has(post.id);
+      const effectiveSaveStatus = post.read || isOptimisticallySaved;
+
+      if (saveFilter === "saved" && !effectiveSaveStatus) {
+        return false;
+      }
+    }
+
     return true;
   });
 
@@ -197,13 +262,15 @@ function Posts() {
     setSubredditFilter("all");
     setDateFilter("all");
     setSortBy("newest");
+    setSaveFilter("all");
   };
 
   const hasActiveFilters =
     searchTerm ||
     subredditFilter !== "all" ||
     dateFilter !== "all" ||
-    sortBy !== "newest";
+    sortBy !== "newest" ||
+    saveFilter !== "all";
 
   // Handle scrolling to specific post from URL parameter
   useEffect(() => {
@@ -297,13 +364,11 @@ function Posts() {
               </div>
               <Button
                 onClick={handleGeneratePost}
-                disabled={generatePostMutation.isPending || !product}
+                disabled={isGeneratingPosts || !product}
                 className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                {generatePostMutation.isPending
-                  ? "Generating..."
-                  : "Generate Post"}
+                {isGeneratingPosts ? "Generating..." : "Generate Post"}
               </Button>
             </motion.div>
 
@@ -353,6 +418,33 @@ function Posts() {
                 <div className="text-sm text-gray-500">
                   {sortedPosts.length} of {allPosts.length} posts
                 </div>
+              </div>
+
+              {/* Save Filter Buttons */}
+              <div className="flex items-center space-x-2 mb-4">
+                <Button
+                  onClick={() => setSaveFilter("all")}
+                  variant="ghost"
+                  className={
+                    saveFilter === "all"
+                      ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
+                      : "hover:bg-gray-100"
+                  }
+                >
+                  All Posts
+                </Button>
+
+                <Button
+                  onClick={() => setSaveFilter("saved")}
+                  variant="ghost"
+                  className={
+                    saveFilter === "saved"
+                      ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
+                      : "hover:bg-gray-100"
+                  }
+                >
+                  Saved Posts
+                </Button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -460,6 +552,32 @@ function Posts() {
                         <FileText className="w-4 h-4 mr-2" />
                         <span>View Post</span>
                       </Button>
+                      {(() => {
+                        const isOptimisticallySaved = optimisticSaves.has(
+                          post.id
+                        );
+                        const isSaved = post.read || isOptimisticallySaved;
+
+                        return (
+                          <Button
+                            onClick={() =>
+                              isSaved
+                                ? handleUnsavePost(post.id)
+                                : handleSavePost(post.id)
+                            }
+                            variant="outline"
+                            className={`px-3 py-2 transition-all duration-200 ${
+                              isSaved
+                                ? "bg-orange-50 border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400"
+                                : "hover:bg-gray-50"
+                            }`}
+                            title={isSaved ? "Unsave post" : "Save post"}
+                          >
+                            <Flag className="w-4 h-4 mr-2" />
+                            <span>{isSaved ? "Saved" : "Save"}</span>
+                          </Button>
+                        );
+                      })()}
                       {post.url && (
                         <Button
                           onClick={() => window.open(post.url, "_blank")}
@@ -501,16 +619,6 @@ function Posts() {
                       Clear Filters
                     </Button>
                   ) : null}
-                  <Button
-                    onClick={handleGeneratePost}
-                    disabled={generatePostMutation.isPending || !product}
-                    className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    {generatePostMutation.isPending
-                      ? "Generating..."
-                      : "Generate Post"}
-                  </Button>
                 </motion.div>
               )}
             </div>

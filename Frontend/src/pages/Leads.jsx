@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   useLeads,
   useMarkLeadAsRead,
+  useMarkLeadAsUnread,
   useProducts,
   useGenerateLeads,
 } from "../hooks/useApi";
@@ -41,6 +42,7 @@ function Leads() {
   const { data: leads, isLoading, error } = useLeads();
   const { data: productsResponse } = useProducts();
   const markAsReadMutation = useMarkLeadAsRead();
+  const markAsUnreadMutation = useMarkLeadAsUnread();
   const generateLeadsMutation = useGenerateLeads();
   const { newlyGeneratedLeads, addNewlyGeneratedLeads } = useLeadsContext();
 
@@ -80,20 +82,37 @@ function Leads() {
     }
   };
 
-  const handleMarkAsRead = async (leadId) => {
-    // Optimistically update the UI
-    setOptimisticReads((prev) => new Set([...prev, leadId]));
-
-    try {
-      await markAsReadMutation.mutateAsync(leadId);
-    } catch (error) {
-      console.error("Failed to mark lead as read:", error);
-      // Revert optimistic update on error
+  const handleToggleReadStatus = async (leadId, currentReadStatus) => {
+    if (currentReadStatus) {
+      // Currently read, mark as unread
       setOptimisticReads((prev) => {
         const newSet = new Set(prev);
         newSet.delete(leadId);
         return newSet;
       });
+
+      try {
+        await markAsUnreadMutation.mutateAsync(leadId);
+      } catch (error) {
+        console.error("Failed to mark lead as unread:", error);
+        // Revert optimistic update on error
+        setOptimisticReads((prev) => new Set([...prev, leadId]));
+      }
+    } else {
+      // Currently unread, mark as read
+      setOptimisticReads((prev) => new Set([...prev, leadId]));
+
+      try {
+        await markAsReadMutation.mutateAsync(leadId);
+      } catch (error) {
+        console.error("Failed to mark lead as read:", error);
+        // Revert optimistic update on error
+        setOptimisticReads((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(leadId);
+          return newSet;
+        });
+      }
     }
   };
 
@@ -242,7 +261,7 @@ function Leads() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
-              className="bg-white border border-gray-200 rounded-lg p-6"
+              className="bg-white border border-gray-200 rounded-lg p-4"
             >
               <div className="flex items-center justify-between">
                 {/* Left side - Action buttons */}
@@ -620,19 +639,19 @@ function Leads() {
                       </span>
                     </Button>
                     <Button
-                      onClick={() => handleMarkAsRead(lead.id)}
+                      onClick={() => handleToggleReadStatus(lead.id, isRead)}
                       variant="outline"
                       className={`px-3 py-2 transition-all duration-200 ${
                         isRead
                           ? "bg-green-50 border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400"
                           : "hover:bg-gray-50"
                       }`}
-                      title={isRead ? "Marked as read" : "Mark as read"}
+                      title={isRead ? "Mark as unread" : "Mark as read"}
                     >
                       {isRead ? (
                         <>
                           <EyeOff className="w-4 h-4" />
-                          <span>Marked as read</span>
+                          <span>Mark as unread</span>
                         </>
                       ) : (
                         <>

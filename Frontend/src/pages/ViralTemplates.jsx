@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useApi";
 import staticDataService from "../services/staticData";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, animate } from "framer-motion";
 import Snackbar from "@mui/material/Snackbar";
 import redditPng from "../assets/reddit.png";
 
@@ -22,7 +22,29 @@ function ViralTemplates() {
         subredditDropdownRef.current &&
         !subredditDropdownRef.current.contains(event.target)
       ) {
+        // Close dropdown immediately and trigger smooth closing animation (same as button click)
         setShowSubredditDropdown(false);
+
+        // Trigger the same smooth closing animation as the button click
+        if (subredditDropdownRef.current) {
+          const element = subredditDropdownRef.current;
+          let scrollContainer =
+            element.closest(".overflow-y-auto") ||
+            element.closest('[class*="max-h"]') ||
+            document.querySelector(".fixed.inset-0 .overflow-y-auto");
+
+          if (scrollContainer) {
+            const currentScroll = scrollContainer.scrollTop;
+            // Same smooth closing animation
+            animate(currentScroll, currentScroll - 80, {
+              duration: 0.4,
+              ease: [0.25, 0.46, 0.45, 0.94],
+              onUpdate: (value) => {
+                scrollContainer.scrollTop = Math.max(0, value);
+              },
+            });
+          }
+        }
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -726,7 +748,75 @@ function ViralTemplates() {
                           type="button"
                           className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium mr-1"
                           onClick={(e) => {
-                            setShowSubredditDropdown((prev) => !prev);
+                            setShowSubredditDropdown((prev) => {
+                              const newState = !prev;
+
+                              if (newState) {
+                                // Opening: Smooth scroll down
+                                setTimeout(() => {
+                                  if (subredditDropdownRef.current) {
+                                    const element =
+                                      subredditDropdownRef.current;
+                                    let scrollContainer =
+                                      element.closest(".overflow-y-auto") ||
+                                      element.closest('[class*="max-h"]') ||
+                                      document.querySelector(
+                                        ".fixed.inset-0 .overflow-y-auto"
+                                      );
+
+                                    if (scrollContainer) {
+                                      const currentScroll =
+                                        scrollContainer.scrollTop;
+                                      // Store original position for closing animation
+                                      subredditDropdownRef.current._originalScrollTop =
+                                        currentScroll;
+
+                                      // Scroll down more for better visibility
+                                      animate(
+                                        currentScroll,
+                                        currentScroll + 160,
+                                        {
+                                          duration: 0.8,
+                                          ease: [0.25, 0.46, 0.45, 0.94],
+                                          onUpdate: (value) => {
+                                            scrollContainer.scrollTop = value;
+                                          },
+                                        }
+                                      );
+                                    }
+                                  }
+                                }, 100);
+                              } else {
+                                // Closing: Smooth scroll to compensate for dropdown height reduction
+                                if (subredditDropdownRef.current) {
+                                  const element = subredditDropdownRef.current;
+                                  let scrollContainer =
+                                    element.closest(".overflow-y-auto") ||
+                                    element.closest('[class*="max-h"]') ||
+                                    document.querySelector(
+                                      ".fixed.inset-0 .overflow-y-auto"
+                                    );
+
+                                  if (scrollContainer) {
+                                    const currentScroll =
+                                      scrollContainer.scrollTop;
+                                    // Slower, more seamless scroll to match dropdown fade-out
+                                    animate(currentScroll, currentScroll - 80, {
+                                      duration: 0.4,
+                                      ease: [0.25, 0.46, 0.45, 0.94], // Same smooth easing as opening
+                                      onUpdate: (value) => {
+                                        scrollContainer.scrollTop = Math.max(
+                                          0,
+                                          value
+                                        );
+                                      },
+                                    });
+                                  }
+                                }
+                              }
+
+                              return newState;
+                            });
                           }}
                         >
                           {/* Reddit Icon as image */}
@@ -757,13 +847,13 @@ function ViralTemplates() {
                           {showSubredditDropdown &&
                             selectedTemplate?.recommendedSubreddits && (
                               <motion.div
-                                initial={{ opacity: 0, y: -8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -8 }}
-                                transition={{ duration: 0.18, ease: "easeOut" }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
                                 className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50"
                               >
-                                <div className="py-1">
+                                <div className="py-2">
                                   {selectedTemplate.recommendedSubreddits.map(
                                     (sub, idx) => (
                                       <button
