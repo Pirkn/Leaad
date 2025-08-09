@@ -187,7 +187,7 @@ function ViralTemplates() {
           >
             <button
               onClick={() => setShowProductModal(true)}
-              className="bg-[#FF4500] text-white px-3 py-2 rounded-md hover:bg-[#CC3700] transition-all duration-200 text-sm font-medium flex items-center shadow-sm hover:shadow-md"
+              className="bg-[#FF4500] text-white px-3 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium flex items-center"
             >
               <svg
                 className="w-4 h-4 mr-2"
@@ -315,7 +315,7 @@ function ViralTemplates() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.95 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-white rounded-xl p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto shadow-2xl"
+              className="bg-white border border-gray-200 rounded-lg p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -367,7 +367,7 @@ function ViralTemplates() {
                   {productsData.products.map((product) => (
                     <div
                       key={product.id}
-                      className="p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-sm border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                      className="p-4 border border-gray-200 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm hover:border-gray-300 hover:bg-gray-50"
                       onClick={() => {
                         setShowProductModal(false);
                         handleGenerateRedditPost(product);
@@ -445,7 +445,7 @@ function ViralTemplates() {
                   delay: 0.3 + index * 0.05,
                   ease: "easeOut",
                 }}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors flex flex-col h-52"
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-sm transition-shadow flex flex-col h-52"
               >
                 {/* Card Header */}
                 <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 h-16 flex items-center">
@@ -627,7 +627,7 @@ function ViralTemplates() {
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-white rounded-xl w-full max-w-7xl mx-4 max-h-[95vh] overflow-y-auto shadow-2xl"
+              className="bg-white border border-gray-200 rounded-lg w-full max-w-7xl mx-4 max-h-[95vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Only close button, no sticky header or divider */}

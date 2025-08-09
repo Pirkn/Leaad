@@ -186,6 +186,12 @@ function Karma() {
       setGeneratedComment(result);
       // Store in localStorage using karmaService for consistency
       karmaService.updateStoredKarmaContent("comment", result);
+
+      // Show success toast
+      toast("Comments generated successfully!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (error) {
       console.error("Failed to generate comment:", error);
     }
@@ -197,6 +203,12 @@ function Karma() {
       setGeneratedPost(result);
       // Store in localStorage using karmaService for consistency
       karmaService.updateStoredKarmaContent("post", result);
+
+      // Show success toast
+      toast("Post generated successfully!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (error) {
       console.error("Failed to generate post:", error);
     }
@@ -210,6 +222,12 @@ function Karma() {
 
       // Update state with the new result
       setGeneratedComment(result);
+
+      // Show success toast
+      toast("Comments generated successfully!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
 
       // Note: localStorage is already updated by karmaService.generateComment()
       console.log("Comment refreshed via karmaService");
@@ -229,6 +247,12 @@ function Karma() {
 
       // Update state with the new result
       setGeneratedPost(result);
+
+      // Show success toast
+      toast("Post generated successfully!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
 
       // Note: localStorage is already updated by karmaService.generatePost()
       console.log("Post refreshed via karmaService");

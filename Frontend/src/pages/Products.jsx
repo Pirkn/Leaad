@@ -30,6 +30,8 @@ function Products() {
     target_audience: "",
     problem_solved: "",
   });
+  const [hasReanalyzed, setHasReanalyzed] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
 
   // API hooks
@@ -48,6 +50,7 @@ function Products() {
 
   const handleEdit = (product) => {
     setEditingProduct(product.id);
+    setHasReanalyzed(false); // Reset reanalysis state
     setFormValues({
       name: product.name || "",
       url: product.url || "",
@@ -59,23 +62,44 @@ function Products() {
 
   const handleSave = async () => {
     if (!product?.id) return;
-    try {
-      await updateProductMutation.mutateAsync({
-        productId: product.id,
-        productData: { ...formValues },
-      });
+
+    // Set saving state briefly for immediate feedback
+    setIsSaving(true);
+
+    // Small delay to show the saving state briefly, then optimistically exit
+    setTimeout(() => {
       setEditingProduct(null);
+      setHasReanalyzed(false); // Reset reanalysis state
+      setIsSaving(false); // Reset saving state
       toast("Product saved", {
         duration: 2000,
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
+    }, 200); // Brief 200ms delay for visual feedback
+
+    try {
+      // Format URL before saving
+      const formattedFormValues = {
+        ...formValues,
+        url: formatUrl(formValues.url),
+      };
+
+      await updateProductMutation.mutateAsync({
+        productId: product.id,
+        productData: formattedFormValues,
+      });
     } catch (error) {
-      toast(error.message || "Failed to save product", { duration: 2500 });
+      // If save fails, show error toast as backup
+      toast("Product save failed - please try again", {
+        duration: 3000,
+        icon: <TriangleAlert className="w-4 h-4 text-red-600" />,
+      });
     }
   };
 
   const handleCancel = () => {
     setEditingProduct(null);
+    setHasReanalyzed(false); // Reset reanalysis state
   };
 
   const handleDelete = async (productId) => {
@@ -94,45 +118,50 @@ function Products() {
     return new Date(dateString).toLocaleDateString();
   };
 
+  // Helper function to format URL
+  const formatUrl = (url) => {
+    if (!url) return url;
+    const trimmedUrl = url.trim();
+    if (
+      trimmedUrl &&
+      !trimmedUrl.startsWith("http://") &&
+      !trimmedUrl.startsWith("https://")
+    ) {
+      return `https://${trimmedUrl}`;
+    }
+    return trimmedUrl;
+  };
+
   const handleReanalyzeProduct = async () => {
-    if (!product?.url) {
+    if (!formValues.url) {
       toast("No product URL available for reanalysis", { duration: 2500 });
       return;
     }
 
+    const formattedUrl = formatUrl(formValues.url);
+
     try {
-      console.log("Starting reanalysis for URL:", product.url);
-      const result = await analyzeProductMutation.mutateAsync(product.url);
+      console.log("Starting reanalysis for URL:", formattedUrl);
+      const result = await analyzeProductMutation.mutateAsync(formattedUrl);
       console.log("Analysis result:", result);
 
       // Use the returned values from generate-product-details
       if (result) {
-        console.log("New data to save:", result);
+        console.log("New data received:", result);
 
-        // Immediately update form values to display the new data
-        setFormValues({
-          name: product.name, // Keep existing name
-          url: product.url, // Keep existing URL
+        // Only update form values - don't save to backend yet
+        setFormValues((prev) => ({
+          ...prev,
+          url: formattedUrl, // Update with formatted URL
           description: result.description,
           target_audience: result.target_audience,
           problem_solved: result.problem_solved,
-        });
+        }));
 
-        // Call edit-product endpoint with the new analysis data
-        const updateResult = await updateProductMutation.mutateAsync({
-          productId: product.id,
-          productData: {
-            name: product.name, // Keep existing name
-            url: product.url, // Keep existing URL
-            description: result.description,
-            target_audience: result.target_audience,
-            problem_solved: result.problem_solved,
-          },
-        });
-        console.log("Update result:", updateResult);
+        setHasReanalyzed(true); // Mark as reanalyzed to hide the section
 
-        toast("Product reanalyzed and saved successfully", {
-          duration: 2000,
+        toast("Product reanalyzed successfully", {
+          duration: 3000,
           icon: <CircleCheck className="w-4 h-4 text-green-600" />,
         });
       } else {
@@ -294,48 +323,15 @@ function Products() {
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {editingProduct !== product.id && (
-                      <button
-                        onClick={handleReanalyzeProduct}
-                        disabled={analyzeProductMutation.isPending}
-                        className="border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {analyzeProductMutation.isPending ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            <span>Analyzing...</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                              />
-                            </svg>
-                            <span>Reanalyze Product</span>
-                          </>
-                        )}
-                      </button>
-                    )}
                     {editingProduct === product.id ? (
                       <div className="flex items-center space-x-2">
                         <Button
                           onClick={handleSave}
-                          disabled={updateProductMutation.isPending}
+                          disabled={isSaving}
                           variant="outline"
                           className="border-green-500 hover:border-green-600 bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 h-9 text-sm"
                         >
-                          {updateProductMutation.isPending
-                            ? "Saving..."
-                            : "Save"}
+                          {isSaving ? "Saving..." : "Save"}
                         </Button>
                         <Button
                           onClick={handleCancel}
@@ -410,14 +406,73 @@ function Products() {
                       Website URL
                     </label>
                     {editingProduct === product.id ? (
-                      <input
-                        type="url"
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
-                        value={formValues.url}
-                        onChange={(e) =>
-                          setFormValues((v) => ({ ...v, url: e.target.value }))
-                        }
-                      />
+                      <div>
+                        <input
+                          type="url"
+                          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-[0.95rem]"
+                          value={formValues.url}
+                          onChange={(e) => {
+                            setFormValues((v) => ({
+                              ...v,
+                              url: e.target.value,
+                            }));
+                            // Reset reanalyzed flag when URL changes after reanalysis
+                            if (hasReanalyzed) {
+                              setHasReanalyzed(false);
+                            }
+                          }}
+                        />
+
+                        {/* Reanalyze functionality when editing URL */}
+                        <AnimatePresence>
+                          {formValues.url &&
+                            formatUrl(formValues.url) !==
+                              formatUrl(product.url) &&
+                            !hasReanalyzed && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="mt-3 px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-between"
+                              >
+                                <p className="text-sm text-gray-800">
+                                  Reanalyze your product to update description
+                                  and details from the new website
+                                </p>
+                                <button
+                                  onClick={handleReanalyzeProduct}
+                                  disabled={analyzeProductMutation.isPending}
+                                  className="ml-4 border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                                >
+                                  {analyzeProductMutation.isPending ? (
+                                    <>
+                                      <div className="w-3 h-3 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                                      <span>Analyzing...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <svg
+                                        className="w-3 h-3"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                        />
+                                      </svg>
+                                      <span>Reanalyze</span>
+                                    </>
+                                  )}
+                                </button>
+                              </motion.div>
+                            )}
+                        </AnimatePresence>
+                      </div>
                     ) : (
                       <div className="mt-1">
                         <a

@@ -19,9 +19,11 @@ import {
   Filter,
   SortAsc,
   Search,
-  Flag,
+  Bookmark,
+  CircleCheck,
 } from "lucide-react";
 import Snackbar from "@mui/material/Snackbar";
+import { Toaster, toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 
 function Posts() {
@@ -34,7 +36,7 @@ function Posts() {
   const markAsSavedMutation = useMarkRedditPostAsSaved();
   const markAsUnsavedMutation = useMarkRedditPostAsUnsaved();
   const [copiedPostId, setCopiedPostId] = useState(null);
-  const [showSuccess, setShowSuccess] = useState(false);
+
   const {
     newlyGeneratedPosts,
     addNewlyGeneratedPosts,
@@ -113,8 +115,11 @@ function Posts() {
         }
       }
 
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 2000);
+      // Show success toast
+      toast("Posts generated successfully!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (error) {
       // Error handled by mutation
     } finally {
@@ -380,26 +385,6 @@ function Posts() {
               </Button>
             </motion.div>
 
-            {/* Success Notification */}
-            <AnimatePresence>
-              {showSuccess && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="bg-green-50 border border-green-200 rounded-lg p-4"
-                >
-                  <div className="flex items-center">
-                    <Check className="w-5 h-5 text-green-600 mr-2" />
-                    <span className="text-sm text-green-800">
-                      Post generated successfully!
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {/* Filter Card */}
             <motion.div
               initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
@@ -409,73 +394,63 @@ function Posts() {
               }
               className="bg-white border border-gray-200 rounded-lg p-4"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between">
+                {/* Left side - Action buttons */}
                 <div className="flex items-center space-x-2">
-                  <Filter className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-700">
-                    Filters
-                  </span>
+                  <Button
+                    onClick={() => setSaveFilter("all")}
+                    variant="ghost"
+                    className={
+                      saveFilter === "all"
+                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
+                        : "hover:bg-gray-100"
+                    }
+                  >
+                    All Posts
+                  </Button>
+
+                  <Button
+                    onClick={() => setSaveFilter("saved")}
+                    variant="ghost"
+                    className={
+                      saveFilter === "saved"
+                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
+                        : "hover:bg-gray-100"
+                    }
+                  >
+                    Saved Posts
+                  </Button>
+
                   {hasActiveFilters && (
                     <Button
                       onClick={clearFilters}
                       variant="ghost"
-                      className="text-xs text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 hover:text-gray-700"
                     >
                       Clear all
                     </Button>
                   )}
                 </div>
-                <div className="text-sm text-gray-500">
-                  {sortedPosts.length} of {allPosts.length} posts
-                </div>
-              </div>
 
-              {/* Save Filter Buttons */}
-              <div className="flex items-center space-x-2 mb-4">
-                <Button
-                  onClick={() => setSaveFilter("all")}
-                  variant="ghost"
-                  className={
-                    saveFilter === "all"
-                      ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                      : "hover:bg-gray-100"
-                  }
-                >
-                  All Posts
-                </Button>
+                {/* Right side - Filters */}
+                <div className="flex items-center space-x-4">
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search posts..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-48 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    />
+                  </div>
 
-                <Button
-                  onClick={() => setSaveFilter("saved")}
-                  variant="ghost"
-                  className={
-                    saveFilter === "saved"
-                      ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                      : "hover:bg-gray-100"
-                  }
-                >
-                  Saved Posts
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search posts..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Subreddit Filter */}
-                <div>
+                  {/* Subreddit Filter */}
                   <select
                     value={subredditFilter}
                     onChange={(e) => setSubredditFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-40 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                   >
                     <option value="all">All Subreddits</option>
                     {uniqueSubreddits.map((subreddit) => (
@@ -484,33 +459,34 @@ function Posts() {
                       </option>
                     ))}
                   </select>
-                </div>
 
-                {/* Date Filter */}
-                <div>
+                  {/* Date Filter */}
                   <select
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                   >
                     <option value="all">All Time</option>
                     <option value="today">Today</option>
                     <option value="week">This Week</option>
                     <option value="month">This Month</option>
                   </select>
-                </div>
 
-                {/* Sort By */}
-                <div>
+                  {/* Sort By */}
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-36 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                   >
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
                     <option value="subreddit">By Subreddit</option>
                   </select>
+
+                  {/* Post count */}
+                  <div className="text-sm text-gray-500">
+                    {sortedPosts.length} of {allPosts.length}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -543,7 +519,9 @@ function Posts() {
                         )}
                         <span className="text-xs text-gray-500">
                           {post.created_at
-                            ? new Date(post.created_at).toLocaleDateString()
+                            ? `Created ${new Date(
+                                post.created_at
+                              ).toLocaleDateString()}`
                             : ""}
                         </span>
                       </div>
@@ -587,7 +565,7 @@ function Posts() {
                             }`}
                             title={isSaved ? "Unsave post" : "Save post"}
                           >
-                            <Flag className="w-4 h-4 mr-2" />
+                            <Bookmark className="w-4 h-4 mr-2" />
                             <span>{isSaved ? "Saved" : "Save"}</span>
                           </Button>
                         );
@@ -849,6 +827,18 @@ function Posts() {
           {snackbarMessage}
         </div>
       </Snackbar>
+
+      {/* Sonner Toaster */}
+      <Toaster
+        position="bottom-right"
+        theme="light"
+        toastOptions={{
+          classNames: {
+            toast: "max-w-xs p-3",
+            closeButton: "hidden",
+          },
+        }}
+      />
     </motion.div>
   );
 }
