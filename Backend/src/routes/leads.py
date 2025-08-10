@@ -11,6 +11,7 @@ import os
 import json
 import uuid
 import datetime
+import random
 load_dotenv()
 
 blp = Blueprint('Leads', __name__, description='Lead Operations')
@@ -94,7 +95,13 @@ class LeadGeneration(MethodView):
         user_id = g.current_user['id']
         leads_to_insert = []
 
-        for lead in generated_leads:
+        # Calculate scheduling intervals using dynamic algorithm
+        base_interval_minutes = 120.0 / len(generated_leads)
+        base_interval_minutes = max(5.0, min(45.0, base_interval_minutes))  # Min 5 min, max 45 min
+        
+        schedule_time = datetime.datetime.now(datetime.timezone.utc)
+
+        for i, lead in enumerate(generated_leads):            
             lead_data = {
                 'id': lead['id'],
                 'uid': user_id,
@@ -107,9 +114,19 @@ class LeadGeneration(MethodView):
                 'num_comments': lead['num_comments'],
                 'author': lead['author'],
                 'subreddit': lead['subreddit'],
-                'date': lead['date']
+                'date': lead['date'],
+                'scheduled_at': scheduled_time.strftime('%Y-%m-%dT%H:%M:%S')
             }
             leads_to_insert.append(lead_data)
+
+            # Calculate random delay between 0.7x and 1.3x of base interval
+            min_delay = base_interval_minutes * 0.7
+            max_delay = base_interval_minutes * 1.3
+            random_delay = random.uniform(min_delay, max_delay)
+            
+            # Add cumulative delay for this lead
+            total_delay_minutes = (i * base_interval_minutes) + random_delay
+            scheduled_time = schedule_time + datetime.timedelta(minutes=total_delay_minutes)
         
         if leads_to_insert:
             try:
@@ -130,8 +147,18 @@ class GetLeads(MethodView):
         supabase: Client = create_client(supabase_url, supabase_key)
 
         user_id = g.current_user['id']
+
         result = supabase.table('leads').select('*').eq('uid', user_id).order('created_at', desc=True).execute()
         leads = result.data
+
+        # current_time = datetime.datetime.now(datetime.timezone.utc)
+        
+        # # Only return leads that have reached their scheduled time (drip-feed system)
+        # result = supabase.table('leads').select('id, selftext, title, url, score, read, num_comments, author, subreddit, date, comment').eq('uid', user_id).lte(
+        #     'scheduled_at', current_time.isoformat()
+        # ).order('scheduled_at', desc=True).execute()
+
+        # leads = result.data
 
         return jsonify(leads)
     

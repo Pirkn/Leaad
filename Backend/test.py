@@ -1,27 +1,23 @@
-# 
+import random
+import datetime
 
-response_data = {
-    "comments": [
-        {
-            "1": "comment1",
-        },
-        {
-            "2": "comment2",
-        }
-    ]
-}
+leads = ['lead1', 'lead2', 'lead3', 'lead4', 'lead5']
 
-comments = response_data.get('comments', [])
+base_interval_minutes = 120.0 / len(leads)
+base_interval_minutes = max(5.0, min(45.0, base_interval_minutes))  # Min 5 min, max 45 min
 
-# Proper way to iterate through comments array
+schedule_time = datetime.datetime.now(datetime.timezone.utc)
 
-# Alternative approach - if you want to process them into a structured format
-processed_comments = []
-for comment in comments:
-    for key, value in comment.items():
-        processed_comments.append({
-            'post_id': key,
-            'comment': value
-        })
+print(schedule_time)
+for i, lead in enumerate(leads):
+    min_delay = base_interval_minutes * 0.7
+    max_delay = base_interval_minutes * 1.3
+    random_delay = random.uniform(min_delay, max_delay)
 
-print(f"Processed comments: {processed_comments}")
+    # Add cumulative delay for this lead
+    total_delay_minutes = (i * base_interval_minutes) + random_delay
+    scheduled_time = schedule_time + datetime.timedelta(minutes=total_delay_minutes)
+    
+    # Format datetime for Supabase (ISO format)
+    formatted_time = scheduled_time.strftime('%Y-%m-%dT%H:%M:%S')
+    print(formatted_time)
