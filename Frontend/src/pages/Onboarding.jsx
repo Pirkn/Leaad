@@ -85,6 +85,14 @@ const steps = [
   },
   {
     id: 2,
+    title: "Why Reddit is perfect for leads",
+    subtitle:
+      "While most businesses chase social media trends, Reddit offers something different: genuine intent and real problems.",
+    icon: Target,
+    action: "Continue",
+  },
+  {
+    id: 3,
     title: "Scanning Reddit for your leads",
     subtitle:
       "Our AI is actively searching through thousands of Reddit discussions to find people actively seeking solutions like yours",
@@ -92,20 +100,12 @@ const steps = [
     action: "Scanning...",
   },
   {
-    id: 3,
+    id: 4,
     title: "Here are your first leads!",
     subtitle:
       "We found real people discussing problems your product solves. These are actual Reddit posts from the last 48 hours.",
     icon: TrendingUp,
     action: "See More Leads",
-  },
-  {
-    id: 4,
-    title: "Ready to unlock unlimited leads?",
-    subtitle:
-      "Join thousands of entrepreneurs who are finding their next customers with AI-powered lead generation",
-    icon: Rocket,
-    action: "Start Free Trial",
   },
 ];
 
@@ -193,7 +193,7 @@ function Onboarding() {
   };
 
   const handleNext = () => {
-    if (currentStep === 4) {
+    if (currentStep === 5) {
       navigate("/signup");
     } else {
       setCurrentStep(currentStep + 1);
@@ -264,7 +264,7 @@ function Onboarding() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="text-center mb-8"
+              className="text-center mb-12"
             >
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 {currentStepData.title}
@@ -550,24 +550,145 @@ function Onboarding() {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="max-w-2xl mx-auto"
               >
-                <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
-                  <p className="text-gray-600 mb-6">
-                    While we're searching, let us know: How many qualified leads
-                    do you think you'll find in your first week?
-                  </p>
-                  <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6">
-                    <button className="px-4 py-2 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors text-sm">
-                      5-10 leads
-                    </button>
-                    <button className="px-4 py-2 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors text-sm">
-                      10-20 leads
-                    </button>
-                    <button className="px-4 py-2 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors text-sm">
-                      20+ leads
-                    </button>
-                  </div>
-                  <div className="w-16 h-16 mx-auto border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
-                </div>
+                <motion.div
+                  className="space-y-12"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.1,
+                        delayChildren: 0.1,
+                      },
+                    },
+                  }}
+                >
+                  <motion.div
+                    className="space-y-6"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      visible: {
+                        opacity: 1,
+                        transition: {
+                          staggerChildren: 0.08,
+                          delayChildren: 0.2,
+                        },
+                      },
+                    }}
+                  >
+                    <motion.div
+                      className="flex items-start space-x-4"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: {
+                          opacity: 1,
+                          x: 0,
+                          transition: { duration: 0.3, ease: "easeOut" },
+                        },
+                      }}
+                    >
+                      <div className="w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-medium mt-1 flex-shrink-0">
+                        1
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">
+                          People actively seeking solutions
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Reddit users post specific problems they need solved,
+                          making them perfect prospects for your product.
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      className="flex items-start space-x-4"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: {
+                          opacity: 1,
+                          x: 0,
+                          transition: { duration: 0.3, ease: "easeOut" },
+                        },
+                      }}
+                    >
+                      <div className="w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-medium mt-1 flex-shrink-0">
+                        2
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">
+                          Authentic pain points
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Real discussions reveal the exact language and
+                          frustrations your target audience uses.
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      className="flex items-start space-x-4"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: {
+                          opacity: 1,
+                          x: 0,
+                          transition: { duration: 0.3, ease: "easeOut" },
+                        },
+                      }}
+                    >
+                      <div className="w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-medium mt-1 flex-shrink-0">
+                        3
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">
+                          Untapped opportunity
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Most businesses ignore Reddit, giving you access to
+                          qualified leads without competition.
+                        </p>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+
+                  <motion.div
+                    className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-8"
+                    variants={{
+                      hidden: { opacity: 0, y: 20, scale: 0.95 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: {
+                          duration: 0.4,
+                          ease: "easeOut",
+                          delay: 0.6,
+                        },
+                      },
+                    }}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <Sparkles className="w-3 h-3 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-2">
+                          How Leaad makes this effortless
+                        </h4>
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                          Leaad scans Reddit 24/7 to surface buying signals,
+                          pain points, and leads you can act on right now. We
+                          discover people actively seeking solutions like yours,
+                          then provide optimized comments and posts designed to
+                          convert them into customers.
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             )}
 
@@ -578,10 +699,54 @@ function Onboarding() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
+                className="max-w-2xl mx-auto"
+              >
+                <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    Scanning Reddit for your leads...
+                  </h3>
+                  <div className="space-y-3 text-left max-w-md mx-auto">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"></div>
+                      <span className="text-gray-600">
+                        Searching through thousands of Reddit discussions
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"
+                        style={{ animationDelay: "0.5s" }}
+                      ></div>
+                      <span className="text-gray-600">
+                        Identifying people actively seeking solutions
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"
+                        style={{ animationDelay: "1s" }}
+                      ></div>
+                      <span className="text-gray-600">
+                        Finding qualified leads in real-time
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {currentStep === 4 && (
+              <motion.div
+                key="step4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="space-y-6"
               >
                 {/* Product Analysis Summary */}
-                <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
+                {/* <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                       <CheckCircle className="w-6 h-6 text-green-600" />
@@ -614,13 +779,13 @@ function Onboarding() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Demo Leads */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-semibold text-gray-900">
-                      Your First Leads (Last 48 Hours)
+                      Your First Leads
                     </h3>
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
@@ -628,129 +793,133 @@ function Onboarding() {
                     </span>
                   </div>
 
-                  {mockLeads.map((lead, index) => (
-                    <motion.div
-                      key={lead.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-sm transition-shadow"
-                    >
-                      {/* Header */}
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h4 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-                            {lead.title}
-                          </h4>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <div className="flex items-center space-x-1">
-                              <User className="w-4 h-4" />
-                              <span>{lead.author}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>Posted {formatDate(lead.date)}</span>
+                  <div className="relative space-y-4">
+                    {mockLeads.slice(0, 2).map((lead, index) => (
+                      <motion.div
+                        key={lead.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className={`bg-white border border-gray-200 rounded-xl p-6 transition-shadow ${
+                          index === 1 ? "" : "hover:shadow-sm"
+                        }`}
+                      >
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
+                              {lead.title}
+                            </h4>
+                            <div className="flex items-center space-x-4 text-sm text-gray-500">
+                              <div className="flex items-center space-x-1">
+                                <User className="w-4 h-4" />
+                                <span>{lead.author}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Calendar className="w-4 h-4" />
+                                <span>Posted {formatDate(lead.date)}</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
-                          r/{lead.subreddit}
-                        </span>
-                      </div>
-
-                      {/* Content */}
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {lead.selftext}
-                      </p>
-
-                      {/* Stats */}
-                      <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
-                        <div className="flex items-center space-x-1">
-                          <ArrowUp className="w-4 h-4" />
-                          <span>{lead.score} upvotes</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <MessageCircle className="w-4 h-4" />
-                          <span>{lead.num_comments} comments</span>
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex space-x-2">
-                        <Button
-                          onClick={() => window.open(lead.url, "_blank")}
-                          className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          <span>View on Reddit</span>
-                        </Button>
-                        <Button
-                          onClick={() => handleViewReply(lead.id)}
-                          variant="outline"
-                          className="flex-1"
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                          <span>
-                            {expandedReplies.has(lead.id)
-                              ? "Hide Reply"
-                              : "View AI Reply"}
+                          <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
+                            r/{lead.subreddit}
                           </span>
-                        </Button>
-                      </div>
+                        </div>
 
-                      {/* Reply Section */}
-                      <AnimatePresence>
-                        {expandedReplies.has(lead.id) && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="mt-4 pt-4 border-t border-gray-200"
+                        {/* Content */}
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                          {lead.selftext}
+                        </p>
+
+                        {/* Stats */}
+                        <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
+                          <div className="flex items-center space-x-1">
+                            <ArrowUp className="w-4 h-4" />
+                            <span>{lead.score} upvotes</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <MessageCircle className="w-4 h-4" />
+                            <span>{lead.num_comments} comments</span>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => window.open(lead.url, "_blank")}
+                            className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
                           >
-                            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                              <div className="flex items-start space-x-3 mb-4">
-                                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <MessageSquare className="w-4 h-4 text-gray-600" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center space-x-2 mb-2">
-                                    <h5 className="text-sm font-medium text-gray-900">
-                                      AI Generated Reply
-                                    </h5>
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                      Personalized
-                                    </span>
+                            <ExternalLink className="w-4 h-4" />
+                            <span>View on Reddit</span>
+                          </Button>
+                          <Button
+                            onClick={() => handleViewReply(lead.id)}
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                            <span>
+                              {expandedReplies.has(lead.id)
+                                ? "Hide Reply"
+                                : "View AI Reply"}
+                            </span>
+                          </Button>
+                        </div>
+
+                        {/* Reply Section */}
+                        <AnimatePresence>
+                          {expandedReplies.has(lead.id) && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3, ease: "easeOut" }}
+                              className="mt-4 pt-4 border-t border-gray-200"
+                            >
+                              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                                <div className="flex items-start space-x-3 mb-4">
+                                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <MessageSquare className="w-4 h-4 text-gray-600" />
                                   </div>
-                                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                                    {lead.comment}
-                                  </p>
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                      <h5 className="text-sm font-medium text-gray-900">
+                                        AI Generated Reply
+                                      </h5>
+                                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                        Personalized
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                      {lead.comment}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex space-x-3">
+                                  <Button
+                                    onClick={() =>
+                                      handleCopyReply(lead.comment, lead.id)
+                                    }
+                                    variant="outline"
+                                    className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium"
+                                  >
+                                    {copiedReplyId === lead.id ? (
+                                      <Check className="w-4 h-4 mr-2" />
+                                    ) : (
+                                      "Copy Reply"
+                                    )}
+                                  </Button>
                                 </div>
                               </div>
-                              <div className="flex space-x-3">
-                                <Button
-                                  onClick={() =>
-                                    handleCopyReply(lead.comment, lead.id)
-                                  }
-                                  variant="outline"
-                                  className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium"
-                                >
-                                  {copiedReplyId === lead.id ? (
-                                    <Check className="w-4 h-4 mr-2" />
-                                  ) : (
-                                    <Copy className="w-4 h-4 mr-2" />
-                                  )}
-                                  {copiedReplyId === lead.id
-                                    ? "Copied!"
-                                    : "Copy Reply"}
-                                </Button>
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    ))}
+
+                    {/* Fade to background effect */}
+                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent pointer-events-none"></div>
+                  </div>
                 </div>
 
                 <div className="text-center py-8">
@@ -762,7 +931,7 @@ function Onboarding() {
                   <Button
                     onClick={handleNext}
                     size="lg"
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-4 text-lg"
+                    className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg"
                   >
                     <Rocket className="w-5 h-5 mr-2" />
                     {currentStepData.action}
@@ -770,123 +939,36 @@ function Onboarding() {
                 </div>
               </motion.div>
             )}
-
-            {currentStep === 4 && (
-              <motion.div
-                key="step4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="max-w-3xl mx-auto"
-              >
-                {/* Social Proof */}
-                <div className="grid md:grid-cols-3 gap-6 mb-12">
-                  {[
-                    {
-                      metric: "1,200+",
-                      label: "Entrepreneurs using Leaad",
-                      icon: Users,
-                    },
-                    {
-                      metric: "15,000+",
-                      label: "Leads generated this month",
-                      icon: Target,
-                    },
-                    {
-                      metric: "89%",
-                      label: "Users find qualified leads in first week",
-                      icon: TrendingUp,
-                    },
-                  ].map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="text-center p-6 bg-white border border-gray-200 rounded-xl"
-                    >
-                      <div className="w-12 h-12 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
-                        <item.icon className="w-6 h-6 text-orange-500" />
-                      </div>
-                      <div className="text-2xl font-bold text-gray-900 mb-1">
-                        {item.metric}
-                      </div>
-                      <div className="text-sm text-gray-600">{item.label}</div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* CTA Section */}
-                <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
-                  <div className="mb-6">
-                    <div className="flex items-center justify-center space-x-1 mb-4">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className="w-5 h-5 text-yellow-400 fill-current"
-                        />
-                      ))}
-                    </div>
-                    <blockquote className="text-lg text-gray-700 mb-4">
-                      "Found 12 qualified leads in my first day. This tool is
-                      incredible!"
-                    </blockquote>
-                    <cite className="text-sm text-gray-500">
-                      - Sarah Chen, SaaS Founder
-                    </cite>
-                  </div>
-
-                  <div className="space-y-6">
-                    <Button
-                      onClick={handleNext}
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 text-xl font-semibold"
-                    >
-                      <Rocket className="w-6 h-6 mr-2" />
-                      {currentStepData.action}
-                    </Button>
-
-                    <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>3-day free trial</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>No credit card required</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>Cancel anytime</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
           </AnimatePresence>
 
           {/* Navigation */}
-          {currentStep > 1 && currentStep < 4 && (
+          {currentStep > 1 && currentStep < 5 && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.4,
+                ease: "easeOut",
+                delay: currentStep === 2 ? 1.0 : 0.6, // Wait for content animations to complete
+              }}
               className="flex justify-between items-center mt-12"
             >
               <Button
                 onClick={handleBack}
                 variant="outline"
-                className="flex items-center"
+                size="lg"
+                className="flex items-center px-8 py-3"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
 
-              {currentStep === 3 && (
+              {currentStep < 4 && (
                 <Button
-                  onClick={handleNext}
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white flex items-center"
+                  onClick={
+                    currentStep === 2 ? () => setCurrentStep(3) : handleNext
+                  }
+                  className="bg-gray-900 hover:bg-gray-800 text-white flex items-center px-8 py-3"
                 >
                   Continue
                   <ArrowRight className="w-4 h-4 ml-2" />
