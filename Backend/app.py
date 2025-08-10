@@ -21,11 +21,18 @@ def create_app():
     app.config['SUPABASE_JWT_SECRET'] = os.getenv('SUPABASE_JWT_SECRET')
 
     # CORS configuration for frontend
+    allowed_origins = [
+        "http://localhost:5173", 
+        "http://127.0.0.1:5500", 
+        "http://localhost:5500",
+        os.getenv('FRONTEND_URL', 'https://your-frontend-domain.railway.app')
+    ]
+    
     CORS(app,
          supports_credentials=True,
          resources={
              r"/*": {
-                 "origins": ["http://localhost:5173", "http://127.0.0.1:5500", "http://localhost:5500"],
+                 "origins": allowed_origins,
                  "methods": ["GET", "POST", "OPTIONS", "PATCH", "DELETE", "PUT"],
                  "allow_headers": ["Content-Type", "Authorization"]
              }
@@ -64,4 +71,6 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(port=5000, debug=True, host='0.0.0.0')
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_ENV') == 'development'
+    app.run(port=port, debug=debug, host='0.0.0.0')
