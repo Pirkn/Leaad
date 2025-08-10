@@ -570,23 +570,47 @@ export default function HomePage() {
 
                 {/* Demo Placeholder */}
                 <div className={index % 2 === 1 ? "lg:col-start-1" : ""}>
-                  <motion.div
-                    className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 h-80 flex items-center justify-center"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <feature.icon className="w-8 h-8 text-orange-500" />
+                  {index === 0 ? (
+                    // Posts feature video for the first feature
+                    <motion.div
+                      className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-80 flex items-center justify-center overflow-hidden"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover rounded-lg"
+                      >
+                        <source
+                          src="/src/assets/posts.webm"
+                          type="video/webm"
+                        />
+                        Your browser does not support the video tag.
+                      </video>
+                    </motion.div>
+                  ) : (
+                    // Regular demo placeholder for other features
+                    <motion.div
+                      className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 h-80 flex items-center justify-center"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <feature.icon className="w-8 h-8 text-orange-500" />
+                        </div>
+                        <p className="text-gray-500 font-medium">
+                          {feature.demoPlaceholder}
+                        </p>
+                        <p className="text-sm text-gray-400 mt-2">
+                          Demo GIF placeholder
+                        </p>
                       </div>
-                      <p className="text-gray-500 font-medium">
-                        {feature.demoPlaceholder}
-                      </p>
-                      <p className="text-sm text-gray-400 mt-2">
-                        Demo GIF placeholder
-                      </p>
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
             ))}

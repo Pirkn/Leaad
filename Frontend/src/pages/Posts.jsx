@@ -641,7 +641,7 @@ function Posts() {
                 Generating your post...
               </h3>
               <p className="text-sm text-gray-500">
-                This may take ~15–30 seconds.
+                This may take ~10–15 seconds.
               </p>
             </motion.div>
           </motion.div>

@@ -929,12 +929,12 @@ function Onboarding() {
                     <strong>AI-generated replies</strong> with your free trial.
                   </p>
                   <Button
-                    onClick={handleNext}
+                    onClick={() => navigate("/signin")}
                     size="lg"
                     className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg"
                   >
                     <Rocket className="w-5 h-5 mr-2" />
-                    {currentStepData.action}
+                    Get Started
                   </Button>
                 </div>
               </motion.div>
