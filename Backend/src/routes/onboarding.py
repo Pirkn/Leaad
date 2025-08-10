@@ -6,7 +6,6 @@ from src.utils.auth import verify_supabase_token
 from supabase import create_client, Client
 import os
 import datetime
-from datetime import timezone
 
 load_dotenv()
 
