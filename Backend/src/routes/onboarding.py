@@ -21,7 +21,6 @@ blp = Blueprint('Onboarding', __name__, description='Onboarding Operations')
 @blp.route('/onboarding-lead-generation')
 class OnboardingLeadGeneration(MethodView):
     def post(self):
-        #product_data = {name, target_audience, problem_solved, description}
         product_data = request.get_json()
 
         # Subreddit generation
@@ -37,7 +36,7 @@ class OnboardingLeadGeneration(MethodView):
             clean_subreddit = subreddit.replace('r/', '') if subreddit.startswith('r/') else subreddit
             subreddits.append(clean_subreddit)
 
-        unformatted_posts, posts = lead_posts(subreddits[:3])
+        unformatted_posts, posts = lead_posts(subreddits[:5])
 
         # Creates a file with the posts
         with open('posts.json', 'w') as f:
@@ -46,9 +45,6 @@ class OnboardingLeadGeneration(MethodView):
         # Process posts in batches of 10
         batch_size = 10
         selected_posts = []
-        
-        # Create one Model instance to reuse for all batches
-        model = Model()
         
         for i in range(0, len(posts), batch_size):
             batch = posts[i:i + batch_size]
