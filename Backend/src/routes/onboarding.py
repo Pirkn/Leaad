@@ -6,157 +6,233 @@ from src.utils.auth import verify_supabase_token
 from supabase import create_client, Client
 import os
 import datetime
+from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt
+from src.utils.prompt_generator import lead_generation_prompt, lead_generation_prompt_2
+from src.utils.reddit_helpers import lead_posts
+from src.utils.models import Model
+import json
+import uuid
+import random
 
 load_dotenv()
 
 blp = Blueprint('Onboarding', __name__, description='Onboarding Operations')
 
-@blp.route('/onboarding-status')
-class OnboardingStatus(MethodView):
-    @verify_supabase_token
-    def get(self):
-        """
-        Get the current onboarding status for the authenticated user
-        Returns the onboarding record with status and created_at timestamp
-        """
-        supabase_url = current_app.config['SUPABASE_URL']
-        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
-        supabase: Client = create_client(supabase_url, supabase_key)
+@blp.route('/onboarding-lead-generation')
+class OnboardingLeadGeneration(MethodView):
+    def post(self):
+        #product_data = {name, target_audience, problem_solved, description}
+        product_data = request.get_json()
 
-        user_id = g.current_user['id']
+        # Subreddit generation
+        messages = lead_subreddits_for_product_prompt(product_data)
+        model = Model()
+        response = model.gemini_chat_completion(messages)
+        response_data = json.loads(response)
+
+        subreddits = []
+        for subreddit in response_data.get('subreddits', []):
+            print(subreddit)
+            # Clean the subreddit name (remove 'r/' prefix if present)
+            clean_subreddit = subreddit.replace('r/', '') if subreddit.startswith('r/') else subreddit
+            subreddits.append(clean_subreddit)
+
+        unformatted_posts, posts = lead_posts(subreddits[:3])
+
+        # Creates a file with the posts
+        with open('posts.json', 'w') as f:
+            json.dump(posts, f)
+
+        # Process posts in batches of 10
+        batch_size = 10
+        selected_posts = []
         
-        try:
-            # Get onboarding status for the current user
-            result = supabase.table('onboarding').select('*').eq('user_id', user_id).execute()
-            
-            if result.data:
-                # User has an onboarding record
-                onboarding_data = result.data[0]
-                return jsonify({
-                    'success': True,
-                    'onboarding': onboarding_data,
-                    'completed': onboarding_data['status']
-                })
-            else:
-                # User doesn't have an onboarding record yet, create one with status = false
-                new_onboarding = {
-                    'user_id': user_id,
-                    'status': False,
-                    'created_at': datetime.datetime.now().isoformat()
-                }
-                
-                insert_result = supabase.table('onboarding').insert(new_onboarding).execute()
-                
-                return jsonify({
-                    'success': True,
-                    'onboarding': insert_result.data[0],
-                    'completed': False
-                })
-                
-        except Exception as e:
-            return jsonify({
-                'success': False,
-                'error': str(e)
-                         }), 500
+        # Create one Model instance to reuse for all batches
+        model = Model()
+        
+        for i in range(0, len(posts), batch_size):
+            batch = posts[i:i + batch_size]
+            messages = lead_generation_prompt(product_data, batch)
 
-@blp.route('/onboarding-reset')
-class OnboardingReset(MethodView):
+            response = model.gemini_lead_checking(messages)
+
+            try:
+                response_data = json.loads(response)
+                post_ids = response_data.get('post_ids', [])
+                print(post_ids)
+                for post_id in post_ids:
+                    selected_posts.append(posts[post_id])
+            except json.JSONDecodeError as e:
+                print(f"Failed to parse AI response: {e}")
+                print(f"Raw response: {response}")
+        
+        messages = lead_generation_prompt_2(product_data, selected_posts, min_posts=2)
+
+        response = model.gemini_chat_completion(messages)
+        response_data = json.loads(response)
+        comments = response_data.get('comments', [])
+
+        # Creates a file with the comments
+        with open('comments.json', 'w') as f:
+            json.dump(comments, f)
+
+        generated_leads = []
+        for comment in comments:
+            for key, value in comment.items():
+                new_post = {}
+                unformatted_post = unformatted_posts[int(key)]
+                new_post['id'] = str(uuid.uuid4())
+                new_post['comment'] = value
+                new_post['selftext'] = unformatted_post['selftext']
+                new_post['title'] = unformatted_post['title']
+                new_post['url'] = unformatted_post['url']
+                new_post['score'] = unformatted_post['score']
+                new_post['read'] = False
+                new_post['num_comments'] = unformatted_post['num_comments']
+                new_post['author'] = unformatted_post['author']
+                new_post['subreddit'] = unformatted_post['subreddit']
+                new_post['date'] = unformatted_post['date']
+                new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+                generated_leads.append(new_post)
+
+        return jsonify({"generated_leads": generated_leads, "subreddits": subreddits})
+
+@blp.route('/save-generated-leads')
+class SaveGeneratedLeads(MethodView):
     @verify_supabase_token
     def post(self):
-        """
-        Reset onboarding status to incomplete for the authenticated user
-        Updates the status field to False
-        """
+        data = request.get_json()
+        generated_leads = data['generated_leads']
+        subreddits = data['subreddits']
+        product_data = data['product_data']
+
+        user_id = g.current_user['id']
+
+        unformatted_posts, posts = lead_posts(subreddits[3:])
+
+        # Creates a file with the posts
+        with open('posts.json', 'w') as f:
+            json.dump(posts, f)
+
+        # Process posts in batches of 10
+        batch_size = 10
+        selected_posts = []
+        
+        # Create one Model instance to reuse for all batches
+        model = Model()
+        
+        for i in range(0, len(posts), batch_size):
+            batch = posts[i:i + batch_size]
+            messages = lead_generation_prompt(product_data, batch)
+
+            response = model.gemini_lead_checking(messages)
+
+            try:
+                response_data = json.loads(response)
+                post_ids = response_data.get('post_ids', [])
+                print(post_ids)
+                for post_id in post_ids:
+                    selected_posts.append(posts[post_id])
+            except json.JSONDecodeError as e:
+                print(f"Failed to parse AI response: {e}")
+                print(f"Raw response: {response}")
+        
+        messages = lead_generation_prompt_2(product_data, selected_posts)
+
+        response = model.gemini_chat_completion(messages)
+        response_data = json.loads(response)
+        comments = response_data.get('comments', [])
+
+        # Creates a file with the comments
+        with open('comments.json', 'w') as f:
+            json.dump(comments, f)
+
+            # Add new leads from additional subreddits
+            for comment in comments:
+                for key, value in comment.items():
+                    new_post = {}
+                    unformatted_post = unformatted_posts[int(key)]
+                    new_post['id'] = str(uuid.uuid4())
+                    new_post['comment'] = value
+                    new_post['selftext'] = unformatted_post['selftext']
+                    new_post['title'] = unformatted_post['title']
+                    new_post['url'] = unformatted_post['url']
+                    new_post['score'] = unformatted_post['score']
+                    new_post['read'] = False
+                    new_post['num_comments'] = unformatted_post['num_comments']
+                    new_post['author'] = unformatted_post['author']
+                    new_post['subreddit'] = unformatted_post['subreddit']
+                    new_post['date'] = unformatted_post['date']
+                    new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+                    generated_leads.append(new_post)
+
+        # Calculate scheduling intervals using dynamic algorithm
+        if len(generated_leads) > 2:
+            base_interval_minutes = 120.0 / len(generated_leads[2:])
+            base_interval_minutes = max(5.0, min(45.0, base_interval_minutes))  # Min 5 min, max 45 min
+        else:
+            base_interval_minutes = 30.0  # Default interval if less than 3 leads
+        
+        schedule_time = datetime.datetime.now(datetime.timezone.utc)
+
+        leads_to_insert = []
+        for i, lead in enumerate(generated_leads):
+            if i < 2:  # First two leads scheduled immediately
+                lead_data = {
+                    'id': lead['id'],
+                    'uid': user_id,
+                    'comment': lead['comment'],
+                    'selftext': lead['selftext'],
+                    'title': lead['title'],
+                    'url': lead['url'],
+                    'score': lead['score'],
+                    'read': lead['read'],
+                    'num_comments': lead['num_comments'],
+                    'author': lead['author'],
+                    'subreddit': lead['subreddit'],
+                    'date': lead['date'],
+                    'scheduled_at': schedule_time.strftime('%Y-%m-%dT%H:%M:%S')
+                }
+                leads_to_insert.append(lead_data)
+            else:  # Remaining leads scheduled with intervals
+                # Calculate random delay between 0.7x and 1.3x of base interval
+                min_delay = base_interval_minutes * 0.7
+                max_delay = base_interval_minutes * 1.3
+                random_delay = random.uniform(min_delay, max_delay)
+                
+                # Add cumulative delay for this lead
+                total_delay_minutes = ((i - 2) * base_interval_minutes) + random_delay
+                scheduled_time = schedule_time + datetime.timedelta(minutes=total_delay_minutes)
+                
+                lead_data = {
+                    'id': lead['id'],
+                    'uid': user_id,
+                    'comment': lead['comment'],
+                    'selftext': lead['selftext'],
+                    'title': lead['title'],
+                    'url': lead['url'],
+                    'score': lead['score'],
+                    'read': lead['read'],
+                    'num_comments': lead['num_comments'],
+                    'author': lead['author'],
+                    'subreddit': lead['subreddit'],
+                    'date': lead['date'],
+                    'scheduled_at': scheduled_time.strftime('%Y-%m-%dT%H:%M:%S')
+                }
+                leads_to_insert.append(lead_data)
+        
         supabase_url = current_app.config['SUPABASE_URL']
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
         supabase: Client = create_client(supabase_url, supabase_key)
 
-        user_id = g.current_user['id']
+        if leads_to_insert:
+            try:
+                supabase.table('leads').insert(leads_to_insert).execute()
+                print(f"Successfully saved {len(leads_to_insert)} leads to database")
+                return jsonify({"status": 200, "message": f"Successfully saved {len(leads_to_insert)} leads to database"})
+            except Exception as e:
+                print(f"Error saving leads to database: {e}")
+                return jsonify({"status": 500, "message": f"Error saving leads to database: {e}"}), 500
+        else:
+            return jsonify({"status": 400, "message": "No leads to save"}), 400
         
-        try:
-            # Check if onboarding record exists
-            check_result = supabase.table('onboarding').select('*').eq('user_id', user_id).execute()
-            
-            if check_result.data:
-                # Update existing record
-                result = supabase.table('onboarding').update({
-                    'status': False
-                }).eq('user_id', user_id).execute()
-                
-                return jsonify({
-                    'success': True,
-                    'message': 'Onboarding reset to incomplete',
-                    'onboarding': result.data[0]
-                })
-            else:
-                # Create new record with incomplete status
-                new_onboarding = {
-                    'user_id': user_id,
-                    'status': False,
-                    'created_at': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
-                }
-                
-                insert_result = supabase.table('onboarding').insert(new_onboarding).execute()
-                
-                return jsonify({
-                    'success': True,
-                    'message': 'Onboarding created with incomplete status',
-                    'onboarding': insert_result.data[0]
-                })
-                
-        except Exception as e:
-            return jsonify({
-                'success': False,
-                'error': str(e)
-            }), 500
-
-@blp.route('/onboarding-completed')
-class OnboardingCompleted(MethodView):
-    @verify_supabase_token
-    def post(self):
-        """
-        Mark onboarding as completed for the authenticated user
-        Updates the status field to True
-        """
-        supabase_url = current_app.config['SUPABASE_URL']
-        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
-        supabase: Client = create_client(supabase_url, supabase_key)
-
-        user_id = g.current_user['id']
-        
-        try:
-            # Check if onboarding record exists
-            check_result = supabase.table('onboarding').select('*').eq('user_id', user_id).execute()
-            
-            if check_result.data:
-                # Update existing record
-                result = supabase.table('onboarding').update({
-                    'status': True
-                }).eq('user_id', user_id).execute()
-                
-                return jsonify({
-                    'success': True,
-                    'message': 'Onboarding marked as completed',
-                    'onboarding': result.data[0]
-                })
-            else:
-                # Create new record with completed status
-                new_onboarding = {
-                    'user_id': user_id,
-                    'status': True,
-                    'created_at': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
-                }
-                
-                insert_result = supabase.table('onboarding').insert(new_onboarding).execute()
-                
-                return jsonify({
-                    'success': True,
-                    'message': 'Onboarding created and marked as completed',
-                    'onboarding': insert_result.data[0]
-                })
-                
-        except Exception as e:
-            return jsonify({
-                'success': False,
-                'error': str(e)
-            }), 500 
