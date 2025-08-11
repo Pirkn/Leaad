@@ -17,6 +17,8 @@ import {
   Award,
   Menu,
   X,
+  ChevronRight,
+  CirclePercent,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -162,15 +164,19 @@ export default function HomePage() {
           <div className="grid grid-cols-3 items-center h-16">
             {/* Left column - Logo */}
             <motion.div
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-3 cursor-pointer"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Leaad</span>
+              <img
+                src="/src/assets/logo.png"
+                alt="Leaad Logo"
+                className="w-5 h-5"
+              />
+              <span className="text-xl font-semibold text-gray-900 mt-0.5">
+                Leaad
+              </span>
             </motion.div>
 
             {/* Center column - Navigation */}
@@ -233,7 +239,7 @@ export default function HomePage() {
                 >
                   <Button
                     size="sm"
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-normal"
+                    className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
                     onClick={() => handleAuthAction("/signup")}
                   >
                     {user ? "Dashboard" : "Get Started"}
@@ -399,7 +405,7 @@ export default function HomePage() {
               animate="visible"
             >
               <motion.div
-                className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 border border-orange-200 rounded-full text-sm font-medium shadow-sm"
+                className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
                 variants={itemVariants}
               >
                 <Rocket className="w-4 h-4 mr-2" />
@@ -429,10 +435,11 @@ export default function HomePage() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <button
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2 text-base font-medium rounded-lg flex items-center justify-center"
+                    className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 pl-5 pr-3 py-2 text-base font-medium rounded-lg flex items-center justify-center"
                     onClick={() => handleAuthAction("/signup")}
                   >
                     {user ? "Go to Dashboard" : "Find your next users"}
+                    <ChevronRight className="ml-2 w-4 h-4" />
                     {/* <ArrowRight className="ml-2 w-4 h-4" /> */}
                   </button>
                 </motion.div>
@@ -483,7 +490,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center relative">
             <motion.img
-              src="/src/assets/macbook-air-medium.png"
+              src="/src/assets/macbook-air-medium.webp"
               alt="Leaad AI Platform Demo"
               className="mx-auto max-w-full h-auto"
               style={{ maxHeight: "1000px" }}
@@ -700,7 +707,7 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
               <Zap className="w-4 h-4 mr-2" />
@@ -803,10 +810,10 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
-              <DollarSign className="w-4 h-4 mr-2" />
+              <CirclePercent className="w-4 h-4 mr-2" />
               Transparent Pricing
             </motion.div>
             <motion.h2
@@ -830,14 +837,14 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             {/* Pro Plan */}
-            <motion.div className="bg-white rounded-2xl border-2 border-orange-500 hover:border-orange-600 transition-all duration-300 relative p-8 shadow-xl hover:shadow-2xl transform hover:scale-105">
+            <motion.div className="bg-white rounded-2xl border-2 border-amber-500 hover:border-amber-600 transition-all duration-300 relative p-8 shadow-xl hover:shadow-2xl transform hover:scale-105">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+                <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
                   3-Day Free Trial
                 </div>
               </div>
               <div className="absolute top-4 right-4">
-                <Award className="w-6 h-6 text-orange-500" />
+                <Award className="w-6 h-6 text-amber-500" />
               </div>
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
@@ -879,7 +886,7 @@ export default function HomePage() {
               >
                 <Button
                   size="lg"
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Start Free Trial
                 </Button>
@@ -921,7 +928,7 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
               <Star className="w-4 h-4 mr-2" />
@@ -1014,7 +1021,7 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
               <MessageSquare className="w-4 h-4 mr-2" />
@@ -1172,7 +1179,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-white"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
-            className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 border border-orange-200 rounded-full text-sm font-medium shadow-sm"
+            className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
             variants={itemVariants}
           >
             <Rocket className="w-4 h-4 mr-2" />
@@ -1194,7 +1201,7 @@ export default function HomePage() {
           <motion.div className="flex justify-center" variants={itemVariants}>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <button
-                className="px-8 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-md font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                className="px-8 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white text-md font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                 onClick={() => handleAuthAction("/signup")}
               >
                 Try it for free
@@ -1238,11 +1245,13 @@ export default function HomePage() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                  <Target className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">
-                  LeadGen AI
+                <img
+                  src="src/assets/logo.png"
+                  alt="Leaad"
+                  className="w-5 h-5"
+                />
+                <span className="text-xl font-bold text-gray-900 mt-0.5">
+                  Leaad
                 </span>
               </motion.div>
               <p className="text-gray-600">
