@@ -22,7 +22,8 @@ def create_app():
 
     # CORS configuration for frontend
     allowed_origins = [
-        "https://leaad.co/"
+        "https://leaad.co",
+        "https://www.leaad.co"
     ]
     
     CORS(app,
