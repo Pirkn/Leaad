@@ -81,6 +81,14 @@ class ApiService {
     });
   }
 
+  // Onboarding lead generation (no auth required)
+  async onboardingLeadGeneration(productData) {
+    return this.request("/onboarding-lead-generation", {
+      method: "POST",
+      body: JSON.stringify(productData),
+    });
+  }
+
   // Reddit endpoints
   async generateRedditPost(productData) {
     return this.request("/generate-reddit-post", {

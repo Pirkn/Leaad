@@ -373,12 +373,13 @@ export default function HomePage() {
                 AI-Powered Lead Generation
               </motion.div>
               <motion.h1
-                className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight max-w-5xl mx-auto"
+                className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
                 variants={itemVariants}
               >
-                Your Users are Waiting. We Know <br />
+                Get Your Product in Front of the Right People{" "}
                 <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent relative">
-                  Where to find them.
+                  Without Guessing
+                  {/* <div className="absolute bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-60"></div> */}
                 </span>
               </motion.h1>
               <motion.p
