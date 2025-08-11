@@ -30,6 +30,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+// Import assets
+import macbookImage from "../assets/macbook-air-medium.png";
+import postsVideo from "../assets/posts.webm";
+import templatesVideo from "../assets/templates.webm";
+import karmaVideo from "../assets/karma.webm";
+
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -454,7 +460,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center relative">
             <motion.img
-              src="/src/assets/macbook-air-medium.png"
+              src={macbookImage}
               alt="Leaad AI Platform Demo"
               className="mx-auto max-w-full h-auto"
               style={{ maxHeight: "800px" }}
@@ -594,7 +600,7 @@ export default function HomePage() {
                         className="w-full h-full object-cover rounded-lg"
                       >
                         <source
-                          src="/src/assets/posts.webm"
+                          src={postsVideo}
                           type="video/webm"
                         />
                         Your browser does not support the video tag.
@@ -611,7 +617,7 @@ export default function HomePage() {
                         className="w-full h-full object-cover rounded-lg"
                       >
                         <source
-                          src="/src/assets/templates.webm"
+                          src={templatesVideo}
                           type="video/webm"
                         />
                         Your browser does not support the video tag.
@@ -628,7 +634,7 @@ export default function HomePage() {
                         className="w-full h-full object-cover rounded-lg"
                       >
                         <source
-                          src="/src/assets/karma.webm"
+                          src={karmaVideo}
                           type="video/webm"
                         />
                         Your browser does not support the video tag.

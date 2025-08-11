@@ -15,6 +15,25 @@ export default defineConfig({
   define: {
     'process.env': {}
   },
+  build: {
+    // Ensure assets are properly handled
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.');
+          const ext = info[info.length - 1];
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
+            return `assets/images/[name]-[hash][extname]`;
+          }
+          if (/webm|mp4|ogg|mov/i.test(ext)) {
+            return `assets/videos/[name]-[hash][extname]`;
+          }
+          return `assets/[name]-[hash][extname]`;
+        },
+      },
+    },
+  },
   server: {
     port: process.env.PORT || 5173,
     host: '0.0.0.0',
