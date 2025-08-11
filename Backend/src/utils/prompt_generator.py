@@ -114,7 +114,7 @@ def lead_subreddits_for_product_prompt(product_data):
     4. Active enough for regular lead opportunities
     
     Return top 10 subreddits with reasoning for each.
-    Return in the following format:
+    You MUST return in the following json format:
     {{"subreddits": ["subreddit1", "subreddit2", "subreddit3"]}}
     """
     
