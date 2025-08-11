@@ -396,6 +396,15 @@ export default function HomePage() {
 
       {/* Hero Section with Floating Elements */}
       <section className="pt-20 pb-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Background Texture for Hero Section */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="/src/assets/herobg.png"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+
         <div className="relative z-10">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -486,8 +495,18 @@ export default function HomePage() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
+        {/* Background Texture */}
+        <div className="absolute inset-x-0 -top-10 w-full h-full opacity-30">
+          <img
+            src="/src/assets/background.png"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ minHeight: "600px" }}
+          />
+        </div>
+
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center relative">
             <motion.img
               src="/src/assets/macbook-air-medium.webp"
