@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ChevronDown } from "lucide-react";
-import { cn } from "../../lib/utils.js";
+import { cn } from "../utils.js";
 
 const Select = React.forwardRef(({ className, children, ...props }, ref) => (
   <select
