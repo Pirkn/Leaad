@@ -22,10 +22,7 @@ def create_app():
 
     # CORS configuration for frontend
     allowed_origins = [
-        "http://localhost:5173", 
-        "http://127.0.0.1:5500", 
-        "http://localhost:5500",
-        os.getenv('FRONTEND_URL')
+        "https://leaad.co/"
     ]
     
     CORS(app,
