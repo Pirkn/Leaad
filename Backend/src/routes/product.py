@@ -3,25 +3,24 @@ from flask_smorest import Blueprint
 from flask import jsonify, request, g, current_app
 from dotenv import load_dotenv
 from src.utils.auth import verify_supabase_token
-from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt, lead_generation_prompt, lead_generation_prompt_2
+from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt
 from src.utils.models import Model
 from supabase import create_client, Client
 from src.utils.website_scraper import get_website_content
-from src.utils.reddit_helpers import lead_posts
 import os
 import json
-import uuid
+
 load_dotenv()
 
 blp = Blueprint('Product', __name__, description='Product Operations')
 
 @blp.route('/generate-product-details')
 class GenerateProductDetails(MethodView):
-    @verify_supabase_token
     def post(self):
         data = request.get_json()
         product_website_link = data.get('product_website_link')
         print(product_website_link)
+
         # ===== Get Product Details =====
         website_content = get_website_content(product_website_link)
 

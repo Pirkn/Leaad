@@ -175,7 +175,7 @@ def lead_generation_prompt(product_data, posts):
     messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
     return messages
 
-def lead_generation_prompt_2(product_data, posts):
+def lead_generation_prompt_2(product_data, posts, min_posts=5):
     system_prompt = f"""
     You are an expert lead generation specialist analyzing Reddit posts for marketing opportunities.
     
@@ -203,7 +203,7 @@ def lead_generation_prompt_2(product_data, posts):
     - Only select posts where you can provide genuine value
     - Skip posts that are too generic, off-topic, or don't need your solution
     - If no posts meet criteria, return empty array
-    - Select at least 5 posts
+    - Select at least {min_posts} posts
 
     RETURN JSON FORMAT:
     {{"comments": [
