@@ -30,10 +30,13 @@ class LeadGeneration(MethodView):
         result = supabase.table('lead_subreddits').select('*').eq('product_id', product_id).execute()
         subreddits = [lead['subreddit'] for lead in result.data]
 
+        if not subreddits:
+            return jsonify({'error': 'No subreddits found for this product. Please add subreddits first.'}), 400
+
         # Get product data
         product_result = supabase.table('products').select('*').eq('id', product_id).execute()
         product_data = product_result.data[0]
-
+        
         unformatted_posts, posts = lead_posts(subreddits)
         # Creates a file with the posts
         with open('posts.json', 'w') as f:
@@ -55,7 +58,7 @@ class LeadGeneration(MethodView):
             try:
                 response_data = json.loads(response)
                 post_ids = response_data.get('post_ids', [])
-                print(post_ids)
+                print(f"AI returned post_ids: {post_ids}")
                 for post_id in post_ids:
                     selected_posts.append(posts[post_id])
             except json.JSONDecodeError as e:
@@ -127,7 +130,7 @@ class LeadGeneration(MethodView):
             
             # Add cumulative delay for this lead
             total_delay_minutes = (i * base_interval_minutes) + random_delay
-            scheduled_time =  time_now + datetime.timedelta(minutes=total_delay_minutes)
+            scheduled_time = time_now + datetime.timedelta(minutes=total_delay_minutes)
         
         if leads_to_insert:
             try:

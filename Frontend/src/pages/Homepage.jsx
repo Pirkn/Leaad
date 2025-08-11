@@ -592,6 +592,27 @@ export default function HomePage() {
                         Your browser does not support the video tag.
                       </video>
                     </motion.div>
+                  ) : index === 1 ? (
+                    // Viral Templates feature video for the second feature
+                    <motion.div
+                      className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-80 flex items-center justify-center overflow-hidden"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover rounded-lg"
+                      >
+                        <source
+                          src="/src/assets/templates.webm"
+                          type="video/webm"
+                        />
+                        Your browser does not support the video tag.
+                      </video>
+                    </motion.div>
                   ) : (
                     // Regular demo placeholder for other features
                     <motion.div

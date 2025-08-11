@@ -31,16 +31,12 @@ class OnboardingLeadGeneration(MethodView):
 
         subreddits = []
         for subreddit in response_data.get('subreddits', []):
-            print(subreddit)
             # Clean the subreddit name (remove 'r/' prefix if present)
             clean_subreddit = subreddit.replace('r/', '') if subreddit.startswith('r/') else subreddit
-            subreddits.append(clean_subreddit)
+            subreddits.append(clean_subreddit)        
 
-        unformatted_posts, posts = lead_posts(subreddits[:5])
-
-        # Creates a file with the posts
-        with open('posts.json', 'w') as f:
-            json.dump(posts, f)
+        unformatted_posts, posts = lead_posts(subreddits)
+        print("posts found: ", len(posts))
 
         # Process posts in batches of 10
         batch_size = 10
@@ -62,15 +58,11 @@ class OnboardingLeadGeneration(MethodView):
                 print(f"Failed to parse AI response: {e}")
                 print(f"Raw response: {response}")
         
-        messages = lead_generation_prompt_2(product_data, selected_posts, min_posts=2)
+        messages = lead_generation_prompt_2(product_data, selected_posts, min_posts="Exactly 2 posts")
 
         response = model.gemini_chat_completion(messages)
         response_data = json.loads(response)
         comments = response_data.get('comments', [])
-
-        # Creates a file with the comments
-        with open('comments.json', 'w') as f:
-            json.dump(comments, f)
 
         generated_leads = []
         for comment in comments:
@@ -91,7 +83,7 @@ class OnboardingLeadGeneration(MethodView):
                 new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                 generated_leads.append(new_post)
 
-        return jsonify({"generated_leads": generated_leads, "subreddits": subreddits})
+        return jsonify({"generated_leads": generated_leads[:2], "subreddits": subreddits})
 
 @blp.route('/save-generated-leads')
 class SaveGeneratedLeads(MethodView):
