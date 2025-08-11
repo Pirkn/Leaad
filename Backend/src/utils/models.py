@@ -77,7 +77,7 @@ class Model:
                     contents=formatted_contents,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
-                        #thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
+                        thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
                     )
                 )
                 try:
