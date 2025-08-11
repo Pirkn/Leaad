@@ -99,7 +99,8 @@ class LeadGeneration(MethodView):
         base_interval_minutes = 120.0 / len(generated_leads)
         base_interval_minutes = max(5.0, min(45.0, base_interval_minutes))  # Min 5 min, max 45 min
         
-        schedule_time = datetime.datetime.now(datetime.timezone.utc)
+        scheduled_time = datetime.datetime.now(datetime.timezone.utc)
+        time_now = datetime.datetime.now(datetime.timezone.utc)
 
         for i, lead in enumerate(generated_leads):            
             lead_data = {
@@ -126,7 +127,7 @@ class LeadGeneration(MethodView):
             
             # Add cumulative delay for this lead
             total_delay_minutes = (i * base_interval_minutes) + random_delay
-            scheduled_time = schedule_time + datetime.timedelta(minutes=total_delay_minutes)
+            scheduled_time =  time_now + datetime.timedelta(minutes=total_delay_minutes)
         
         if leads_to_insert:
             try:
