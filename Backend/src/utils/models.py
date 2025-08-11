@@ -77,9 +77,14 @@ class Model:
                     contents=formatted_contents,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
-                        thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
+                        #thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
                     )
                 )
+                try:
+                    print("Thoughts tokens:",response.usage_metadata.thoughts_token_count)
+                except:
+                    pass
+
                 return response.text
             except Exception as e:
                 print(f"Error generating response: {e}")
