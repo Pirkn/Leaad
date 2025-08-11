@@ -104,46 +104,56 @@ def get_product_lead_subreddits(product_id):
     
 def lead_posts(subreddits):
     post_content = []
-    for subreddit in subreddits:
-        subreddit = reddit.subreddit(subreddit)
-        for post in subreddit.new(limit=10):
-            if post.over_18 == True:
-                continue
+    for subreddit_name in subreddits:
+        try:
+            subreddit = reddit.subreddit(subreddit_name)
             
-            comments = []
+            # Test if subreddit exists
+            display_name = subreddit.display_name
+            print(f"✅ Processing subreddit: r/{display_name}")
             
-            # Construct the proper Reddit comment URL using post ID
-            # This ensures we get the comment page URL, not the direct image/media URL
-            comment_url = f"https://www.reddit.com/r/{subreddit}/comments/{post.id}/"
-            subreddit_name = str(subreddit)
-            # Get the post using the comment URL
-            post = reddit.submission(url=comment_url)
-            post.comment_sort = 'top'   
+            for post in subreddit.new(limit=10):
+                if post.over_18 == True:
+                    continue
+                
+                comments = []
+                
+                # Construct the proper Reddit comment URL using post ID
+                # This ensures we get the comment page URL, not the direct image/media URL
+                comment_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{post.id}/"
+                subreddit_name_clean = str(subreddit_name)
+                # Get the post using the comment URL
+                post = reddit.submission(url=comment_url)
+                post.comment_sort = 'top'   
 
-            for comment in post.comments[:3]:
-                new_comment = {
-                    "comment": comment.body,
-                    "score": comment.score
+                for comment in post.comments[:3]:
+                    new_comment = {
+                        "comment": comment.body,
+                        "score": comment.score
+                    }
+                    comments.append(new_comment)
+
+                # Convert epoch to ISO datetime string (YYYY-MM-DDTHH:MM:SS) for Postgres timestamp column using timezone-aware UTC
+                created_iso_date = datetime.datetime.fromtimestamp(post.created_utc, tz=datetime.timezone.utc).isoformat()
+
+                lead_post = {
+                    "title": post.title,
+                    "score": post.score,
+                    "comments": post.num_comments,
+                    "created": post.created,
+                    "url": comment_url,
+                    "selftext": post.selftext[:1000] if post.selftext else "No text",
+                    "top_comments": comments,
+                    "num_comments": post.num_comments,
+                    "author": post.author.name if post.author else 'deleted',
+                    "subreddit": subreddit_name_clean,
+                    "date": created_iso_date
                 }
-                comments.append(new_comment)
-
-            # Convert epoch to ISO datetime string (YYYY-MM-DDTHH:MM:SS) for Postgres timestamp column using timezone-aware UTC
-            created_iso_date = datetime.datetime.fromtimestamp(post.created_utc, tz=datetime.timezone.utc).isoformat()
-
-            lead_post = {
-                "title": post.title,
-                "score": post.score,
-                "comments": post.num_comments,
-                "created": post.created,
-                "url": comment_url,
-                "selftext": post.selftext[:1000] if post.selftext else "No text",
-                "top_comments": comments,
-                "num_comments": post.num_comments,
-                "author": post.author.name if post.author else 'deleted',
-                "subreddit": subreddit_name,
-                "date": created_iso_date
-            }
-            post_content.append(lead_post)
+                post_content.append(lead_post)
+                
+        except Exception as e:
+            print(f"❌ Error processing subreddit r/{subreddit_name}: {str(e)}")
+            continue
 
     # ===== Format Posts Data for Better AI Understanding =====
     formatted_posts = []
