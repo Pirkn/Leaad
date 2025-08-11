@@ -17,6 +17,22 @@ export default defineConfig({
   },
   server: {
     port: process.env.PORT || 5173,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    // Allow reverse proxies/healthcheck hosts during dev
+    allowedHosts: [
+      'healthcheck.railway.app',
+      'leaad.co',
+      'www.leaad.co',
+    ],
+  },
+  // Vite preview (used in production preview/serve) host allowlist
+  preview: {
+    port: process.env.PORT || 5173,
+    host: '0.0.0.0',
+    allowedHosts: [
+      'healthcheck.railway.app',
+      'leaad.co',
+      'www.leaad.co',
+    ],
   }
 });

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, g
+from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -25,7 +25,7 @@ def create_app():
         "http://localhost:5173", 
         "http://127.0.0.1:5500", 
         "http://localhost:5500",
-        os.getenv('FRONTEND_URL', 'https://your-frontend-domain.railway.app')
+        os.getenv('FRONTEND_URL')
     ]
     
     CORS(app,
@@ -40,22 +40,17 @@ def create_app():
 
     api = Api(app)
 
-    # Import the centralized auth decorator
-    from src.utils.auth import verify_supabase_token
-
-    # Example protected route
-    @app.route('/protected')
-    @verify_supabase_token
-    def protected_route():
-        return jsonify({
-            'message': 'This is a protected route',
-            'user': g.current_user
-        })
-
     # Example public route
     @app.route('/health')
     def health_check():
         return jsonify({'status': 'healthy'})
+    
+    @app.route('/')
+    def index():
+        return jsonify({
+            'message': 'Welcome to the AI Lead Generator',
+            'status': 'running'
+        })
 
     # Register your blueprints here
     from src.routes.product import blp as product_blp
@@ -69,8 +64,6 @@ def create_app():
 
     return app
 
+app = create_app()
 if __name__ == '__main__':
-    app = create_app()
-    port = int(os.getenv('PORT', 5000))
-    debug = os.getenv('FLASK_ENV') == 'development'
-    app.run(port=port, debug=debug, host='0.0.0.0')
+    app.run()
