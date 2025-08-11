@@ -693,7 +693,7 @@ function ViralTemplates() {
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
                         rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none leading-snug"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 resize-none leading-snug"
                         placeholder="Enter your post title..."
                         style={{ minHeight: "2.5rem", maxHeight: "4.5rem" }}
                       />
@@ -736,7 +736,7 @@ function ViralTemplates() {
                         value={editedPostText}
                         onChange={(e) => setEditedPostText(e.target.value)}
                         rows={18}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 resize-none"
                         placeholder="Enter your post content..."
                       />
                     </div>

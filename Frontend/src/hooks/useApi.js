@@ -9,6 +9,7 @@ export const queryKeys = {
   health: ["health"],
   products: ["products"],
   leads: ["leads"],
+  onboardingLeads: ["onboardingLeads"],
 };
 
 // Viral posts are now loaded as static data - no need for TanStack Query
@@ -104,21 +105,31 @@ export const useGenerateKarmaPost = () => {
 // Product Analysis Mutation (for manual triggering)
 export const useAnalyzeProduct = () => {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (websiteUrl) => {
-      if (!user) {
-        throw new Error("User must be authenticated to analyze products");
-      }
-      return apiService.generateProductDetails(websiteUrl);
-    },
+    mutationFn: (websiteUrl) => apiService.generateProductDetails(websiteUrl),
     onSuccess: (data, websiteUrl) => {
       // Update the cache with the new analysis
       queryClient.setQueryData(queryKeys.productAnalysis(websiteUrl), data);
     },
     onError: (error, websiteUrl, context) => {
       console.error("Failed to analyze product:", error);
+    },
+  });
+};
+
+// Onboarding Lead Generation (no auth, background)
+export const useOnboardingLeadGeneration = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (productData) => {
+      return apiService.onboardingLeadGeneration(productData);
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.onboardingLeads, data);
+    },
+    onError: (error) => {
+      console.error("Failed to generate onboarding leads:", error);
     },
   });
 };

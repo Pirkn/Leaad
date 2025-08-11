@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAnalyzeProduct } from "../hooks/useApi";
+import {
+  useAnalyzeProduct,
+  useOnboardingLeadGeneration,
+} from "../hooks/useApi";
 import {
   ArrowRight,
   ArrowLeft,
@@ -123,9 +126,44 @@ function Onboarding() {
     target_audience: "",
     problem_solved: "",
   });
+  const [generatedLeads, setGeneratedLeads] = useState([]);
+  const [leadSubreddits, setLeadSubreddits] = useState([]);
+  const [isGeneratingLeads, setIsGeneratingLeads] = useState(false);
+  const [hasTriggeredLeadGeneration, setHasTriggeredLeadGeneration] =
+    useState(false);
 
   const analyzeProductMutation = useAnalyzeProduct();
   const isAnalyzing = analyzeProductMutation.isPending;
+  const onboardingLeadsMutation = useOnboardingLeadGeneration();
+
+  const deriveNameFromUrl = (url) => {
+    if (!url) return "Product";
+    try {
+      const { hostname } = new URL(url);
+      const host = hostname.replace(/^www\./i, "");
+      const firstPart = host.split(".")[0] || "product";
+      return firstPart
+        .split(/[-_\s]+/)
+        .filter(Boolean)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join("");
+    } catch (e) {
+      return "Product";
+    }
+  };
+
+  const triggerOnboardingLeadGeneration = (productData) => {
+    if (!productData || hasTriggeredLeadGeneration) return;
+    setHasTriggeredLeadGeneration(true);
+    setIsGeneratingLeads(true);
+    onboardingLeadsMutation.mutate(productData, {
+      onSuccess: (data) => {
+        setGeneratedLeads(data?.generated_leads || []);
+        setLeadSubreddits(data?.subreddits || []);
+      },
+      onSettled: () => setIsGeneratingLeads(false),
+    });
+  };
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
@@ -148,6 +186,14 @@ function Onboarding() {
       });
 
       setProductAnalysis(analysisResult);
+
+      // Start generating onboarding leads in background
+      triggerOnboardingLeadGeneration({
+        name: analysisResult?.name || deriveNameFromUrl(productUrl),
+        description: analysisResult?.description,
+        target_audience: analysisResult?.target_audience,
+        problem_solved: analysisResult?.problem_solved,
+      });
     } catch (error) {
       console.error("Analysis failed:", error);
       // Keep the manual fields open so user can fill them manually if API fails
@@ -520,7 +566,14 @@ function Onboarding() {
                                   target_audience: manualData.target_audience,
                                   problem_solved: manualData.problem_solved,
                                 });
-                                setCurrentStep(3); // Skip analysis step
+                                // Kick off onboarding lead generation in background with manual inputs
+                                triggerOnboardingLeadGeneration({
+                                  name: deriveNameFromUrl(productUrl),
+                                  description: manualData.description,
+                                  target_audience: manualData.target_audience,
+                                  problem_solved: manualData.problem_solved,
+                                });
+                                setCurrentStep(2); // Proceed to step 2 after entering details
                               }}
                               disabled={
                                 !manualData.description.trim() ||
@@ -703,9 +756,6 @@ function Onboarding() {
               >
                 <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
                   <div className="w-16 h-16 mx-auto mb-6 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Scanning Reddit for your leads...
-                  </h3>
                   <div className="space-y-3 text-left max-w-md mx-auto">
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"></div>
@@ -794,7 +844,10 @@ function Onboarding() {
                   </div>
 
                   <div className="relative space-y-4">
-                    {mockLeads.slice(0, 2).map((lead, index) => (
+                    {(generatedLeads?.length
+                      ? generatedLeads.slice(0, 2)
+                      : mockLeads.slice(0, 2)
+                    ).map((lead, index) => (
                       <motion.div
                         key={lead.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -924,8 +977,7 @@ function Onboarding() {
 
                 <div className="text-center py-8">
                   <p className="text-gray-600 mb-4">
-                    This is just a preview. Get access to{" "}
-                    <strong>unlimited leads</strong> and{" "}
+                    Get access to <strong>unlimited leads</strong> and{" "}
                     <strong>AI-generated replies</strong> with your free trial.
                   </p>
                   <Button
