@@ -2,13 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
 import {
-  Home,
   Package,
   Users,
   Flame,
   Sparkles,
   Settings,
   FileText,
+  LayoutDashboard,
 } from "lucide-react";
 
 function Sidebar() {
@@ -82,7 +82,7 @@ function Sidebar() {
               }}
             >
               {/* Dashboard Icon */}
-              <Home className="w-5 h-5" strokeWidth={1.5} />
+              <LayoutDashboard className="w-5 h-5" strokeWidth={1.5} />
               <span className="text-sm font-medium">Dashboard</span>
             </Link>
           </motion.div>

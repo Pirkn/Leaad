@@ -257,8 +257,7 @@ function Leads() {
         >
           <h1 className="text-2xl font-semibold text-gray-900">Your Leads</h1>
           <p className="text-gray-600 mt-2">
-            View leads that AI found based on your product. These are leads from
-            your lead history.
+            View leads that AI found based on your product.
           </p>
         </motion.div>
 
@@ -307,8 +306,7 @@ function Leads() {
       >
         <h1 className="text-2xl font-semibold text-gray-900">Your Leads</h1>
         <p className="text-gray-600 mt-2">
-          View leads that AI found based on your product. These are leads from
-          your lead history.
+          View leads that we found based on your product.
         </p>
       </motion.div>
 
@@ -352,7 +350,7 @@ function Leads() {
                       : "hover:bg-gray-100"
                   }
                 >
-                  All Leads
+                  All
                 </Button>
 
                 <Button

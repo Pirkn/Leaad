@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useProducts } from "../hooks/useApi";
 import staticDataService from "../services/staticData";
 import { motion, AnimatePresence, animate } from "framer-motion";
 import Snackbar from "@mui/material/Snackbar";
@@ -8,7 +7,6 @@ import redditPng from "../assets/reddit.png";
 
 function ViralTemplates() {
   const navigate = useNavigate();
-  const [showProductModal, setShowProductModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showSubredditDropdown, setShowSubredditDropdown] = useState(false);
@@ -79,32 +77,6 @@ function ViralTemplates() {
       sortBy,
     });
   }, [searchTerm, engagementFilter, sortBy]);
-
-  // Get user's products
-  const { data: productsData, isLoading: productsLoading } = useProducts();
-
-  // Function to get product icon
-  const getProductIcon = () => {
-    return (
-      <svg
-        className="w-5 h-5 text-[#FF4500]"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-        />
-      </svg>
-    );
-  };
-
-  const handleGenerateRedditPost = (product) => {
-    navigate("/reddit-posts", { state: { product } });
-  };
 
   const handleOpenTemplateModal = (template) => {
     setSelectedTemplate(template);
@@ -186,7 +158,7 @@ function ViralTemplates() {
             transition={{ duration: 0.3, delay: 0.15 }}
           >
             <button
-              onClick={() => setShowProductModal(true)}
+              onClick={() => navigate("/posts")}
               className="bg-[#FF4500] text-white px-3 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium flex items-center"
             >
               <svg
@@ -298,133 +270,6 @@ function ViralTemplates() {
           )}
         </div>
       </motion.div>
-
-      {/* Product Selection Modal */}
-      <AnimatePresence>
-        {showProductModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowProductModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-white border border-gray-200 rounded-lg p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-[#FF4500] mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Select a Product
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setShowProductModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              {productsLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
-                  <p className="text-gray-500 mt-2">Loading products...</p>
-                </div>
-              ) : productsData?.products && productsData.products.length > 0 ? (
-                <div className="space-y-3">
-                  {productsData.products.map((product) => (
-                    <div
-                      key={product.id}
-                      className="p-4 border border-gray-200 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm hover:border-gray-300 hover:bg-gray-50"
-                      onClick={() => {
-                        setShowProductModal(false);
-                        handleGenerateRedditPost(product);
-                      }}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 bg-[#FF4500]/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                          {getProductIcon()}
-                        </div>
-                        <div className="flex-1 min-w-0 overflow-hidden">
-                          <h4 className="font-semibold text-gray-900 truncate">
-                            {product.name}
-                          </h4>
-                          <p className="text-sm text-gray-600 truncate">
-                            {product.target_audience ||
-                              "No target audience specified"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-8 h-8 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No products available
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    You need to create a product first to generate posts.
-                  </p>
-                  <Link
-                    to="/products"
-                    className="inline-block bg-[#FF4500] text-white px-4 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium"
-                  >
-                    Create Product
-                  </Link>
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Viral Posts from Static Data */}
       {filteredPosts.length > 0 ? (

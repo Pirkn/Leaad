@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Target } from "lucide-react";
 import { motion } from "framer-motion";
 
 const SignUp = () => {
@@ -128,11 +128,10 @@ const SignUp = () => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(1px)" },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
         duration: 0.4,
         ease: "easeOut",
@@ -140,20 +139,8 @@ const SignUp = () => {
     },
   };
 
-  const slideInFromLeft = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
         <motion.div
           className="max-w-md w-full space-y-8"
@@ -163,26 +150,14 @@ const SignUp = () => {
         >
           <motion.div variants={itemVariants}>
             <motion.div
-              className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-500"
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              className="mx-auto h-12 w-12 flex items-center justify-center rounded-lg bg-gray-900"
+              whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <svg
-                className="h-8 w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                />
-              </svg>
+              <Target className="h-6 w-6 text-white" />
             </motion.div>
             <motion.h2
-              className="mt-6 text-center text-3xl font-extrabold text-gray-900"
+              className="mt-6 text-center text-2xl font-semibold text-gray-900"
               variants={itemVariants}
             >
               Create your account
@@ -194,7 +169,7 @@ const SignUp = () => {
               Or{" "}
               <Link
                 to="/signin"
-                className="font-medium text-orange-600 hover:text-orange-500 transition-colors duration-200"
+                className="font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200"
               >
                 sign in to your existing account
               </Link>
@@ -208,8 +183,8 @@ const SignUp = () => {
           >
             {error && (
               <motion.div
-                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
-                initial={{ opacity: 0, scale: 0.9 }}
+                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               >
@@ -223,9 +198,9 @@ const SignUp = () => {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={googleLoading}
-                className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
                 {googleLoading ? (
                   <svg
@@ -279,10 +254,10 @@ const SignUp = () => {
             {/* Separator */}
             <motion.div className="relative" variants={itemVariants}>
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
+                <span className="px-2 bg-gray-50 text-gray-500">
                   Or continue with
                 </span>
               </div>
@@ -296,11 +271,11 @@ const SignUp = () => {
                 <motion.div variants={itemVariants}>
                   <label
                     htmlFor="firstName"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 mb-2"
                   >
                     First Name
                   </label>
-                  <motion.input
+                  <input
                     id="firstName"
                     name="firstName"
                     type="text"
@@ -308,20 +283,18 @@ const SignUp = () => {
                     required
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm transition-colors duration-200"
+                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
                     placeholder="First name"
-                    whileFocus={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
                   />
                 </motion.div>
                 <motion.div variants={itemVariants}>
                   <label
                     htmlFor="lastName"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 mb-2"
                   >
                     Last Name
                   </label>
-                  <motion.input
+                  <input
                     id="lastName"
                     name="lastName"
                     type="text"
@@ -329,10 +302,8 @@ const SignUp = () => {
                     required
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm transition-colors duration-200"
+                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
                     placeholder="Last name"
-                    whileFocus={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
                   />
                 </motion.div>
               </motion.div>
@@ -340,11 +311,11 @@ const SignUp = () => {
               <motion.div variants={itemVariants}>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Email address
                 </label>
-                <motion.input
+                <input
                   id="email"
                   name="email"
                   type="email"
@@ -352,22 +323,20 @@ const SignUp = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm transition-colors duration-200"
+                  className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
                   placeholder="Enter your email"
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
                 />
               </motion.div>
 
               <motion.div variants={itemVariants}>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Password
                 </label>
-                <div className="mt-1 relative">
-                  <motion.input
+                <div className="relative">
+                  <input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
@@ -375,12 +344,10 @@ const SignUp = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm pr-10 transition-colors duration-200"
+                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm pr-10 transition-colors duration-200"
                     placeholder="Create a password"
-                    whileFocus={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
                   />
-                  <motion.button
+                  <button
                     type="button"
                     onMouseDown={(e) => {
                       e.preventDefault();
@@ -388,8 +355,6 @@ const SignUp = () => {
                       setShowPassword(!showPassword);
                     }}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center z-10 pointer-events-auto hover:text-gray-600 transition-colors duration-200"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                   >
                     {showPassword ? (
                       <svg
@@ -426,7 +391,7 @@ const SignUp = () => {
                         />
                       </svg>
                     )}
-                  </motion.button>
+                  </button>
                 </div>
                 {formData.password && (
                   <motion.div
@@ -469,12 +434,12 @@ const SignUp = () => {
               <motion.div variants={itemVariants}>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Confirm Password
                 </label>
-                <div className="mt-1 relative">
-                  <motion.input
+                <div className="relative">
+                  <input
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
@@ -482,12 +447,10 @@ const SignUp = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm pr-10 transition-colors duration-200"
+                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm pr-10 transition-colors duration-200"
                     placeholder="Confirm your password"
-                    whileFocus={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
                   />
-                  <motion.button
+                  <button
                     type="button"
                     onMouseDown={(e) => {
                       e.preventDefault();
@@ -495,8 +458,6 @@ const SignUp = () => {
                       setShowConfirmPassword(!showConfirmPassword);
                     }}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center z-10 pointer-events-auto hover:text-gray-600 transition-colors duration-200"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                   >
                     {showConfirmPassword ? (
                       <svg
@@ -533,7 +494,7 @@ const SignUp = () => {
                         />
                       </svg>
                     )}
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             </motion.div>
@@ -542,9 +503,9 @@ const SignUp = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
                 {loading ? (
                   <svg
@@ -589,11 +550,11 @@ const SignUp = () => {
             <motion.div className="text-center" variants={itemVariants}>
               <motion.button
                 onClick={() => navigate("/")}
-                className="flex items-center justify-center space-x-2 text-gray-600 hover:text-orange-600 transition-colors duration-200 mx-auto"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="flex items-center justify-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors duration-200 mx-auto"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm font-medium">Back to Homepage</span>
               </motion.button>
             </motion.div>
