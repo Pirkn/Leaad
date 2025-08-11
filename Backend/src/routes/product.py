@@ -70,14 +70,17 @@ class CreateProduct(MethodView):
             product_id = result.data[0]['id']
             
             # Generate subreddit recommendations
+            print(f"Generating subreddits for product: {product_data['name']}")
             messages = lead_subreddits_for_product_prompt(product_data)
             model = Model()
             response = model.gemini_chat_completion(messages)
+            print(f"AI Response: {response}")
             
             # Parse the AI response to extract subreddits
             try:
                 response_data = json.loads(response)
                 subreddits = response_data.get('subreddits', [])
+                print(f"Extracted subreddits: {subreddits}")
                 
                 # Save each subreddit as a lead
                 leads_data = []
@@ -92,14 +95,20 @@ class CreateProduct(MethodView):
                 
                 # Insert all leads
                 if leads_data:
+                    print(f"Attempting to insert {len(leads_data)} subreddits: {leads_data}")
                     leads_result = supabase.table('lead_subreddits').insert(leads_data).execute()
-                    print(f"Saved {len(leads_data)} leads for product {product_id}")
+                    print(f"Insert result: {leads_result.data}")
+                    print(f"Saved {len(leads_data)} subreddits for product {product_id}")
+                else:
+                    print("No subreddits to save")
                 
             except json.JSONDecodeError as e:
                 print(f"Failed to parse AI response: {e}")
                 print(f"Raw response: {response}")
             except Exception as e:
-                print(f"Error saving leads: {e}")
+                print(f"Error saving subreddits: {e}")
+                import traceback
+                traceback.print_exc()
 
             return jsonify({
                 'message': 'Product created successfully',

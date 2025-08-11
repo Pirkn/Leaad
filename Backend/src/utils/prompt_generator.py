@@ -113,9 +113,23 @@ def lead_subreddits_for_product_prompt(product_data):
     3. Community allows helpful recommendations (not anti-promotion)
     4. Active enough for regular lead opportunities
     
-    Return top 10 subreddits with reasoning for each.
-    Return in the following format:
-    {{"subreddits": ["subreddit1", "subreddit2", "subreddit3"]}}
+    CRITICAL REQUIREMENTS:
+    - Only suggest subreddits that you are 100% certain exist and are active
+    - Avoid made-up or speculative subreddit names
+    - Focus on well-known, established subreddits
+    - If unsure about a subreddit's existence, exclude it
+    
+    FORMAT REQUIREMENTS:
+    - You MUST respond with ONLY valid JSON
+    - No additional text, explanations, or markdown formatting
+    - Use the exact format: {{"subreddits": ["r/subreddit1", "r/subreddit2", "r/subreddit3", ...]}}
+    - Maximum 10 subreddits
+    - If no suitable subreddits found, return: {{"subreddits": []}}
+    
+    EXAMPLE RESPONSE:
+    {{"subreddits": ["r/entrepreneur", "r/smallbusiness", "r/startups"]}}
+    
+    Return top 10 subreddits (you are absolutely sure exist) in JSON format only.
     """
     
     messages = [{"role": "user", "content": prompt}]
@@ -214,9 +228,9 @@ def lead_generation_prompt_2(product_data, posts, min_posts=5):
     - Use the EXACT post number from ===== POST [postnumber] ===== as the key for JSONs
     
     IMPORTANT:
-    - Use sequential post numbers (1, 2, 3, etc.)
     - Only include posts where you can provide genuine value
     - Quality over quantity
+    - 
     """
     
     formatted_posts_string = "\n\n".join(posts)
