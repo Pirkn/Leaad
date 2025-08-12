@@ -21,8 +21,8 @@ import {
   Search,
   Bookmark,
   CircleCheck,
+  TriangleAlert,
 } from "lucide-react";
-import Snackbar from "@mui/material/Snackbar";
 import { Toaster, toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 
@@ -49,8 +49,6 @@ function Posts() {
   const [editedPostText, setEditedPostText] = useState("");
   const [originalTitle, setOriginalTitle] = useState("");
   const [originalPostText, setOriginalPostText] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -146,15 +144,27 @@ function Posts() {
     setOriginalPostText("");
   };
 
-  const handleCopyToClipboard = async (text) => {
+  const handleCopyToClipboard = async (text, type) => {
     try {
       await navigator.clipboard.writeText(text);
-      setSnackbarMessage("Content copied to clipboard!");
-      setSnackbarOpen(true);
+      const message =
+        type === "title"
+          ? "Title copied to clipboard!"
+          : "Content copied to clipboard!";
+      toast(message, {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
-      setSnackbarMessage("Failed to copy to clipboard. Please try again.");
-      setSnackbarOpen(true);
+      const errorMessage =
+        type === "title"
+          ? "Failed to copy title. Please try again."
+          : "Failed to copy content. Please try again.";
+      toast(errorMessage, {
+        duration: 3000,
+        icon: <TriangleAlert className="w-4 h-4 text-red-600" />,
+      });
     }
   };
 
@@ -163,13 +173,15 @@ function Posts() {
     setEditedPostText(originalPostText);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   const handleSavePost = async (postId) => {
     // Optimistically update the UI
     setOptimisticSaves((prev) => new Set([...prev, postId]));
+
+    // Show success toast immediately
+    toast("Post saved successfully!", {
+      duration: 2000,
+      icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+    });
 
     try {
       await markAsSavedMutation.mutateAsync(postId);
@@ -180,6 +192,11 @@ function Posts() {
         const newSet = new Set(prev);
         newSet.delete(postId);
         return newSet;
+      });
+      // Show error toast
+      toast("Failed to save post. Please try again.", {
+        duration: 3000,
+        icon: <TriangleAlert className="w-4 h-4 text-red-600" />,
       });
     }
   };
@@ -192,12 +209,23 @@ function Posts() {
       return newSet;
     });
 
+    // Show success toast immediately
+    toast("Post unsaved!", {
+      duration: 2000,
+      icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+    });
+
     try {
       await markAsUnsavedMutation.mutateAsync(postId);
     } catch (error) {
       console.error("Failed to unsave post:", error);
       // Revert optimistic update on error
       setOptimisticSaves((prev) => new Set([...prev, postId]));
+      // Show error toast
+      toast("Failed to unsave post. Please try again.", {
+        duration: 3000,
+        icon: <TriangleAlert className="w-4 h-4 text-red-600" />,
+      });
     }
   };
 
@@ -695,7 +723,9 @@ function Posts() {
                           Post Title (Edit this section to make it your own)
                         </label>
                         <motion.button
-                          onClick={() => handleCopyToClipboard(editedTitle)}
+                          onClick={() =>
+                            handleCopyToClipboard(editedTitle, "title")
+                          }
                           className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
                           title="Copy title to clipboard"
                           whileHover={{ scale: 1.1 }}
@@ -733,7 +763,9 @@ function Posts() {
                           Post Content (Edit this section to make it your own)
                         </label>
                         <motion.button
-                          onClick={() => handleCopyToClipboard(editedPostText)}
+                          onClick={() =>
+                            handleCopyToClipboard(editedPostText, "content")
+                          }
                           className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
                           title="Copy content to clipboard"
                           whileHover={{ scale: 1.1 }}
@@ -814,26 +846,23 @@ function Posts() {
         )}
       </AnimatePresence>
 
-      {/* Snackbar for copy success/failure */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-      >
-        <div className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
-          {snackbarMessage}
-        </div>
-      </Snackbar>
-
       {/* Sonner Toaster */}
       <Toaster
         position="bottom-right"
         theme="light"
         toastOptions={{
           classNames: {
-            toast: "max-w-xs p-3",
-            closeButton: "hidden",
+            toast:
+              "bg-white text-gray-900 border border-gray-200 shadow-lg rounded-lg px-3 py-2 max-w-xs",
+            content: "text-gray-900 text-sm",
+            title: "text-gray-900 text-sm",
+            description: "text-gray-700 text-xs",
+            icon: "hidden",
+            successIcon: "hidden",
+            infoIcon: "hidden",
+            warningIcon: "hidden",
+            errorIcon: "hidden",
+            loadingIcon: "hidden",
           },
         }}
       />

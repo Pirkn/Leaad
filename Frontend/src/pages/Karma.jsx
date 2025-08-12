@@ -13,6 +13,8 @@ import {
   Lightbulb,
   RotateCcw,
   CircleCheck,
+  Info,
+  Bot,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/button";
@@ -37,6 +39,9 @@ function Karma() {
   const [copiedTitleState, setCopiedTitleState] = useState(false);
   const [copiedImageState, setCopiedImageState] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
+
+  // State for expanded reasoning sections
+  const [expandedReasoning, setExpandedReasoning] = useState({});
 
   // API hooks for generating karma content
   const generateCommentMutation = useGenerateKarmaComment();
@@ -270,6 +275,13 @@ function Karma() {
 
   const shouldAnimate = !(isBackgroundGenerating || isKarmaGenerating);
 
+  const toggleReasoning = (commentId) => {
+    setExpandedReasoning((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
   return (
     <motion.div
       initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
@@ -499,37 +511,76 @@ function Karma() {
                                     <h4 className="font-medium text-gray-900 mb-2">
                                       Generated Comment:
                                     </h4>
-                                    <div className="text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 p-4 rounded border border-gray-200">
-                                      {commentData.comment
-                                        .replace(/\*\*(.*?)\*\*/g, "$1")
-                                        .replace(/\*(.*?)\*/g, "$1")
-                                        .replace(/`(.*?)`/g, "$1")
-                                        .split("\n")
-                                        .map((line, i) => (
-                                          <div key={i} className="mb-1">
-                                            {line.startsWith("- ") ? (
-                                              <div className="flex items-start">
-                                                <span className="mr-2 text-gray-500">
-                                                  •
-                                                </span>
-                                                <span>{line.substring(2)}</span>
+                                    <div className="text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 px-2 py-1 rounded border text-md border-gray-200">
+                                      <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                          {commentData.comment
+                                            .replace(/\*\*(.*?)\*\*/g, "$1")
+                                            .replace(/\*(.*?)\*/g, "$1")
+                                            .replace(/`(.*?)`/g, "$1")
+                                            .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+                                            .replace(/#{1,6}\s/g, "")
+                                            .replace(/>\s/g, "")
+                                            .replace(/\n\s*-\s/g, "\n• ")
+                                            .replace(/\n\s*\d+\.\s/g, "\n")
+                                            .trim()
+                                            .split("\n")
+                                            .map((line, i) => (
+                                              <div key={i} className="mb-1">
+                                                {line.startsWith("- ") ? (
+                                                  <div className="flex items-start">
+                                                    <span className="mr-2 text-gray-500">
+                                                      •
+                                                    </span>
+                                                    <span>
+                                                      {line.substring(2)}
+                                                    </span>
+                                                  </div>
+                                                ) : (
+                                                  <span>{line}</span>
+                                                )}
                                               </div>
-                                            ) : (
-                                              <span>{line}</span>
-                                            )}
-                                          </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                        <Button
+                                          onClick={() =>
+                                            toggleReasoning(`comment-${index}`)
+                                          }
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-auto p-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex-shrink-0"
+                                        >
+                                          <Sparkles className="w-4 h-4 mr-1.5" />
+                                          See reasoning
+                                        </Button>
+                                      </div>
                                     </div>
                                   </div>
-
-                                  <div>
-                                    <h4 className="font-medium text-gray-900 mb-2">
-                                      AI Reasoning:
-                                    </h4>
-                                    <p className="text-gray-600 text-sm italic">
-                                      {commentData.reasoning}
-                                    </p>
-                                  </div>
+                                  <AnimatePresence>
+                                    {expandedReasoning[`comment-${index}`] && (
+                                      <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        transition={{
+                                          height: {
+                                            duration: 0.3,
+                                            ease: "easeOut",
+                                          },
+                                          opacity: {
+                                            duration: 0.2,
+                                            ease: "easeOut",
+                                          },
+                                        }}
+                                        className="overflow-hidden"
+                                      >
+                                        <div className="pt-0 pb-1">
+                                          <p className="text-gray-500 text-sm italic px-0.5 pt-0.5">
+                                            {commentData.reasoning}
+                                          </p>
+                                        </div>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
                                 </div>
                               </motion.div>
                             ))}

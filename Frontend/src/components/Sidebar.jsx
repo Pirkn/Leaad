@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
+import logo from "../assets/logo.png";
 import {
   Package,
   Users,
@@ -36,19 +37,12 @@ function Sidebar() {
         style={{ borderBottomColor: "#e5e7eb" }}
       >
         <div className="flex items-center space-x-3">
-          {/* Placeholder Icon */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
-          >
-            <span className="text-gray-600 font-medium text-sm">MA</span>
-          </motion.div>
+          <img src={logo} alt="Logo" className="h-6 w-6" />
           <motion.h1
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg font-semibold text-gray-900"
+            className="text-xl mt-0.5 font-semibold text-gray-900"
           >
             Leaad
           </motion.h1>

@@ -20,6 +20,8 @@ import {
   ChevronRight,
   CirclePercent,
   Clock,
+  Dumbbell,
+  WandSparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +34,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+
+// Import all images and videos for immediate loading
+import logoImage from "/src/assets/logo.png";
+import heroBackgroundImage from "/src/assets/herobg.png";
+import backgroundTextureImage from "/src/assets/background.png";
+import macbookImage from "/src/assets/macbook-air-medium.webp";
+import postsVideo from "/src/assets/posts.webm";
+import templatesVideo from "/src/assets/templates.webm";
+import karmaVideo from "/src/assets/karma.webm";
 
 // Animation variants
 const containerVariants = {
@@ -179,11 +190,7 @@ export default function HomePage() {
               transition={{ duration: 0.2 }}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <img
-                src="/src/assets/logo.png"
-                alt="Leaad Logo"
-                className="w-5 h-5"
-              />
+              <img src={logoImage} alt="Leaad Logo" className="w-5 h-5" />
               <span className="text-xl font-semibold text-gray-900 mt-0.5">
                 Leaad
               </span>
@@ -409,7 +416,7 @@ export default function HomePage() {
         {/* Background Texture for Hero Section */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src="/src/assets/herobg.png"
+            src={heroBackgroundImage}
             alt=""
             className="w-full h-full object-cover"
           />
@@ -508,7 +515,7 @@ export default function HomePage() {
         {/* Background Texture */}
         <div className="absolute inset-x-0 -top-10 w-full h-full opacity-30">
           <img
-            src="/src/assets/background.png"
+            src={backgroundTextureImage}
             alt=""
             className="w-full h-full object-cover"
             style={{ minHeight: "600px" }}
@@ -524,7 +531,7 @@ export default function HomePage() {
               className="pointer-events-none absolute inset-0 flex justify-center items-start z-0"
             >
               <div
-                className="w-[min(1600px,95vw)] h-[500px] -translate-y-10 rounded-full blur-[150px] opacity-50"
+                className="w-[min(1600px,95vw)] h-[500px] -translate-y-20 rounded-full blur-[120px] opacity-30"
                 style={{
                   background:
                     "radial-gradient(75% 80% at 50% 0%, rgba(255,193,7,0.5) 0%, rgba(255,152,0,0.35) 25%, rgba(251,146,60,0.25) 50%, rgba(244,63,94,0.15) 70%, transparent 85%)",
@@ -532,7 +539,7 @@ export default function HomePage() {
               />
             </div>
             <motion.img
-              src="/src/assets/macbook-air-medium.webp"
+              src={macbookImage}
               alt="Leaad AI Platform Demo"
               className="relative z-10 mx-auto max-w-full h-auto"
               style={{ maxHeight: "1000px" }}
@@ -564,7 +571,7 @@ export default function HomePage() {
               className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4 tracking-tight"
               variants={itemVariants}
             >
-              From content creation to community building, we've got you covered
+              From lead discovery to customer conversion, we've got you covered
             </motion.p>
           </motion.div>
 
@@ -598,10 +605,10 @@ export default function HomePage() {
                 icon: Shield,
                 title: "Fit in before you stand out",
                 description:
-                  "We help you build a credible, active presence—so when you post, people listen.",
+                  "We help you build an active presence—so when you post, people listen.",
                 bullets: [
+                  "Karma builder to boost your credibility",
                   "Avoid low-effort bans and buried posts",
-                  "Build karma faster than your competitors",
                   "Show up like someone worth listening to",
                 ],
                 demoPlaceholder: "Karma Builder Demo",
@@ -671,10 +678,7 @@ export default function HomePage() {
                         playsInline
                         className="w-full h-full object-cover rounded-lg"
                       >
-                        <source
-                          src="/src/assets/posts.webm"
-                          type="video/webm"
-                        />
+                        <source src={postsVideo} type="video/webm" />
                         Your browser does not support the video tag.
                       </video>
                     </motion.div>
@@ -688,10 +692,7 @@ export default function HomePage() {
                         playsInline
                         className="w-full h-full object-cover rounded-lg"
                       >
-                        <source
-                          src="/src/assets/templates.webm"
-                          type="video/webm"
-                        />
+                        <source src={templatesVideo} type="video/webm" />
                         Your browser does not support the video tag.
                       </video>
                     </motion.div>
@@ -705,10 +706,7 @@ export default function HomePage() {
                         playsInline
                         className="w-full h-full object-cover rounded-lg"
                       >
-                        <source
-                          src="/src/assets/karma.webm"
-                          type="video/webm"
-                        />
+                        <source src={karmaVideo} type="video/webm" />
                         Your browser does not support the video tag.
                       </video>
                     </motion.div>
@@ -740,9 +738,9 @@ export default function HomePage() {
         id="how-it-works"
         className="py-20 px-4 sm:px-6 lg:px-8 bg-white"
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-24"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -771,71 +769,77 @@ export default function HomePage() {
           </motion.div>
 
           <motion.div
-            className="grid md:grid-cols-3 gap-8 relative"
-            variants={containerVariants}
+            className="space-y-40 relative"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            {/* Connection Lines */}
-            <motion.div
-              className="hidden md:block absolute top-1/2 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-amber-200 via-orange-200 to-red-200 transform -translate-y-1/2"
-              initial={{ opacity: 0, scaleX: 0 }}
-              whileInView={{ opacity: 1, scaleX: 1 }}
-              transition={{
-                duration: 0.8,
-                ease: "easeOut",
-                delay: 0.6,
-              }}
-              viewport={{ once: true, margin: "-100px" }}
-            ></motion.div>
-
             {[
               {
                 number: "01",
                 icon: Link,
-                title: "Paste Your Product Link",
+                title: "Enter Your Product",
                 description:
-                  "Simply input your product URL and our AI instantly analyzes your target audience, problems solved, and creates the perfect positioning strategy.",
+                  "Input your product URL and our AI instantly analyzes your target audience, problems solved, and creates the perfect positioning strategy.",
               },
               {
                 number: "02",
                 icon: Sparkles,
-                title: "Let Us Do The Hard Work",
+                title: "We Find Your Leads",
                 description:
-                  "Receive perfectly crafted, natural-sounding comments tailored to each post. No spam detection, just authentic engagement that converts.",
+                  "We scan Reddit 24/7 to surface people actively seeking solutions like yours, then provide optimized engagement strategies.",
               },
               {
                 number: "03",
                 icon: TrendingUp,
-                title: "Build Karma (If Needed)",
+                title: "Interact and Convert",
                 description:
-                  "Low karma? Use our karma builder with AI-created posts and fitting comments to build authentic credibility before promoting your product.",
+                  "Engage with your found leads using AI-generated, personalized responses that build relationships and convert prospects into customers.",
               },
             ].map((step, index) => (
               <motion.div
                 key={index}
-                className="bg-white rounded-xl p-8 border border-gray-200 hover:border-amber-300 transition-all duration-300 group shadow-sm hover:shadow-lg relative overflow-hidden"
-                variants={itemVariants}
+                className="relative"
+                initial={{ opacity: 0, filter: "blur(8px)", y: 30 }}
+                whileInView={{
+                  opacity: 1,
+                  filter: "blur(0px)",
+                  y: 0,
+                }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{
+                  duration: 0.4,
+                  ease: "easeOut",
+                  delay: index * 0.1,
+                }}
               >
-                <div className="flex items-center gap-5 mb-6">
-                  <motion.div
-                    className="w-12 h-12 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-amber-100"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <step.icon className="w-6 h-6 text-amber-500" />
-                  </motion.div>
-                  <span className="text-5xl font-semibold text-gray-200">
-                    {step.number}
-                  </span>
+                {/* Step Number and Icon */}
+                <div className="flex items-center gap-6 mb-8">
+                  <div className="flex items-center gap-4">
+                    <span className="text-6xl font-bold text-gray-200">
+                      {step.number}
+                    </span>
+                  </div>
+
+                  {/* Content aligned to the same level */}
+                  <div className="flex-1 ml-20">
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tighter flex items-center gap-3">
+                      {step.title}
+                      {index === 0 && (
+                        <Link className="w-6 h-6 text-gray-400" />
+                      )}
+                      {index === 1 && (
+                        <Dumbbell className="w-6 h-6 text-gray-400" />
+                      )}
+                      {index === 2 && (
+                        <WandSparkles className="w-6 h-6 text-gray-400" />
+                      )}
+                    </h3>
+                    <p className="text-md text-gray-600 leading-relaxed tracking-normal">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4 tracking-tighter">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed tracking-tight">
-                  {step.description}
-                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -1332,7 +1336,7 @@ export default function HomePage() {
                 transition={{ duration: 0.2 }}
               >
                 <img
-                  src="src/assets/logo.png"
+                  src={logoImage}
                   alt="Leaad"
                   className="w-5 h-5 brightness-0 invert"
                 />
