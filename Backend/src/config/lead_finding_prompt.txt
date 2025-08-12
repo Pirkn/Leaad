@@ -24,7 +24,5 @@ RESPONSE FORMAT:
 Return ONLY the IDs of the selected posts in JSON format:
 {{"selected_post_ids": [post_id_1, post_id_2, post_id_3]}}
 
-The id is
-
 IMPORTANT:
 - Quality over quantity - only select the best opportunities
