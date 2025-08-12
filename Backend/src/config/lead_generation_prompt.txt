@@ -35,10 +35,9 @@ QUALITY STANDARDS:
 
 RETURN JSON FORMAT:
 {{"comments": [
-    {{"[postnumber]": "Your crafted comment for this postnumber"}},
-    {{"[postnumber]": "Your crafted comment for this postnumber"}}
+    {{"[post_id_1]": "Your crafted comment for this post_id_1"}},
+    {{"[post_id_2]": "Your crafted comment for this post_id_2"}}
 ]}}
-- Use the EXACT post number from ===== POST [postnumber] ===== as the key.
 
 IMPORTANT:
 - Value first, product mention optional.
