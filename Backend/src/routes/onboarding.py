@@ -50,7 +50,8 @@ class OnboardingLeadGeneration(MethodView):
 
             try:
                 response_data = json.loads(response)
-                post_ids = response_data.get('post_ids', [])
+                print(response_data)
+                post_ids = response_data.get('selected_post_ids', [])
                 print(post_ids)
                 for post_id in post_ids:
                     selected_posts.append(posts[post_id])
@@ -96,7 +97,7 @@ class SaveGeneratedLeads(MethodView):
 
         user_id = g.current_user['id']
 
-        unformatted_posts, posts = lead_posts(subreddits[3:])
+        unformatted_posts, posts = lead_posts(subreddits)
 
         # Creates a file with the posts
         with open('posts.json', 'w') as f:

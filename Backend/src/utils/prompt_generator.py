@@ -6,7 +6,7 @@ def reddit_post_generator_prompt(user_prompt):
     
     # ===== Create System Prompt =====
     config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'reddit_post_generator_prompt.txt')
-    with open(config_path, 'r') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         system_prompt = file.read()
 
     # ===== Create Messages =====
@@ -20,7 +20,7 @@ def reddit_post_generator_prompt(user_prompt):
 def generate_product_details_prompt(website_content):
     # ===== Create System Prompt =====
     config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'product_details_prompt.txt')
-    with open(config_path, 'r') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         system_prompt = file.read()
 
     # ===== Create Messages =====
@@ -34,7 +34,7 @@ def generate_product_details_prompt(website_content):
 def comment_karma_prompt(posts):
     # ===== Create System Prompt =====
     config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'karma_helper_prompt.txt')
-    with open(config_path, 'r') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         system_prompt = file.read()
     
     # ===== Format Posts Data for Better AI Understanding =====
@@ -137,54 +137,24 @@ def lead_subreddits_for_product_prompt(product_data):
     return messages
 
 def lead_generation_prompt(product_data, posts):
-    system_prompt = f"""
-    You are an expert lead generation specialist analyzing Reddit posts for marketing opportunities.
-    
-    PRODUCT ANALYSIS:
-    - Product: {product_data['name']}
-    - Target Audience: {product_data['target_audience']}
-    - Problem Solved: {product_data['problem_solved']}
-    - Description: {product_data['description']}
-    
-    LEAD GENERATION CRITERIA:
-    1. **Perfect Problem Match**: Post directly discusses the exact problem your product solves
-    2. **Active Engagement**: Post has good upvotes and comments (shows community interest)
-    3. **Help-Seeking Behavior**: OP is asking for solutions, recommendations, or advice
-    4. **Relevant Context**: Post content aligns with your product's value proposition
-    5. **Comment-Friendly**: Post encourages discussion and allows helpful responses
-    
-    COMMENTING STRATEGY (80% Value / 20% Selling):
-    - **80% Value**: Provide genuine help, insights, or solutions to their problem
-    - **20% Selling**: Subtly mention your product as a relevant solution
-    - **Approach**: "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue"
-    
-    QUALITY STANDARDS:
-    - Only select posts where you can provide genuine value
-    - Skip posts that are too generic, off-topic, or don't need your solution
-    - If no posts meet criteria, return empty array
-    - Maximum 3 posts per batch to maintain quality
-    - Minimum 1 post per batch
-    """
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'lead_finding_prompt.txt')
+    with open(config_path, 'r', encoding='utf-8') as file:
+        system_prompt_template = file.read()
 
-    formatted_posts_string = "\n\n".join(posts)
+    system_prompt = system_prompt_template.format(
+        name=product_data['name'],
+        target_audience=product_data['target_audience'],
+        problem_solved=product_data['problem_solved'],
+        description=product_data['description'],
+    )
+
+    # Convert JSON posts to string format for AI processing
+    import json
+    formatted_posts_string = json.dumps(posts, indent=2, ensure_ascii=False)
 
     user_prompt = f"""
     Analyze these Reddit posts for lead generation opportunities:
     {formatted_posts_string}
-    
-    EVALUATION PROCESS:
-    1. Read each post carefully
-    2. Assess if it matches your lead generation criteria
-    3. Consider if you can provide genuine value (80%) + subtle promotion (20%)
-    4. Only select posts where you can make a meaningful contribution
-    
-    RETURN JSON FORMAT:
-    {{"post_ids": [Postnumber1, Postnumber2, ...]}}
-    
-    IMPORTANT:
-    - Return empty array {{"post_ids": []}} if no posts meet criteria
-    - Maximum 3 posts per response
-    - Quality over quantity - only select the best opportunities
     """
     
     messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
@@ -193,7 +163,7 @@ def lead_generation_prompt(product_data, posts):
 def lead_generation_prompt_2(product_data, posts, min_posts=5):
     # ===== Create System Prompt =====
     config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'lead_generation_prompt.txt')
-    with open(config_path, 'r') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         system_prompt_template = file.read()
     
     # Format the prompt with the provided data
@@ -204,10 +174,10 @@ def lead_generation_prompt_2(product_data, posts, min_posts=5):
         description=product_data['description'],
         min_posts=min_posts
     )
-
-    print(system_prompt)
     
-    formatted_posts_string = "\n\n".join(posts)
+    # Convert JSON posts to string format for AI processing
+    import json
+    formatted_posts_string = json.dumps(posts, indent=2, ensure_ascii=False)
 
     user_prompt = f"""
     Analyze these Reddit posts for lead generation opportunities:

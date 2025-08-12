@@ -155,26 +155,26 @@ def lead_posts(subreddits):
             print(f"❌ Error processing subreddit r/{subreddit_name}: {str(e)}")
             continue
 
-    # ===== Format Posts Data for Better AI Understanding =====
+    # ===== Format Posts Data as JSON for Better AI Understanding =====
     formatted_posts = []
     
     for i, post in enumerate(post_content, 0):
-        formatted_post = f"""
-            === POST {i} ===
-            Title: {post['title']}
-            Score: {post['score']} upvotes
-            Total Comments: {post['comments']}
-            URL: {post['url']}
-            Content: {post['selftext']}
-
-            TOP COMMENTS:
-        """
-        
-        for j, comment in enumerate(post['top_comments'], 1):
-            formatted_post += f"{j}. Score: {comment['score']} | Comment: {comment['comment']}\n"
-        
-        formatted_post += "=" * 30
+        formatted_post = {
+            "post_id": i,
+            "title": post['title'],
+            "score": post['score'],
+            "total_comments": post['comments'],
+            "url": post['url'],
+            "content": post['selftext'],
+            "top_comments": [
+                {
+                    "comment_number": j,
+                    "score": comment['score'],
+                    "comment": comment['comment']
+                }
+                for j, comment in enumerate(post['top_comments'], 1)
+            ]
+        }
         formatted_posts.append(formatted_post)
     
     return post_content, formatted_posts
-
