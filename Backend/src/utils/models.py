@@ -80,10 +80,6 @@ class Model:
                         thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
                     )
                 )
-                try:
-                    print("Thoughts tokens:",response.usage_metadata.thoughts_token_count)
-                except:
-                    pass
 
                 return response.text
             except Exception as e:
