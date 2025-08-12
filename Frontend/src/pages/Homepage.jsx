@@ -517,10 +517,23 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center relative">
+            {/* Upward orange glow with subtle noise behind the laptop */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 flex justify-center items-start z-0"
+            >
+              <div
+                className="w-[min(1600px,95vw)] h-[500px] -translate-y-10 rounded-full blur-[100px] opacity-50"
+                style={{
+                  background:
+                    "radial-gradient(75% 80% at 50% 0%, rgba(255,193,7,0.5) 0%, rgba(255,152,0,0.35) 25%, rgba(251,146,60,0.25) 50%, rgba(244,63,94,0.15) 70%, transparent 85%)",
+                }}
+              />
+            </div>
             <motion.img
               src={macbookImage}
               alt="Leaad AI Platform Demo"
-              className="mx-auto max-w-full h-auto"
+              className="relative z-10 mx-auto max-w-full h-auto"
               style={{ maxHeight: "1000px" }}
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
