@@ -163,6 +163,7 @@ def lead_generation_prompt(product_data, posts):
     - Skip posts that are too generic, off-topic, or don't need your solution
     - If no posts meet criteria, return empty array
     - Maximum 3 posts per batch to maintain quality
+    - Minimum 1 post per batch
     """
 
     formatted_posts_string = "\n\n".join(posts)
@@ -190,48 +191,18 @@ def lead_generation_prompt(product_data, posts):
     return messages
 
 def lead_generation_prompt_2(product_data, posts, min_posts=5):
-    system_prompt = f"""
-    You are an expert lead generation specialist analyzing Reddit posts for marketing opportunities.
+    # ===== Create System Prompt =====
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'lead_generation_prompt.txt')
+    with open(config_path, 'r') as file:
+        system_prompt_template = file.read()
     
-    PRODUCT ANALYSIS:
-    - Product: {product_data['name']}
-    - Target Audience: {product_data['target_audience']}
-    - Problem Solved: {product_data['problem_solved']}
-    - Description: {product_data['description']}
-    
-    LEAD GENERATION CRITERIA:
-    1. **Perfect Problem Match**: Post directly discusses the exact problem your product solves
-    2. **Active Engagement**: Post has good upvotes and comments (shows community interest)
-    3. **Help-Seeking Behavior**: OP is asking for solutions, recommendations, or advice
-    4. **Relevant Context**: Post content aligns with your product's value proposition
-    5. **Comment-Friendly**: Post encourages discussion and allows helpful responses
-    
-    COMMENTING STRATEGY (80% Value / 20% Selling):
-    - **80% Value**: Provide genuine help, insights, or solutions to their problem
-    - **20% Selling**: Subtly mention your product as a relevant solution
-    - **Approach**: "Here's how to solve this... [valuable advice]... BTW, I found [product] helpful for this exact issue"
-    - **Mention** Product in the comment subtly
-    - **Length**: Keep the comment length medium to short
-    
-    QUALITY STANDARDS:
-    - Only select posts where you can provide genuine value
-    - Skip posts that are too generic, off-topic, or don't need your solution
-    - If no posts meet criteria, return empty array
-    - Select at least {min_posts} posts
+    # Format the prompt with the provided data
+    system_prompt = system_prompt_template.format(
+        product_data=product_data,
+        min_posts=min_posts
+    )
 
-    RETURN JSON FORMAT:
-    {{"comments": [
-        {{"[postnumber]": "Your comment for postnumber"}},
-        {{"[postnumber]": "Your comment for postnumber"}},
-        ...
-    ]}}
-    - Use the EXACT post number from ===== POST [postnumber] ===== as the key for JSONs
-    
-    IMPORTANT:
-    - Only include posts where you can provide genuine value
-    - Quality over quantity
-    - 
-    """
+    print(system_prompt)
     
     formatted_posts_string = "\n\n".join(posts)
 
