@@ -19,6 +19,7 @@ import {
   X,
   ChevronRight,
   CirclePercent,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -111,6 +112,11 @@ export default function HomePage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  useEffect(() => {
+    // Smooth scroll to top on page load/refresh
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -514,7 +520,7 @@ export default function HomePage() {
               className="pointer-events-none absolute inset-0 flex justify-center items-start z-0"
             >
               <div
-                className="w-[min(1600px,95vw)] h-[500px] -translate-y-10 rounded-full blur-[100px] opacity-50"
+                className="w-[min(1600px,95vw)] h-[500px] -translate-y-10 rounded-full blur-[150px] opacity-50"
                 style={{
                   background:
                     "radial-gradient(75% 80% at 50% 0%, rgba(255,193,7,0.5) 0%, rgba(255,152,0,0.35) 25%, rgba(251,146,60,0.25) 50%, rgba(244,63,94,0.15) 70%, transparent 85%)",
@@ -728,7 +734,7 @@ export default function HomePage() {
       {/* How It Works with Enhanced Design */}
       <section
         id="how-it-works"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-white"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -739,7 +745,7 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
               variants={itemVariants}
             >
               <Zap className="w-4 h-4 mr-2" />
@@ -752,13 +758,14 @@ export default function HomePage() {
               How It Works
             </motion.h2>
             <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto tracking-tight"
+              className="text-lg text-gray-600 max-w-2xl mx-auto tracking-tight"
               variants={itemVariants}
             >
               From product analysis to lead generation in just 3 simple steps.
               Our AI handles the heavy lifting while you focus on closing deals.
             </motion.p>
           </motion.div>
+
           <motion.div
             className="grid md:grid-cols-3 gap-8 relative"
             variants={containerVariants}
@@ -768,13 +775,13 @@ export default function HomePage() {
           >
             {/* Connection Lines */}
             <motion.div
-              className="hidden md:block absolute top-1/2 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-orange-200 to-red-200 transform -translate-y-1/2"
+              className="hidden md:block absolute top-1/2 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-amber-200 via-orange-200 to-red-200 transform -translate-y-1/2"
               initial={{ opacity: 0, scaleX: 0 }}
               whileInView={{ opacity: 1, scaleX: 1 }}
               transition={{
                 duration: 0.8,
                 ease: "easeOut",
-                delay: 0.6, // Delay to appear after cards are rendered
+                delay: 0.6,
               }}
               viewport={{ once: true, margin: "-100px" }}
             ></motion.div>
@@ -804,16 +811,16 @@ export default function HomePage() {
             ].map((step, index) => (
               <motion.div
                 key={index}
-                className="bg-white rounded-xl p-8 border border-gray-200 hover:border-orange-300 transition-all duration-300 group shadow-sm hover:shadow-lg relative"
+                className="bg-white rounded-xl p-8 border border-gray-200 hover:border-amber-300 transition-all duration-300 group shadow-sm hover:shadow-lg relative overflow-hidden"
                 variants={itemVariants}
               >
                 <div className="flex items-center gap-5 mb-6">
                   <motion.div
-                    className="w-12 h-12 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"
+                    className="w-12 h-12 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-amber-100"
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 0.6 }}
                   >
-                    <step.icon className="w-6 h-6 text-orange-500" />
+                    <step.icon className="w-6 h-6 text-amber-500" />
                   </motion.div>
                   <span className="text-5xl font-semibold text-gray-200">
                     {step.number}
@@ -832,7 +839,7 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section with Enhanced Card */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -842,7 +849,7 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
               variants={itemVariants}
             >
               <CirclePercent className="w-4 h-4 mr-2" />
@@ -855,23 +862,93 @@ export default function HomePage() {
               Simple, Transparent Pricing
             </motion.h2>
             <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto tracking-tight"
+              className="text-lg text-gray-600 max-w-2xl mx-auto tracking-tight"
               variants={itemVariants}
             >
               Start generating leads today with our powerful AI platform
             </motion.p>
           </motion.div>
+
           <motion.div
-            className="max-w-md mx-auto"
-            variants={scaleIn}
+            className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+            variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
+            {/* Free Plan */}
+            <motion.div
+              className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-300 relative p-8 shadow-sm hover:shadow-md transform hover:scale-[1.02] flex flex-col"
+              variants={itemVariants}
+            >
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-gray-900">$0</span>
+                  <span className="text-gray-600">/month</span>
+                </div>
+                <p className="text-gray-600 mb-8">
+                  Perfect for getting started
+                </p>
+              </div>
+              <ul className="space-y-4 mb-8 flex-grow">
+                {[
+                  "Limited product analyses",
+                  "15 leads per month",
+                  "15 post generations",
+                  "Basic support",
+                ].map((feature, index) => (
+                  <motion.li
+                    key={index}
+                    className="flex items-center"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
+                    <span className="text-gray-700">{feature}</span>
+                  </motion.li>
+                ))}
+                {["No karma builder", "No viral templates"].map(
+                  (feature, index) => (
+                    <motion.li
+                      key={index + 4}
+                      className="flex items-center"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (index + 4) * 0.1 }}
+                      viewport={{ once: true }}
+                    >
+                      <X className="w-5 h-5 text-gray-400 mr-3" />
+                      <span className="text-gray-500">{feature}</span>
+                    </motion.li>
+                  )
+                )}
+              </ul>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="mt-auto"
+              >
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 shadow-sm hover:shadow-md transition-all duration-300"
+                  onClick={() => handleAuthAction("/signup")}
+                >
+                  Get Started Free
+                </Button>
+              </motion.div>
+            </motion.div>
+
             {/* Pro Plan */}
-            <motion.div className="bg-white rounded-2xl border-2 border-amber-500 hover:border-amber-600 transition-all duration-300 relative p-8 shadow-xl hover:shadow-2xl transform hover:scale-105">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+            <motion.div
+              className="bg-white rounded-2xl border-2 border-amber-500 hover:border-amber-400 transition-all duration-300 relative p-8 shadow-md hover:shadow-lg transform hover:scale-[1.02] flex flex-col"
+              variants={itemVariants}
+            >
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
                   3-Day Free Trial
                 </div>
               </div>
@@ -881,23 +958,21 @@ export default function HomePage() {
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$19</span>
+                  <span className="text-4xl font-bold text-gray-900">$15</span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <p className="text-gray-600 mb-8">
                   Everything you need to generate leads at scale
                 </p>
               </div>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-4 mb-8 flex-grow">
                 {[
+                  "Unlimited Lead Generation",
                   "Unlimited product analyses",
-                  "Unlimited AI-generated comments",
+                  "Unlimited AI Comments",
                   "Advanced karma builder",
-                  "Reddit + Twitter support",
                   "Viral template library",
                   "Priority support",
-                  "All platform integrations",
-                  "Custom templates",
                 ].map((feature, index) => (
                   <motion.li
                     key={index}
@@ -913,18 +988,21 @@ export default function HomePage() {
                 ))}
               </ul>
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="mt-auto"
               >
                 <Button
                   size="lg"
-                  className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-sm hover:shadow-md transition-all duration-300"
+                  onClick={() => handleAuthAction("/signup")}
                 >
                   Start Free Trial
                 </Button>
               </motion.div>
             </motion.div>
           </motion.div>
+
           <motion.div
             className="text-center mt-12"
             variants={fadeInUp}
@@ -932,16 +1010,14 @@ export default function HomePage() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            <p className="text-gray-600 mb-4">
-              Start with a 3-day free trial. No credit card required.
-            </p>
+            <p className="text-gray-600 mb-4">Start with a 3-day free trial.</p>
             <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
               <div className="flex items-center">
-                <Shield className="w-4 h-4 text-green-500 mr-2" />
+                <Shield className="w-4 h-4 text-amber-500 mr-2" />
                 Cancel anytime
               </div>
               <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                <CheckCircle className="w-4 h-4 text-amber-500 mr-2" />
                 24/7 customer support
               </div>
             </div>
@@ -1200,79 +1276,53 @@ export default function HomePage() {
       </section>
 
       {/* Enhanced CTA Section */}
-      <motion.section
-        className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-2xl border-x-2 border-gray-200 border-t mx-auto"
-        variants={fadeInUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-2xl border-x-2 border-gray-200 mx-auto">
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200"></div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.1) 1px, transparent 0)`,
+              backgroundSize: "40px 40px",
+            }}
+          ></div>
+        </div>
+
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.div
-            className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
-            variants={itemVariants}
-          >
+          <div className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm">
             <Rocket className="w-4 h-4 mr-2" />
             Ready to Get Started?
-          </motion.div>
-          <motion.h2
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tighter"
-            variants={itemVariants}
-          >
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tighter">
             Start reaching the right people
-          </motion.h2>
-          <motion.p
-            className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto tracking-tight"
-            variants={itemVariants}
-          >
+          </h2>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto tracking-tight">
             Transform your growth strategy with smart, targeted distribution
             that actually works.
-          </motion.p>
-          <motion.div className="flex justify-center" variants={itemVariants}>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          </p>
+          <div className="flex justify-center">
+            <div className="whileHover:scale-105 whileTap:scale-98">
               <button
-                className="px-8 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white text-md font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                className="px-8 py-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                 onClick={() => handleAuthAction("/signup")}
               >
                 Try it for free
-                <ArrowRight className="ml-2 w-4 h-4" />
+                <ArrowRight className="ml-2 w-5 h-5" />
               </button>
-            </motion.div>
-          </motion.div>
-          <motion.div
-            className="flex items-center justify-center space-x-6 text-sm text-gray-500 mt-8"
-            variants={itemVariants}
-          >
-            <div className="flex items-center">
-              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-              Free 3-day trial
             </div>
-            <div className="flex items-center">
-              <Shield className="w-4 h-4 text-green-500 mr-2" />
-              Cancel anytime
-            </div>
-            <div className="flex items-center">
-              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-              24/7 support included
-            </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Footer */}
-      <motion.footer
-        className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-200"
-        variants={fadeInUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
+      <footer className="bg-black py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
             <div>
-              <motion.div
+              <div
                 className="flex items-center space-x-2 mb-4"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
@@ -1280,127 +1330,110 @@ export default function HomePage() {
                 <img
                   src="src/assets/logo.png"
                   alt="Leaad"
-                  className="w-5 h-5"
+                  className="w-5 h-5 brightness-0 invert"
                 />
-                <span className="text-xl font-bold text-gray-900 mt-0.5">
+                <span className="text-xl font-bold text-white mt-0.5">
                   Leaad
                 </span>
-              </motion.div>
-              <p className="text-gray-600">
+              </div>
+              <p className="text-gray-300 text-sm">
                 AI-powered lead generation for the modern entrepreneur.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-gray-900">Product</h4>
-              <ul className="space-y-2 text-gray-600">
+              <h4 className="font-semibold mb-4 text-white text-base">
+                Product
+              </h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     Features
-                  </motion.a>
+                  </a>
                 </li>
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     Pricing
-                  </motion.a>
+                  </a>
                 </li>
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    API
-                  </motion.a>
+                  <a href="#" className="hover:text-white transition-colors">
+                    FAQ
+                  </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-gray-900">Company</h4>
-              <ul className="space-y-2 text-gray-600">
+              <h4 className="font-semibold mb-4 text-white text-base">
+                Company
+              </h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     About
-                  </motion.a>
+                  </a>
                 </li>
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     Blog
-                  </motion.a>
+                  </a>
                 </li>
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    Careers
-                  </motion.a>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Team
+                  </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-gray-900">Support</h4>
-              <ul className="space-y-2 text-gray-600">
+              <h4 className="font-semibold mb-4 text-white text-base">
+                Support
+              </h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     Help Center
-                  </motion.a>
+                  </a>
                 </li>
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     Contact
-                  </motion.a>
+                  </a>
                 </li>
                 <li>
-                  <motion.a
-                    href="#"
-                    className="hover:text-gray-900 transition-colors"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <a href="#" className="hover:text-white transition-colors">
                     Privacy
-                  </motion.a>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-white text-base">
+                Connect
+              </h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    YouTube
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    TikTok
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2024 LeadGen AI. All rights reserved.</p>
           </div>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   );
 }
