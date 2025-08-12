@@ -120,6 +120,15 @@ export default function HomePage() {
     };
 
     window.addEventListener("scroll", handleScroll);
+
+    // Force scroll to top immediately when component mounts
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Also try to prevent scroll restoration
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -1299,7 +1308,7 @@ export default function HomePage() {
             that actually works.
           </p>
           <div className="flex justify-center">
-            <div className="whileHover:scale-105 whileTap:scale-98">
+            <div>
               <button
                 className="px-8 py-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                 onClick={() => handleAuthAction("/signup")}
@@ -1317,7 +1326,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
             <div>
-              <div
+              <motion.div
                 className="flex items-center space-x-2 mb-4"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
@@ -1330,7 +1339,7 @@ export default function HomePage() {
                 <span className="text-xl font-bold text-white mt-0.5">
                   Leaad
                 </span>
-              </div>
+              </motion.div>
               <p className="text-gray-300 text-sm">
                 AI-powered lead generation for the modern entrepreneur.
               </p>
