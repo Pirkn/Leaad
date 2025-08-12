@@ -37,6 +37,9 @@ import macbookImage from "../assets/macbook-air-medium.png";
 import postsVideo from "../assets/posts.webm";
 import templatesVideo from "../assets/templates.webm";
 import karmaVideo from "../assets/karma.webm";
+import logoImage from "../assets/logo.png";
+import heroBgImage from "../assets/herobg.png";
+import backgroundImage from "../assets/background.png";
 
 // Animation variants
 const containerVariants = {
@@ -176,7 +179,7 @@ export default function HomePage() {
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <img
-                src="/src/assets/logo.png"
+                src={logoImage}
                 alt="Leaad Logo"
                 className="w-5 h-5"
               />
@@ -405,7 +408,7 @@ export default function HomePage() {
         {/* Background Texture for Hero Section */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src="/src/assets/herobg.png"
+            src={heroBgImage}
             alt=""
             className="w-full h-full object-cover"
           />
@@ -504,7 +507,7 @@ export default function HomePage() {
         {/* Background Texture */}
         <div className="absolute inset-x-0 -top-10 w-full h-full opacity-30">
           <img
-            src="/src/assets/background.png"
+            src={backgroundImage}
             alt=""
             className="w-full h-full object-cover"
             style={{ minHeight: "600px" }}
@@ -1271,7 +1274,7 @@ export default function HomePage() {
                 transition={{ duration: 0.2 }}
               >
                 <img
-                  src="src/assets/logo.png"
+                  src={logoImage}
                   alt="Leaad"
                   className="w-5 h-5"
                 />
