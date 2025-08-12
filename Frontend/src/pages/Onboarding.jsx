@@ -260,25 +260,27 @@ function Onboarding() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* DEV ONLY - Step Navigation for Testing */}
-      <div className="fixed top-4 right-4 z-50 flex space-x-2">
+      {/* Back to Homepage Button */}
+      <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-          variant="outline"
+          onClick={() => navigate("/")}
+          variant="ghost"
           size="sm"
-          className="bg-white/80 backdrop-blur-sm"
+          className="text-gray-500 hover:text-gray-700 hover:bg-gray-50"
         >
-          ← Prev
+          ← Back to Homepage
         </Button>
+      </div>
+
+      {/* Skip to Sign In Button */}
+      <div className="fixed top-4 right-4 z-50">
         <Button
-          onClick={() =>
-            setCurrentStep(Math.min(steps.length, currentStep + 1))
-          }
-          variant="outline"
+          onClick={() => navigate("/signin")}
+          variant="ghost"
           size="sm"
-          className="bg-white/80 backdrop-blur-sm"
+          className="text-gray-500 hover:text-gray-700 hover:bg-gray-50"
         >
-          Next →
+          Skip to Sign In
         </Button>
       </div>
 

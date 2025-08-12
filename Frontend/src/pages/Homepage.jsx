@@ -17,6 +17,8 @@ import {
   Award,
   Menu,
   X,
+  ChevronRight,
+  CirclePercent,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -165,65 +167,91 @@ export default function HomePage() {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-32 relative">
-          <div className="flex justify-between items-center h-16">
+          <div className="grid grid-cols-3 items-center h-16">
+            {/* Left column - Logo */}
             <motion.div
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-3 cursor-pointer"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Leaad</span>
+              <img
+                src="/src/assets/logo.png"
+                alt="Leaad Logo"
+                className="w-5 h-5"
+              />
+              <span className="text-xl font-semibold text-gray-900 mt-0.5">
+                Leaad
+              </span>
             </motion.div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <motion.button
-                onClick={() => scrollToSection("features")}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                Features
-              </motion.button>
-              <motion.button
-                onClick={() => scrollToSection("how-it-works")}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                How it Works
-              </motion.button>
-              <motion.button
-                onClick={() => scrollToSection("pricing")}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                Pricing
-              </motion.button>
-              <motion.button
-                onClick={() => scrollToSection("faq")}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                FAQ
-              </motion.button>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+            {/* Center column - Navigation */}
+            <div className="hidden md:flex items-center justify-center">
+              <div className="flex items-center space-x-2">
                 <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
-                  onClick={() => handleAuthAction("/signin")}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  onClick={() => scrollToSection("features")}
                 >
-                  {user ? "Dashboard" : "Get Started"}
+                  Features
                 </Button>
-              </motion.div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  onClick={() => scrollToSection("how-it-works")}
+                >
+                  How it Works
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  onClick={() => scrollToSection("pricing")}
+                >
+                  Pricing
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  onClick={() => scrollToSection("faq")}
+                >
+                  FAQ
+                </Button>
+              </div>
+            </div>
+
+            {/* Right column - Buttons */}
+            <div className="hidden md:flex items-center justify-end">
+              <div className="flex items-center space-x-3">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                    onClick={() => handleAuthAction("/signin")}
+                  >
+                    {user ? "Dashboard" : "Log in"}
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    size="sm"
+                    className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
+                    onClick={() => handleAuthAction("/signup")}
+                  >
+                    {user ? "Dashboard" : "Get Started"}
+                  </Button>
+                </motion.div>
+              </div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -344,10 +372,21 @@ export default function HomePage() {
                     }}
                   >
                     <Button
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                      variant="outline"
+                      size="sm"
+                      className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 mb-3"
                       onClick={() => {
                         handleAuthAction("/signin");
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      {user ? "Dashboard" : "Sign In"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-normal"
+                      onClick={() => {
+                        handleAuthAction("/signup");
                         setIsMobileMenuOpen(false);
                       }}
                     >
@@ -363,6 +402,15 @@ export default function HomePage() {
 
       {/* Hero Section with Floating Elements */}
       <section className="pt-20 pb-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Background Texture for Hero Section */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="/src/assets/herobg.png"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+
         <div className="relative z-10">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -372,24 +420,21 @@ export default function HomePage() {
               animate="visible"
             >
               <motion.div
-                className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 border border-orange-200 rounded-full text-sm font-medium shadow-sm"
+                className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
                 variants={itemVariants}
               >
                 <Rocket className="w-4 h-4 mr-2" />
                 AI-Powered Lead Generation
               </motion.div>
               <motion.h1
-                className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight tracking-tighter"
                 variants={itemVariants}
               >
-                Get Your Product in Front of the Right People{" "}
-                <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent relative">
-                  Without Guessing
-                  {/* <div className="absolute bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-60"></div> */}
-                </span>
+                Get Your Product <br /> in Front of the Right People <br />{" "}
+                Without Guessing
               </motion.h1>
               <motion.p
-                className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed px-4"
+                className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed px-4 tracking-tight"
                 variants={itemVariants}
               >
                 We help you show up where it matters. From product analysis to
@@ -404,28 +449,20 @@ export default function HomePage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-12 py-6 text-xl"
+                  <button
+                    className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 pl-5 pr-3 py-2 text-base font-medium rounded-lg flex items-center justify-center"
                     onClick={() => handleAuthAction("/signup")}
                   >
                     {user ? "Go to Dashboard" : "Find your next users"}
-                    <ArrowRight className="ml-2 w-6 h-6" />
-                  </Button>
+                    <ChevronRight className="ml-2 w-4 h-4" />
+                    {/* <ArrowRight className="ml-2 w-4 h-4" /> */}
+                  </button>
                 </motion.div>
               </motion.div>
               <motion.div
                 className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-500"
                 variants={itemVariants}
               >
-                <motion.div
-                  className="flex items-center"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                  Free 3-day trial
-                </motion.div>
                 <motion.div
                   className="flex items-center"
                   whileHover={{ scale: 1.05 }}
@@ -442,6 +479,14 @@ export default function HomePage() {
                   <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                   Instant results
                 </motion.div>
+                <motion.div
+                  className="flex items-center"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                  Free plan available
+                </motion.div>
               </motion.div>
             </motion.div>
           </div>
@@ -456,14 +501,24 @@ export default function HomePage() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
+        {/* Background Texture */}
+        <div className="absolute inset-x-0 -top-10 w-full h-full opacity-30">
+          <img
+            src="/src/assets/background.png"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ minHeight: "600px" }}
+          />
+        </div>
+
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center relative">
             <motion.img
               src={macbookImage}
               alt="Leaad AI Platform Demo"
               className="mx-auto max-w-full h-auto"
-              style={{ maxHeight: "800px" }}
+              style={{ maxHeight: "1000px" }}
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
             />
@@ -483,13 +538,13 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.h2
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tighter"
               variants={itemVariants}
             >
               Everything you need to reach your audience
             </motion.h2>
             <motion.p
-              className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4"
+              className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4 tracking-tight"
               variants={itemVariants}
             >
               From content creation to community building, we've got you covered
@@ -528,8 +583,8 @@ export default function HomePage() {
                 description:
                   "We help you build a credible, active presence—so when you post, people listen.",
                 bullets: [
-                  "Organic activity that earns trust, not suspicion",
                   "Avoid low-effort bans and buried posts",
+                  "Build karma faster than your competitors",
                   "Show up like someone worth listening to",
                 ],
                 demoPlaceholder: "Karma Builder Demo",
@@ -565,10 +620,10 @@ export default function HomePage() {
                       : "lg:col-span-2"
                   }`}
                 >
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4 tracking-tighter">
                     {feature.title}
                   </h3>
-                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-lg text-gray-600 mb-6 leading-relaxed tracking-tight">
                     {feature.description}
                   </p>
                   <ul className="space-y-3">
@@ -663,106 +718,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section with Enhanced Cards */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
-              variants={itemVariants}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Powerful Features
-            </motion.div>
-            <motion.h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-              variants={itemVariants}
-            >
-              Modern Lead Generation Tools
-            </motion.h2>
-            <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
-              variants={itemVariants}
-            >
-              Our AI-powered platform automates every step of the lead
-              generation process
-            </motion.p>
-          </motion.div>
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            {[
-              {
-                icon: Target,
-                title: "Smart Product Analysis",
-                description:
-                  "Just paste your product link and our AI analyzes your target audience, problems solved, and creates the perfect positioning strategy.",
-              },
-              {
-                icon: MessageSquare,
-                title: "AI Comment Generation",
-                description:
-                  "Get perfectly crafted, natural-sounding comments that don't look like spam. Each one is tailored to the specific post and context.",
-              },
-              {
-                icon: TrendingUp,
-                title: "Karma Builder System",
-                description:
-                  "Build authentic karma with our proven templates and comment suggestions. Never get flagged as a bot again.",
-              },
-              {
-                icon: Zap,
-                title: "15-Second Post Discovery",
-                description:
-                  "Our AI scans thousands of posts in seconds to find the perfect opportunities where your product naturally fits.",
-              },
-              {
-                icon: BarChart3,
-                title: "Viral Template Library",
-                description:
-                  "Access proven comment templates that have generated thousands of leads. Each template is optimized for maximum engagement.",
-              },
-              {
-                icon: Globe,
-                title: "Multi-Platform Ready",
-                description:
-                  "Starting with Reddit, expanding to Twitter and beyond. One tool for all your social lead generation needs.",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                className="bg-white rounded-xl border border-gray-200 hover:border-orange-300 transition-all duration-300 group p-8 shadow-sm hover:shadow-xl relative overflow-hidden"
-                variants={itemVariants}
-              >
-                <motion.div
-                  className="w-12 h-12 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <feature.icon className="w-6 h-6 text-orange-500" />
-                </motion.div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* How It Works with Enhanced Design */}
       <section
         id="how-it-works"
@@ -777,20 +732,20 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
               <Zap className="w-4 h-4 mr-2" />
               Simple Process
             </motion.div>
             <motion.h2
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tighter"
               variants={itemVariants}
             >
               How It Works
             </motion.h2>
             <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              className="text-xl text-gray-600 max-w-2xl mx-auto tracking-tight"
               variants={itemVariants}
             >
               From product analysis to lead generation in just 3 simple steps.
@@ -857,10 +812,10 @@ export default function HomePage() {
                     {step.number}
                   </span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 tracking-tighter">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed tracking-tight">
                   {step.description}
                 </p>
               </motion.div>
@@ -880,20 +835,20 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
-              <DollarSign className="w-4 h-4 mr-2" />
+              <CirclePercent className="w-4 h-4 mr-2" />
               Transparent Pricing
             </motion.div>
             <motion.h2
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tighter"
               variants={itemVariants}
             >
               Simple, Transparent Pricing
             </motion.h2>
             <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              className="text-xl text-gray-600 max-w-2xl mx-auto tracking-tight"
               variants={itemVariants}
             >
               Start generating leads today with our powerful AI platform
@@ -907,14 +862,14 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             {/* Pro Plan */}
-            <motion.div className="bg-white rounded-2xl border-2 border-orange-500 hover:border-orange-600 transition-all duration-300 relative p-8 shadow-xl hover:shadow-2xl transform hover:scale-105">
+            <motion.div className="bg-white rounded-2xl border-2 border-amber-500 hover:border-amber-600 transition-all duration-300 relative p-8 shadow-xl hover:shadow-2xl transform hover:scale-105">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+                <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
                   3-Day Free Trial
                 </div>
               </div>
               <div className="absolute top-4 right-4">
-                <Award className="w-6 h-6 text-orange-500" />
+                <Award className="w-6 h-6 text-amber-500" />
               </div>
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
@@ -956,7 +911,7 @@ export default function HomePage() {
               >
                 <Button
                   size="lg"
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Start Free Trial
                 </Button>
@@ -998,14 +953,14 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
               <Star className="w-4 h-4 mr-2" />
               Customer Success
             </motion.div>
             <motion.h2
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tighter"
               variants={itemVariants}
             >
               Trusted by Growth-Focused Entrepreneurs
@@ -1054,7 +1009,9 @@ export default function HomePage() {
                     />
                   ))}
                 </div>
-                <p className="text-gray-600 mb-6">"{testimonial.quote}"</p>
+                <p className="text-gray-600 mb-6 tracking-tight">
+                  "{testimonial.quote}"
+                </p>
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mr-3">
                     <span className="text-white font-semibold">
@@ -1089,20 +1046,20 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div
-              className="inline-flex items-center px-3 py-1 mb-4 bg-orange-100 text-orange-700 border border-orange-200 rounded-full text-sm font-medium"
+              className="inline-flex items-center px-3 py-1 mb-4 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium"
               variants={itemVariants}
             >
               <MessageSquare className="w-4 h-4 mr-2" />
               FAQ
             </motion.div>
             <motion.h2
-              className="text-2xl md:text-3xl font-bold text-gray-900 mb-4"
+              className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 tracking-tighter"
               variants={itemVariants}
             >
               Frequently Asked Questions
             </motion.h2>
             <motion.p
-              className="text-sm text-gray-600 max-w-2xl mx-auto"
+              className="text-sm text-gray-600 max-w-2xl mx-auto tracking-tight"
               variants={itemVariants}
             >
               Everything you need to know about using Leaad for effective
@@ -1125,7 +1082,7 @@ export default function HomePage() {
                   help?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed tracking-tight">
                     Social media lead generation involves finding and engaging
                     with potential customers on platforms like Reddit and
                     Twitter. Leaad AI automates this process by analyzing your
@@ -1144,7 +1101,7 @@ export default function HomePage() {
                   How does Leaad AI's karma building system work?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed tracking-tight">
                     Our karma builder helps you establish credibility on
                     platforms like Reddit by providing proven templates and
                     comment suggestions for non-promotional posts. This builds
@@ -1164,7 +1121,7 @@ export default function HomePage() {
                   posts?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed tracking-tight">
                     Our AI analyzes your product link to understand your target
                     audience, value proposition, and key benefits. Then it scans
                     relevant posts and generates contextual comments that
@@ -1182,7 +1139,7 @@ export default function HomePage() {
                   What's included in the free trial for lead generation?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed tracking-tight">
                     Our 3-day free trial includes unlimited product analyses,
                     unlimited AI-generated comments, access to advanced karma
                     building templates, and Reddit + Twitter platform support.
@@ -1201,7 +1158,7 @@ export default function HomePage() {
                   How do the AI assistants work for social media marketing?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed tracking-tight">
                     Our AI assistants work in parallel to maximize your lead
                     generation efficiency. One assistant analyzes your product
                     and identifies your ideal customer profile, another scans
@@ -1220,7 +1177,7 @@ export default function HomePage() {
                   Is my lead generation data secure with Leaad AI?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed tracking-tight">
                     Yes, we take data security very seriously. All your product
                     information, generated comments, and account data are
                     encrypted and stored securely. We never share your data with
@@ -1247,20 +1204,20 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-white"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
-            className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 border border-orange-200 rounded-full text-sm font-medium shadow-sm"
+            className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
             variants={itemVariants}
           >
             <Rocket className="w-4 h-4 mr-2" />
             Ready to Get Started?
           </motion.div>
           <motion.h2
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
+            className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tighter"
             variants={itemVariants}
           >
             Start reaching the right people
           </motion.h2>
           <motion.p
-            className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
+            className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto tracking-tight"
             variants={itemVariants}
           >
             Transform your growth strategy with smart, targeted distribution
@@ -1268,17 +1225,13 @@ export default function HomePage() {
           </motion.p>
           <motion.div className="flex justify-center" variants={itemVariants}>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                asChild
-                size="lg"
-                className="px-16 py-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              <button
+                className="px-8 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white text-md font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                 onClick={() => handleAuthAction("/signup")}
               >
-                <button className="flex items-center justify-center">
-                  Get your traction strategy
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </button>
-              </Button>
+                Try it for free
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </button>
             </motion.div>
           </motion.div>
           <motion.div
@@ -1317,11 +1270,13 @@ export default function HomePage() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                  <Target className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">
-                  LeadGen AI
+                <img
+                  src="src/assets/logo.png"
+                  alt="Leaad"
+                  className="w-5 h-5"
+                />
+                <span className="text-xl font-bold text-gray-900 mt-0.5">
+                  Leaad
                 </span>
               </motion.div>
               <p className="text-gray-600">

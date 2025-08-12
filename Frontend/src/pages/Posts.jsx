@@ -323,8 +323,7 @@ function Posts() {
           Your Reddit Posts
         </h1>
         <p className="text-gray-600 mt-2">
-          View and generate Reddit posts for your product. Posts are generated
-          with AI and saved to your account.
+          Generate AI-powered Reddit posts for your product.
         </p>
       </div>
 
@@ -371,8 +370,7 @@ function Posts() {
                   Generate New Reddit Posts
                 </h2>
                 <p className="text-gray-600 text-sm">
-                  Click the button to generate new Reddit posts for your
-                  product.
+                  Click the button to generate new posts for your product.
                 </p>
               </div>
               <Button
@@ -406,7 +404,7 @@ function Posts() {
                         : "hover:bg-gray-100"
                     }
                   >
-                    All Posts
+                    All
                   </Button>
 
                   <Button
@@ -418,7 +416,7 @@ function Posts() {
                         : "hover:bg-gray-100"
                     }
                   >
-                    Saved Posts
+                    Saved
                   </Button>
 
                   {hasActiveFilters && (
@@ -439,7 +437,7 @@ function Posts() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Search posts..."
+                      placeholder="Search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-48 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
@@ -542,7 +540,7 @@ function Posts() {
                         className="px-3 py-2"
                       >
                         <FileText className="w-4 h-4 mr-2" />
-                        <span>View Post</span>
+                        <span>View</span>
                       </Button>
                       {(() => {
                         const isOptimisticallySaved = optimisticSaves.has(

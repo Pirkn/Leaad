@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Target } from "lucide-react";
 import { motion } from "framer-motion";
 
 const ForgotPassword = () => {
@@ -49,11 +49,10 @@ const ForgotPassword = () => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(1px)" },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
         duration: 0.4,
         ease: "easeOut",
@@ -61,21 +60,9 @@ const ForgotPassword = () => {
     },
   };
 
-  const slideInFromLeft = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
-
   if (success) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
           <motion.div
             className="max-w-md w-full space-y-8"
@@ -85,12 +72,12 @@ const ForgotPassword = () => {
           >
             <motion.div variants={itemVariants}>
               <motion.div
-                className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-green-100"
-                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="mx-auto h-12 w-12 flex items-center justify-center rounded-lg bg-green-100"
+                whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
                 <svg
-                  className="h-8 w-8 text-green-600"
+                  className="h-6 w-6 text-green-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -104,7 +91,7 @@ const ForgotPassword = () => {
                 </svg>
               </motion.div>
               <motion.h2
-                className="mt-6 text-center text-3xl font-extrabold text-gray-900"
+                className="mt-6 text-center text-2xl font-semibold text-gray-900"
                 variants={itemVariants}
               >
                 Check your email
@@ -129,17 +116,17 @@ const ForgotPassword = () => {
             >
               <motion.button
                 onClick={() => navigate(-1)}
-                className="flex items-center justify-center space-x-2 text-gray-600 hover:text-orange-600 transition-colors duration-200 mx-auto"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="flex items-center justify-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors duration-200 mx-auto"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm font-medium">Go Back</span>
               </motion.button>
               <div>
                 <Link
                   to="/signin"
-                  className="font-medium text-orange-600 hover:text-orange-500 transition-colors duration-200"
+                  className="font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200"
                 >
                   Back to sign in
                 </Link>
@@ -152,7 +139,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
         <motion.div
           className="max-w-md w-full space-y-8"
@@ -162,26 +149,14 @@ const ForgotPassword = () => {
         >
           <motion.div variants={itemVariants}>
             <motion.div
-              className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-500"
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              className="mx-auto h-12 w-12 flex items-center justify-center rounded-lg bg-gray-900"
+              whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <svg
-                className="h-8 w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                />
-              </svg>
+              <Target className="h-6 w-6 text-white" />
             </motion.div>
             <motion.h2
-              className="mt-6 text-center text-3xl font-extrabold text-gray-900"
+              className="mt-6 text-center text-2xl font-semibold text-gray-900"
               variants={itemVariants}
             >
               Reset your password
@@ -202,8 +177,8 @@ const ForgotPassword = () => {
           >
             {error && (
               <motion.div
-                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
-                initial={{ opacity: 0, scale: 0.9 }}
+                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               >
@@ -214,11 +189,11 @@ const ForgotPassword = () => {
             <motion.div variants={itemVariants}>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
                 Email address
               </label>
-              <motion.input
+              <input
                 id="email"
                 name="email"
                 type="email"
@@ -226,10 +201,8 @@ const ForgotPassword = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm transition-colors duration-200"
+                className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
                 placeholder="Enter your email"
-                whileFocus={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
               />
             </motion.div>
 
@@ -237,9 +210,9 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
                 {loading ? (
                   <svg
@@ -287,21 +260,13 @@ const ForgotPassword = () => {
             >
               <motion.button
                 onClick={() => navigate(-1)}
-                className="flex items-center justify-center space-x-2 text-gray-600 hover:text-orange-600 transition-colors duration-200 mx-auto"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="flex items-center justify-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors duration-200 mx-auto"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm font-medium">Go Back</span>
               </motion.button>
-              {/* <div>
-                <Link
-                  to="/signin"
-                  className="font-medium text-orange-600 hover:text-orange-500 transition-colors duration-200"
-                >
-                  Back to sign in
-                </Link>
-              </div> */}
             </motion.div>
           </motion.form>
         </motion.div>
