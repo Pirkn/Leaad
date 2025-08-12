@@ -198,7 +198,10 @@ def lead_generation_prompt_2(product_data, posts, min_posts=5):
     
     # Format the prompt with the provided data
     system_prompt = system_prompt_template.format(
-        product_data=product_data,
+        name=product_data['name'],
+        target_audience=product_data['target_audience'],
+        problem_solved=product_data['problem_solved'],
+        description=product_data['description'],
         min_posts=min_posts
     )
 
