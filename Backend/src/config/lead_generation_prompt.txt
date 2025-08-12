@@ -33,10 +33,10 @@ QUALITY STANDARDS:
 - Select at least {min_posts} posts.
 
 RETURN JSON FORMAT:
-{"comments": [
-    {"[postnumber]": "Your crafted comment for this postnumber"},
-    {"[postnumber]": "Your crafted comment for this postnumber"}
-]}
+{{"comments": [
+    {{"[postnumber]": "Your crafted comment for this postnumber"}},
+    {{"[postnumber]": "Your crafted comment for this postnumber"}}
+]}}
 - Use the EXACT post number from ===== POST [postnumber] ===== as the key.
 
 IMPORTANT:
