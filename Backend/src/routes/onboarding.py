@@ -51,7 +51,6 @@ class OnboardingLeadGeneration(MethodView):
 
             try:
                 response_data = json.loads(response)
-                print(response_data)
                 post_ids = response_data.get('selected_post_ids', [])
                 print(post_ids)
                 for post_id in post_ids:
