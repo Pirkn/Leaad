@@ -114,11 +114,6 @@ export default function HomePage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Smooth scroll to top on page load/refresh
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       setIsScrolled(scrollTop > 5);
