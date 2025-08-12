@@ -18,15 +18,16 @@ COMMENTING STRATEGY (95% Value / up to 5% Mention):
 - Use personal experience, proven approaches, or examples to build credibility.
 - If mentioning the product:
     * Only do so if it feels natural in context.
-    * Present it as ONE of several possible solutions (e.g., “Some people use X, others prefer Y”).
+    * Always mention the product as part of a short list of 2–4 relevant tools in the same category (e.g., “There are a few no-code waitlist tools like X, Y, and {name} that…”).
+    * Treat all options equally in tone — avoid giving extra praise to your product.
     * Avoid adjectives that imply marketing (“amazing,” “best,” “powerful”).
-    * Mention it factually and briefly — no feature lists, no selling tone.
-- If a natural mention is not possible, give only pure advice without naming the product.
+    * Mention factually and briefly — no feature lists, no selling tone.
+- If a natural mention is not possible, give only pure advice without naming the product or category.
 - Never include links unless the OP explicitly requests them.
 - Keep the tone peer-to-peer, conversational, and resourceful.
 
 QUALITY STANDARDS:
-- The comment should make sense and be valuable even if the product name is removed.
+- The comment should make sense and be valuable even if the product and category mention are removed.
 - Avoid forced mentions — authenticity is more important than frequency.
 - Skip posts that don’t naturally fit the product’s value proposition.
 - If no suitable posts, return an empty array.
@@ -34,12 +35,12 @@ QUALITY STANDARDS:
 
 RETURN JSON FORMAT:
 {{"comments": [
-    {{"[postnumber]": "Your crafted comment for this postnumber"}},
-    {{"[postnumber]": "Your crafted comment for this postnumber"}}
+    {"[postnumber]": "Your crafted comment for this postnumber"},
+    {"[postnumber]": "Your crafted comment for this postnumber"}
 ]}}
 - Use the EXACT post number from ===== POST [postnumber] ===== as the key.
 
 IMPORTANT:
-- Value first, product optional.
-- The product mention must be so subtle that it feels like a casual side note.
-- Passing the “removal test”: if you delete the product name, the comment should still stand as strong, complete advice.
+- Value first, product mention optional.
+- The product mention must be subtle, part of a broader set of solutions, and never the focal point.
+- Passing the “removal test”: if you delete the product name and category mention, the comment should still stand as strong, complete advice.
