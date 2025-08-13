@@ -38,6 +38,7 @@ class LeadGeneration(MethodView):
         product_data = product_result.data[0]
         
         unformatted_posts, posts = lead_posts(subreddits)
+        
         # Creates a file with the posts
         with open('posts.json', 'w') as f:
             json.dump(posts, f)
@@ -57,7 +58,7 @@ class LeadGeneration(MethodView):
 
             try:
                 response_data = json.loads(response)
-                post_ids = response_data.get('post_ids', [])
+                post_ids = response_data.get('selected_post_ids', [])
                 print(f"AI returned post_ids: {post_ids}")
                 for post_id in post_ids:
                     selected_posts.append(posts[post_id])
