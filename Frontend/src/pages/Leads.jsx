@@ -23,6 +23,7 @@ import {
   EyeOff,
   RotateCcw,
   Copy,
+  Search,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useSearchParams } from "react-router-dom";
@@ -38,6 +39,7 @@ function Leads() {
   const [optimisticReads, setOptimisticReads] = useState(new Set());
   const [expandedReplies, setExpandedReplies] = useState(new Set());
   const [copiedReplyId, setCopiedReplyId] = useState(null);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   // API hooks
   const { data: leads, isLoading, error } = useLeads();
@@ -208,14 +210,6 @@ function Leads() {
     }
   };
 
-  const isNew = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    return diffDays < 1;
-  };
-
   // Combine existing leads with newly generated leads
   const allLeads = [...(leads || []), ...newlyGeneratedLeads];
 
@@ -289,6 +283,20 @@ function Leads() {
       }, 500);
     }
   }, [highlightId, sortedLeads]);
+
+  // Close filter dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showFilterDropdown && !event.target.closest(".filter-dropdown")) {
+        setShowFilterDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilterDropdown]);
 
   // Loading State
   if (isLoading) {
@@ -366,29 +374,37 @@ function Leads() {
           transition={{ duration: 0.3, delay: 0.1 }}
           className="space-y-6"
         >
-          {/* Filter Card */}
+          {/* Generate Leads Button - Separate row above filter card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
             className="bg-white border border-gray-200 rounded-lg p-4"
           >
-            <div className="flex items-center justify-between">
-              {/* Left side - Action buttons */}
-              <div className="flex items-center space-x-2">
-                <Button
-                  onClick={handleGenerateLeads}
-                  disabled={generateLeadsMutation.isPending || !product}
-                  className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>
-                    {generateLeadsMutation.isPending
-                      ? "Generating..."
-                      : "Generate Leads"}
-                  </span>
-                </Button>
+            <Button
+              onClick={handleGenerateLeads}
+              disabled={generateLeadsMutation.isPending || !product}
+              className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              <span>
+                {generateLeadsMutation.isPending
+                  ? "Generating..."
+                  : "Generate Leads"}
+              </span>
+            </Button>
+          </motion.div>
 
+          {/* Filter Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-white border border-gray-200 rounded-lg p-4"
+          >
+            <div className="flex flex-col space-y-4 max-[500px]:space-y-3 min-[500px]:flex-row min-[500px]:items-center min-[500px]:justify-between min-[500px]:space-y-0">
+              {/* Top row - Action buttons */}
+              <div className="hidden min-[500px]:flex items-center space-x-2">
                 <Button
                   onClick={() => setViewFilter("all")}
                   variant="ghost"
@@ -426,39 +442,137 @@ function Leads() {
                 </Button>
               </div>
 
-              {/* Right side - Filters */}
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Posted:</span>
-                  <select
-                    id="posted-filter"
-                    name="postedFilter"
-                    value={postedFilter}
-                    onChange={(e) => setPostedFilter(e.target.value)}
-                    className="w-32 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                  >
-                    <option value="all">All Time</option>
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                  </select>
+              {/* Bottom row - Search and Filter */}
+              <div className="flex items-center space-x-2">
+                {/* Search - keep visible for quick access */}
+                <div className="relative flex-1 min-[500px]:flex-none">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search leads..."
+                    className="w-full min-[500px]:w-48 pl-10 pr-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                  />
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <SortAsc className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Sort by:</span>
-                  <select
-                    id="sort-by"
-                    name="sortBy"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-32 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                {/* Filter Button with Dropdown */}
+                <div className="relative filter-dropdown">
+                  <button
+                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                    className="relative flex items-center px-3 h-10 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-colors"
                   >
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="score">Score</option>
-                  </select>
+                    <Filter className="w-4 h-4" />
+                    <span className="hidden sm:inline sm:ml-2">Filters</span>
+                  </button>
+
+                  {showFilterDropdown && (
+                    <div className="absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-4">
+                      <div className="space-y-4">
+                        {/* All/Unread/Read Filter - Only show under 500px */}
+                        <div className="min-[500px]:hidden">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            View
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            <button
+                              onClick={() => {
+                                setViewFilter("all");
+                                setShowFilterDropdown(false);
+                              }}
+                              className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+                                viewFilter === "all"
+                                  ? "bg-gray-800 text-white border-gray-800"
+                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              All
+                            </button>
+                            <button
+                              onClick={() => {
+                                setViewFilter("unread");
+                                setShowFilterDropdown(false);
+                              }}
+                              className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+                                viewFilter === "unread"
+                                  ? "bg-gray-800 text-white border-gray-800"
+                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Unread
+                            </button>
+                            <button
+                              onClick={() => {
+                                setViewFilter("read");
+                                setShowFilterDropdown(false);
+                              }}
+                              className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+                                viewFilter === "read"
+                                  ? "bg-gray-800 text-white border-gray-800"
+                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Read
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Posted Date Filter */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Posted Date
+                          </label>
+                          <select
+                            id="posted-filter"
+                            name="postedFilter"
+                            value={postedFilter}
+                            onChange={(e) => setPostedFilter(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                          >
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                          </select>
+                        </div>
+
+                        {/* Sort By */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Sort By
+                          </label>
+                          <select
+                            id="sort-by"
+                            name="sortBy"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                          >
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="score">Score</option>
+                          </select>
+                        </div>
+
+                        {/* Lead count */}
+                        <div className="pt-2 border-t border-gray-200">
+                          <div className="text-sm text-gray-500 mb-3">
+                            {sortedLeads.length} of {allLeads.length} leads
+                          </div>
+                          <Button
+                            onClick={() => {
+                              setPostedFilter("all");
+                              setSortBy("newest");
+                              setViewFilter("all");
+                              setShowFilterDropdown(false);
+                            }}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Reset Filters
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -540,27 +654,31 @@ function Leads() {
                         {lead.title || "Lead"}
                       </h3>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center space-x-1 min-[700px]:flex hidden">
                           <User className="w-4 h-4" />
                           <span>{lead.author || "Unknown"}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
                           <span>
-                            Posted {formatDate(lead.date || lead.created_at)}
+                            <span className="min-[700px]:inline hidden">
+                              Posted{" "}
+                            </span>
+                            {formatDate(lead.date || lead.created_at)}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1 min-[700px]:hidden">
+                          <span className="text-gray-500">•</span>
+                          <span className="text-gray-500">
+                            r/{lead.subreddit}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 min-[700px]:flex hidden">
                       <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
                         r/{lead.subreddit}
                       </span>
-                      {isNew(lead.created_at) && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          New
-                        </span>
-                      )}
                     </div>
                   </div>
 
@@ -588,7 +706,8 @@ function Leads() {
                       className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      <span>View on Reddit</span>
+                      <span className="max-[700px]:hidden">View on Reddit</span>
+                      <span className="hidden max-[700px]:inline">View</span>
                     </Button>
                     <Button
                       onClick={() => handleViewReply(lead.id)}
@@ -599,7 +718,7 @@ function Leads() {
                       <span>
                         {expandedReplies.has(lead.id)
                           ? "Hide Reply"
-                          : "View Reply"}
+                          : "See Reply"}
                       </span>
                     </Button>
                     <Button
@@ -607,7 +726,7 @@ function Leads() {
                       variant="outline"
                       className={`px-3 py-2 transition-all duration-200 ${
                         isRead
-                          ? "bg-green-50 border-green-300 text-green-700 hover:bg-green-100 hover:border-green-400"
+                          ? "bg-green-50 border-green-300 text-green-700 hover:bg-gray-100 hover:border-green-400"
                           : "hover:bg-gray-50"
                       }`}
                       title={isRead ? "Mark as unread" : "Mark as read"}
@@ -615,12 +734,16 @@ function Leads() {
                       {isRead ? (
                         <>
                           <EyeOff className="w-4 h-4" />
-                          <span>Mark as unread</span>
+                          <span className="min-[700px]:inline hidden">
+                            Mark as unread
+                          </span>
                         </>
                       ) : (
                         <>
                           <Eye className="w-4 h-4" />
-                          <span>Mark as read</span>
+                          <span className="min-[700px]:inline hidden">
+                            Mark as read
+                          </span>
                         </>
                       )}
                     </Button>

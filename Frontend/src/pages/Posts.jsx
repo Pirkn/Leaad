@@ -743,11 +743,11 @@ function Posts() {
                         <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white/60 to-transparent pointer-events-none"></div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 mt-3">
+                    <div className="grid grid-cols-2 gap-2 mt-3 lg:flex lg:items-center lg:grid-cols-none">
                       <Button
                         onClick={() => handleOpenPostModal(post)}
                         variant="outline"
-                        className="px-3 py-2"
+                        className="px-3 py-2 w-full lg:w-auto"
                       >
                         <FileText className="w-4 h-4 mr-2" />
                         <span>View</span>
@@ -766,7 +766,7 @@ function Posts() {
                                 : handleSavePost(post.id)
                             }
                             variant="outline"
-                            className={`px-3 py-2 transition-all duration-200 ${
+                            className={`px-3 py-2 transition-all duration-200 w-full lg:w-auto ${
                               isSaved
                                 ? "bg-orange-50 border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400"
                                 : "hover:bg-gray-50"
@@ -782,7 +782,7 @@ function Posts() {
                         <Button
                           onClick={() => window.open(post.url, "_blank")}
                           variant="outline"
-                          className="px-3 py-2"
+                          className="px-3 py-2 w-full lg:w-auto"
                         >
                           <ExternalLink className="w-4 h-4 mr-2" />
                           <span>View on Reddit</span>

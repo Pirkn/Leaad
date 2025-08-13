@@ -439,12 +439,12 @@ function Dashboard() {
               transition={{ duration: 0.2, delay: 0.3 }}
               className="bg-white border border-gray-200 rounded-lg p-4"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                     <CheckCircle className="w-5 h-5 text-green-600" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <h3 className="text-sm font-medium text-gray-900">
                       Monitoring: {product.name}
                     </h3>
@@ -457,7 +457,7 @@ function Dashboard() {
                 <Button
                   onClick={handleAnalyzeProduct}
                   variant="outline"
-                  className="text-sm"
+                  className="text-sm w-full sm:w-auto"
                 >
                   View Details
                 </Button>
