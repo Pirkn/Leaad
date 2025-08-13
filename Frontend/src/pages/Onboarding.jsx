@@ -271,31 +271,7 @@ function Onboarding() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Back to Homepage Button */}
-      <div className="fixed top-4 left-4 z-50">
-        <Button
-          onClick={() => navigate("/")}
-          variant="ghost"
-          size="sm"
-          className="text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-        >
-          ← Back to Homepage
-        </Button>
-      </div>
-
-      {/* Skip to Sign In Button */}
-      <div className="fixed top-4 right-4 z-50">
-        <Button
-          onClick={() => navigate("/signin")}
-          variant="ghost"
-          size="sm"
-          className="text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-        >
-          Skip to Sign In
-        </Button>
-      </div>
-
-      {/* Step Counter - Outside main container */}
+      {/* Step Counter - At the very top */}
       <div className="w-full py-4">
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex items-center justify-between mb-3">
@@ -310,6 +286,31 @@ function Onboarding() {
             value={(currentStep / steps.length) * 100}
             className="h-2 transition-all duration-1000 ease-out"
           />
+        </div>
+      </div>
+
+      {/* Navigation Buttons - Below the progress bar */}
+      <div className="w-full px-6 pb-4">
+        <div className="max-w-4xl mx-auto flex justify-between">
+          <Button
+            onClick={() => navigate("/")}
+            variant="ghost"
+            size="sm"
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:text-sm px-2 sm:px-3"
+          >
+            <span className="hidden sm:inline">← Back to Homepage</span>
+            <span className="sm:hidden">Back to Home</span>
+          </Button>
+
+          <Button
+            onClick={() => navigate("/signin")}
+            variant="ghost"
+            size="sm"
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:text-sm px-2 sm:px-3"
+          >
+            <span className="hidden sm:inline">Skip to Sign In</span>
+            <span className="sm:hidden">Skip to Sign In</span>
+          </Button>
         </div>
       </div>
 
@@ -383,26 +384,32 @@ function Onboarding() {
 
                             setProductUrl(value);
                           }}
-                          placeholder="https://your-product.com"
-                          className="pl-12 pr-32"
+                          placeholder="https://product.com"
+                          className="pl-12 pr-22 sm:pr-32"
                           required
                         />
                         <Button
                           type="submit"
                           size="sm"
                           variant="ghost"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-3 text-sm hover:bg-gray-100"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 px-3 sm:px-6 py-2 sm:py-3 text-sm hover:bg-gray-100"
                           disabled={!productUrl.trim() || isAnalyzing}
                         >
                           {isAnalyzing ? (
                             <>
                               <div className="w-4 h-4 mr-1 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
-                              Analyzing...
+                              <span className="hidden sm:inline">
+                                Analyzing...
+                              </span>
+                              <span className="sm:hidden">Analyzing...</span>
                             </>
                           ) : (
                             <>
-                              <Sparkles className="w-4 h-4 mr-1" />
-                              {currentStepData.action}
+                              <Sparkles className="hidden sm:block w-4 h-4 mr-1" />
+                              <span className="hidden sm:inline">
+                                Analyze Product
+                              </span>
+                              <span className="sm:hidden">Analyze</span>
                             </>
                           )}
                         </Button>
@@ -587,6 +594,8 @@ function Onboarding() {
                                   problem_solved: manualData.problem_solved,
                                 });
                                 setCurrentStep(2); // Proceed to step 2 after entering details
+                                // Scroll to top for better UX
+                                window.scrollTo({ top: 0, behavior: "smooth" });
                               }}
                               disabled={
                                 !manualData.description.trim() ||
@@ -851,11 +860,23 @@ function Onboarding() {
                               </div>
                               <div className="flex items-center space-x-1">
                                 <Calendar className="w-4 h-4" />
-                                <span>Posted {formatDate(lead.date)}</span>
+                                <span className="hidden sm:inline">
+                                  Posted {formatDate(lead.date)}
+                                </span>
+                                <span className="sm:hidden">
+                                  {formatDate(lead.date)}
+                                </span>
                               </div>
                             </div>
                           </div>
-                          <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
+                          <span className="hidden sm:inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
+                            r/{lead.subreddit}
+                          </span>
+                        </div>
+
+                        {/* Mobile subreddit tag - positioned below title for small screens */}
+                        <div className="sm:hidden mb-3">
+                          <span className="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">
                             r/{lead.subreddit}
                           </span>
                         </div>
@@ -889,7 +910,10 @@ function Onboarding() {
                             disabled={index === 1}
                           >
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            <span>View on Reddit</span>
+                            <span className="hidden sm:inline">
+                              View on Reddit
+                            </span>
+                            <span className="sm:hidden">View</span>
                           </Button>
                           <Button
                             onClick={() => handleViewReply(lead.id)}
@@ -899,9 +923,16 @@ function Onboarding() {
                           >
                             <MessageSquare className="w-4 h-4 mr-2" />
                             <span>
-                              {expandedReplies.has(lead.id)
-                                ? "Hide Reply"
-                                : "View AI Reply"}
+                              {expandedReplies.has(lead.id) ? (
+                                "Hide Reply"
+                              ) : (
+                                <>
+                                  <span className="hidden sm:inline">
+                                    View AI Reply
+                                  </span>
+                                  <span className="sm:hidden">AI Reply</span>
+                                </>
+                              )}
                             </span>
                           </Button>
                         </div>
@@ -1022,7 +1053,11 @@ function Onboarding() {
 
               {currentStep === 2 && (
                 <Button
-                  onClick={() => setCurrentStep(3)}
+                  onClick={() => {
+                    setCurrentStep(3);
+                    // Scroll to top for better UX
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className="bg-gray-900 hover:bg-gray-800 text-white flex items-center px-8 py-3"
                 >
                   Continue
