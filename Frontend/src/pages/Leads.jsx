@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useSearchParams } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 
 function Leads() {
   const [searchParams] = useSearchParams();
@@ -91,16 +92,47 @@ function Leads() {
         return newSet;
       });
 
+      // Show success toast immediately
+      toast("Lead marked as unread!", {
+        duration: 2000,
+        icon: <Check className="w-4 h-4 text-green-600" />,
+      });
+
       try {
         await markAsUnreadMutation.mutateAsync(leadId);
       } catch (error) {
         console.error("Failed to mark lead as unread:", error);
         // Revert optimistic update on error
         setOptimisticReads((prev) => new Set([...prev, leadId]));
+        // Show error toast
+        toast("Failed to mark lead as unread. Please try again.", {
+          duration: 3000,
+          icon: (
+            <svg
+              className="w-4 h-4 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          ),
+        });
       }
     } else {
       // Currently unread, mark as read
       setOptimisticReads((prev) => new Set([...prev, leadId]));
+
+      // Show success toast immediately
+      toast("Lead marked as read!", {
+        duration: 2000,
+        icon: <Check className="w-4 h-4 text-green-600" />,
+      });
 
       try {
         await markAsReadMutation.mutateAsync(leadId);
@@ -111,6 +143,25 @@ function Leads() {
           const newSet = new Set(prev);
           newSet.delete(leadId);
           return newSet;
+        });
+        // Show error toast
+        toast("Failed to mark lead as read. Please try again.", {
+          duration: 3000,
+          icon: (
+            <svg
+              className="w-4 h-4 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          ),
         });
       }
     }
@@ -305,9 +356,6 @@ function Leads() {
         className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
       >
         <h1 className="text-2xl font-semibold text-gray-900">Your Leads</h1>
-        <p className="text-gray-600 mt-2">
-          View leads that we found based on your product.
-        </p>
       </motion.div>
 
       {/* Main Content - Wider Layout */}
@@ -384,6 +432,8 @@ function Leads() {
                   <Calendar className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Posted:</span>
                   <select
+                    id="posted-filter"
+                    name="postedFilter"
                     value={postedFilter}
                     onChange={(e) => setPostedFilter(e.target.value)}
                     className="w-32 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
@@ -399,6 +449,8 @@ function Leads() {
                   <SortAsc className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Sort by:</span>
                   <select
+                    id="sort-by"
+                    name="sortBy"
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="w-32 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
@@ -673,6 +725,27 @@ function Leads() {
           )}
         </motion.div>
       </div>
+
+      {/* Sonner Toaster */}
+      <Toaster
+        position="bottom-right"
+        theme="light"
+        toastOptions={{
+          classNames: {
+            toast:
+              "bg-white text-gray-900 border border-gray-200 shadow-lg rounded-lg px-3 py-2 max-w-xs",
+            content: "text-gray-900 text-sm",
+            title: "text-gray-900 text-sm",
+            description: "text-gray-700 text-xs",
+            icon: "hidden",
+            successIcon: "hidden",
+            infoIcon: "hidden",
+            warningIcon: "hidden",
+            errorIcon: "hidden",
+            loadingIcon: "hidden",
+          },
+        }}
+      />
     </motion.div>
   );
 }

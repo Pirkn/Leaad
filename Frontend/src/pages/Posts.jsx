@@ -56,6 +56,7 @@ function Posts() {
   const [dateFilter, setDateFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [saveFilter, setSaveFilter] = useState("all"); // "all" or "saved"
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   // Save functionality states
   const [optimisticSaves, setOptimisticSaves] = useState(new Set());
@@ -291,6 +292,12 @@ function Posts() {
   ];
 
   const clearFilters = () => {
+    setPreviousFilterState({
+      saveFilter,
+      subredditFilter,
+      dateFilter,
+      sortBy,
+    });
     setSearchTerm("");
     setSubredditFilter("all");
     setDateFilter("all");
@@ -334,7 +341,38 @@ function Posts() {
     }
   }, [highlightId, sortedPosts]);
 
+  // Close filter dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showFilterDropdown && !event.target.closest(".filter-dropdown")) {
+        setShowFilterDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilterDropdown]);
+
+  const [previousFilterState, setPreviousFilterState] = useState({
+    saveFilter: "all",
+    subredditFilter: "all",
+    dateFilter: "all",
+    sortBy: "newest",
+  });
+
   const shouldAnimate = !isGeneratingPosts;
+
+  // Check if filters actually changed
+  const filtersChanged =
+    previousFilterState.saveFilter !== saveFilter ||
+    previousFilterState.subredditFilter !== subredditFilter ||
+    previousFilterState.dateFilter !== dateFilter ||
+    previousFilterState.sortBy !== sortBy;
+
+  // Always animate when switching between Saved/All views for better UX
+  const shouldAnimateSaveFilter = saveFilter !== previousFilterState.saveFilter;
 
   return (
     <motion.div
@@ -350,9 +388,6 @@ function Posts() {
         <h1 className="text-2xl font-semibold text-gray-900">
           Your Reddit Posts
         </h1>
-        <p className="text-gray-600 mt-2">
-          Generate AI-powered Reddit posts for your product.
-        </p>
       </div>
 
       {/* Main Content */}
@@ -391,20 +426,25 @@ function Posts() {
               transition={
                 shouldAnimate ? { duration: 0.3, delay: 0.1 } : { duration: 0 }
               }
-              className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
+              className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col space-y-4 min-[660px]:flex-row min-[660px]:items-center min-[660px]:justify-between min-[660px]:space-y-0"
             >
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-1">
-                  Generate New Reddit Posts
+                <h2 className="text-lg font-semibold text-gray-900 mb-1 min-[660px]:mb-1 max-[660px]:mb-2">
+                  Generate New Posts
                 </h2>
-                <p className="text-gray-600 text-sm">
-                  Click the button to generate new posts for your product.
+                <p className="text-gray-600 text-sm max-[500px]:text-xs">
+                  <span className="max-[420px]:hidden">
+                    Click the button to generate new posts for your product.
+                  </span>
+                  <span className="hidden max-[420px]:inline">
+                    Click the button to generate new posts.
+                  </span>
                 </p>
               </div>
               <Button
                 onClick={handleGeneratePost}
                 disabled={isGeneratingPosts || !product}
-                className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                className="bg-[#FF4500] hover:bg-[#CC3700] text-white w-full min-[660px]:w-auto"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 {isGeneratingPosts ? "Generating..." : "Generate Post"}
@@ -420,11 +460,19 @@ function Posts() {
               }
               className="bg-white border border-gray-200 rounded-lg p-4"
             >
-              <div className="flex items-center justify-between">
-                {/* Left side - Action buttons */}
-                <div className="flex items-center space-x-2">
+              <div className="flex flex-col space-y-4 max-[500px]:space-y-3 min-[500px]:flex-row min-[500px]:items-center min-[500px]:justify-between min-[500px]:space-y-0">
+                {/* Top row - Action buttons */}
+                <div className="hidden min-[500px]:flex items-center space-x-2">
                   <Button
-                    onClick={() => setSaveFilter("all")}
+                    onClick={() => {
+                      setPreviousFilterState({
+                        saveFilter,
+                        subredditFilter,
+                        dateFilter,
+                        sortBy,
+                      });
+                      setSaveFilter("all");
+                    }}
                     variant="ghost"
                     className={
                       saveFilter === "all"
@@ -436,7 +484,15 @@ function Posts() {
                   </Button>
 
                   <Button
-                    onClick={() => setSaveFilter("saved")}
+                    onClick={() => {
+                      setPreviousFilterState({
+                        saveFilter,
+                        subredditFilter,
+                        dateFilter,
+                        sortBy,
+                      });
+                      setSaveFilter("saved");
+                    }}
                     variant="ghost"
                     className={
                       saveFilter === "saved"
@@ -458,60 +514,180 @@ function Posts() {
                   )}
                 </div>
 
-                {/* Right side - Filters */}
-                <div className="flex items-center space-x-4">
-                  {/* Search */}
-                  <div className="relative">
+                {/* Bottom row - Search and Filter */}
+                <div className="flex items-center space-x-2">
+                  {/* Search - keep visible for quick access */}
+                  <div className="relative flex-1 min-[500px]:flex-none">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       type="text"
                       placeholder="Search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-48 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                      className="w-full min-[500px]:w-48 pl-10 pr-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                     />
                   </div>
 
-                  {/* Subreddit Filter */}
-                  <select
-                    value={subredditFilter}
-                    onChange={(e) => setSubredditFilter(e.target.value)}
-                    className="w-40 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                  >
-                    <option value="all">All Subreddits</option>
-                    {uniqueSubreddits.map((subreddit) => (
-                      <option key={subreddit} value={subreddit}>
-                        r/{subreddit}
-                      </option>
-                    ))}
-                  </select>
+                  {/* Filter Button with Dropdown */}
+                  <div className="relative filter-dropdown">
+                    <button
+                      onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                      className="relative flex items-center px-3 h-10 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-colors"
+                    >
+                      <Filter className="w-4 h-4" />
+                      <span className="hidden sm:inline sm:ml-2">Filters</span>
+                      {hasActiveFilters && (
+                        <span className="ml-2 w-2 h-2 bg-orange-500 rounded-full"></span>
+                      )}
+                    </button>
 
-                  {/* Date Filter */}
-                  <select
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                  >
-                    <option value="all">All Time</option>
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                  </select>
+                    {showFilterDropdown && (
+                      <div className="absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-4">
+                        <div className="space-y-4">
+                          {/* All/Saved Filter - Only show under 500px */}
+                          <div className="min-[500px]:hidden">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              View
+                            </label>
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => {
+                                  setPreviousFilterState({
+                                    saveFilter,
+                                    subredditFilter,
+                                    dateFilter,
+                                    sortBy,
+                                  });
+                                  setSaveFilter("all");
+                                  setShowFilterDropdown(false);
+                                }}
+                                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+                                  saveFilter === "all"
+                                    ? "bg-gray-800 text-white border-gray-800"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                All
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setPreviousFilterState({
+                                    saveFilter,
+                                    subredditFilter,
+                                    dateFilter,
+                                    sortBy,
+                                  });
+                                  setSaveFilter("saved");
+                                  setShowFilterDropdown(false);
+                                }}
+                                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+                                  saveFilter === "saved"
+                                    ? "bg-gray-800 text-white border-gray-800"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Saved
+                              </button>
+                            </div>
+                          </div>
 
-                  {/* Sort By */}
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-36 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="subreddit">By Subreddit</option>
-                  </select>
+                          {/* Subreddit Filter */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Subreddit
+                            </label>
+                            <select
+                              value={subredditFilter}
+                              onChange={(e) => {
+                                setPreviousFilterState({
+                                  saveFilter,
+                                  subredditFilter,
+                                  dateFilter,
+                                  sortBy,
+                                });
+                                setSubredditFilter(e.target.value);
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                            >
+                              <option value="all">All Subreddits</option>
+                              {uniqueSubreddits.map((subreddit) => (
+                                <option key={subreddit} value={subreddit}>
+                                  r/{subreddit}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
 
-                  {/* Post count */}
-                  <div className="text-sm text-gray-500">
-                    {sortedPosts.length} of {allPosts.length}
+                          {/* Date Filter */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Posted Date
+                            </label>
+                            <select
+                              value={dateFilter}
+                              onChange={(e) => {
+                                setPreviousFilterState({
+                                  saveFilter,
+                                  subredditFilter,
+                                  dateFilter,
+                                  sortBy,
+                                });
+                                setDateFilter(e.target.value);
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                            >
+                              <option value="all">All Time</option>
+                              <option value="today">Today</option>
+                              <option value="week">This Week</option>
+                              <option value="month">This Month</option>
+                            </select>
+                          </div>
+
+                          {/* Sort By */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Sort By
+                            </label>
+                            <select
+                              value={sortBy}
+                              onChange={(e) => {
+                                setPreviousFilterState({
+                                  saveFilter,
+                                  subredditFilter,
+                                  dateFilter,
+                                  sortBy,
+                                });
+                                setSortBy(e.target.value);
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                            >
+                              <option value="newest">Newest First</option>
+                              <option value="oldest">Oldest First</option>
+                              <option value="subreddit">By Subreddit</option>
+                            </select>
+                          </div>
+
+                          {/* Post count */}
+                          <div className="pt-2 border-t border-gray-200">
+                            <div className="text-sm text-gray-500 mb-3">
+                              {sortedPosts.length} of {allPosts.length} posts
+                            </div>
+                            <Button
+                              onClick={() => {
+                                setSubredditFilter("all");
+                                setDateFilter("all");
+                                setSortBy("newest");
+                                setShowFilterDropdown(false);
+                              }}
+                              variant="outline"
+                              className="w-full"
+                            >
+                              Reset Filters
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -523,10 +699,16 @@ function Posts() {
                 sortedPosts.map((post, index) => (
                   <motion.div
                     key={post.id}
-                    initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+                    initial={
+                      shouldAnimate &&
+                      (filtersChanged || shouldAnimateSaveFilter)
+                        ? { opacity: 0, y: 20 }
+                        : false
+                    }
                     animate={{ opacity: 1, y: 0 }}
                     transition={
-                      shouldAnimate
+                      shouldAnimate &&
+                      (filtersChanged || shouldAnimateSaveFilter)
                         ? { duration: 0.2, delay: 0.3 + index * 0.05 }
                         : { duration: 0 }
                     }
