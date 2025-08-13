@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -165,6 +165,17 @@ function Onboarding() {
     });
   };
 
+  // Auto-advance to step 4 when leads are ready
+  useEffect(() => {
+    if (currentStep === 3 && generatedLeads.length > 0 && !isGeneratingLeads) {
+      // Small delay to show the completion state briefly
+      const timer = setTimeout(() => {
+        setCurrentStep(4);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, generatedLeads.length, isGeneratingLeads]);
+
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     if (!productUrl.trim()) return;
@@ -303,7 +314,7 @@ function Onboarding() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-start justify-center pt-10">
+      <div className="flex-1 flex items-start justify-center pt-6">
         <div className="max-w-4xl mx-auto px-6 py-8 relative w-full">
           <AnimatePresence mode="wait">
             <motion.div
@@ -312,12 +323,12 @@ function Onboarding() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="text-center mb-12"
+              className="text-center mb-8"
             >
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tighter">
                 {currentStepData.title}
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto text-center">
+              <p className="text-base text-gray-600 max-w-2xl mx-auto text-center leading-relaxed tracking-tight">
                 {currentStepData.subtitle}
               </p>
             </motion.div>
@@ -337,7 +348,7 @@ function Onboarding() {
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <form onSubmit={handleProductSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                      <label className="block text-base font-semibold text-gray-900 mb-3">
                         Your website:
                       </label>
                       <div className="relative">
@@ -409,7 +420,7 @@ function Onboarding() {
                           <button
                             type="button"
                             onClick={() => setShowManualInput(!showManualInput)}
-                            className="text-xs text-gray-500 hover:text-gray-700 transition-colors underline"
+                            className="text-sm text-gray-500 hover:text-gray-700 transition-colors underline"
                           >
                             or enter details manually
                           </button>
@@ -467,7 +478,7 @@ function Onboarding() {
                               },
                             }}
                           >
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-base font-semibold text-gray-900 mb-2">
                               Product Description
                             </label>
                             <Textarea
@@ -498,7 +509,7 @@ function Onboarding() {
                               },
                             }}
                           >
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-base font-semibold text-gray-900 mb-2">
                               Target Audience
                             </label>
                             <Textarea
@@ -529,7 +540,7 @@ function Onboarding() {
                               },
                             }}
                           >
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-base font-semibold text-gray-900 mb-2">
                               Problem Solved
                             </label>
                             <Textarea
@@ -585,7 +596,7 @@ function Onboarding() {
                               className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3"
                             >
                               Continue
-                              <ArrowRight className=" w-4 h-4" />
+                              <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>
                           </motion.div>
                         </motion.div>
@@ -606,7 +617,7 @@ function Onboarding() {
                 className="max-w-2xl mx-auto"
               >
                 <motion.div
-                  className="space-y-12"
+                  className="space-y-8"
                   initial="hidden"
                   animate="visible"
                   variants={{
@@ -621,7 +632,7 @@ function Onboarding() {
                   }}
                 >
                   <motion.div
-                    className="space-y-6"
+                    className="space-y-4"
                     variants={{
                       hidden: { opacity: 0 },
                       visible: {
@@ -648,10 +659,10 @@ function Onboarding() {
                         1
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-1">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-2 tracking-tighter">
                           People actively seeking solutions
                         </h4>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-base text-gray-600 leading-relaxed tracking-tight">
                           Reddit users post specific problems they need solved,
                           making them perfect prospects for your product.
                         </p>
@@ -673,10 +684,10 @@ function Onboarding() {
                         2
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-1">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-2 tracking-tighter">
                           Authentic pain points
                         </h4>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-base text-gray-600 leading-relaxed tracking-tight">
                           Real discussions reveal the exact language and
                           frustrations your target audience uses.
                         </p>
@@ -698,10 +709,10 @@ function Onboarding() {
                         3
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-1">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-2 tracking-tighter">
                           Untapped opportunity
                         </h4>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-base text-gray-600 leading-relaxed tracking-tight">
                           Most businesses ignore Reddit, giving you access to
                           qualified leads without competition.
                         </p>
@@ -710,7 +721,7 @@ function Onboarding() {
                   </motion.div>
 
                   <motion.div
-                    className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-8"
+                    className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6"
                     variants={{
                       hidden: { opacity: 0, y: 20, scale: 0.95 },
                       visible: {
@@ -730,10 +741,10 @@ function Onboarding() {
                         <Sparkles className="w-3 h-3 text-blue-600" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-2 tracking-tighter">
                           How Leaad makes this effortless
                         </h4>
-                        <p className="text-gray-600 text-sm leading-relaxed">
+                        <p className="text-base text-gray-600 leading-relaxed tracking-tight">
                           Leaad scans Reddit 24/7 to surface buying signals,
                           pain points, and leads you can act on right now. We
                           discover people actively seeking solutions like yours,
@@ -761,7 +772,7 @@ function Onboarding() {
                   <div className="space-y-3 text-left max-w-md mx-auto">
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"></div>
-                      <span className="text-gray-600">
+                      <span className="text-base text-gray-700 font-medium">
                         Searching through thousands of Reddit discussions
                       </span>
                     </div>
@@ -770,7 +781,7 @@ function Onboarding() {
                         className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"
                         style={{ animationDelay: "0.5s" }}
                       ></div>
-                      <span className="text-gray-600">
+                      <span className="text-base text-gray-700 font-medium">
                         Identifying people actively seeking solutions
                       </span>
                     </div>
@@ -779,7 +790,7 @@ function Onboarding() {
                         className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"
                         style={{ animationDelay: "1s" }}
                       ></div>
-                      <span className="text-gray-600">
+                      <span className="text-base text-gray-700 font-medium">
                         Finding qualified leads in real-time
                       </span>
                     </div>
@@ -795,48 +806,12 @@ function Onboarding() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="space-y-6"
+                className="space-y-4"
               >
-                {/* Product Analysis Summary */}
-                {/* <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Analysis Complete!
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        We found <strong>47 active discussions</strong> where
-                        your target audience is asking for solutions like yours.
-                      </p>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium text-gray-700">
-                            Target Audience:
-                          </span>
-                          <p className="text-gray-600 mt-1">
-                            Entrepreneurs, SaaS founders, product launchers
-                          </p>
-                        </div>
-                        <div>
-                          <span className="font-medium text-gray-700">
-                            Main Problem Solved:
-                          </span>
-                          <p className="text-gray-600 mt-1">
-                            Building waitlists without coding skills
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-
                 {/* Demo Leads */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold text-gray-900">
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tighter">
                       Your First Leads
                     </h3>
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
@@ -845,7 +820,7 @@ function Onboarding() {
                     </span>
                   </div>
 
-                  <div className="relative space-y-4">
+                  <div className="relative space-y-3">
                     {(generatedLeads?.length
                       ? generatedLeads.slice(0, 2)
                       : mockLeads.slice(0, 2)
@@ -856,19 +831,23 @@ function Onboarding() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
                         className={`bg-white border border-gray-200 rounded-xl p-6 transition-shadow ${
-                          index === 1 ? "" : "hover:shadow-sm"
+                          index === 1
+                            ? "opacity-50 pointer-events-none"
+                            : "hover:shadow-sm"
                         }`}
                       >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 tracking-tight">
                               {lead.title}
                             </h4>
                             <div className="flex items-center space-x-4 text-sm text-gray-500">
                               <div className="flex items-center space-x-1">
                                 <User className="w-4 h-4" />
-                                <span>{lead.author}</span>
+                                <span className="font-medium">
+                                  {lead.author}
+                                </span>
                               </div>
                               <div className="flex items-center space-x-1">
                                 <Calendar className="w-4 h-4" />
@@ -882,7 +861,7 @@ function Onboarding() {
                         </div>
 
                         {/* Content */}
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <p className="text-gray-600 text-base mb-4 leading-relaxed line-clamp-3">
                           {lead.selftext}
                         </p>
 
@@ -890,11 +869,15 @@ function Onboarding() {
                         <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
                           <div className="flex items-center space-x-1">
                             <ArrowUp className="w-4 h-4" />
-                            <span>{lead.score} upvotes</span>
+                            <span className="font-medium">
+                              {lead.score} upvotes
+                            </span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <MessageCircle className="w-4 h-4" />
-                            <span>{lead.num_comments} comments</span>
+                            <span className="font-medium">
+                              {lead.num_comments} comments
+                            </span>
                           </div>
                         </div>
 
@@ -903,16 +886,18 @@ function Onboarding() {
                           <Button
                             onClick={() => window.open(lead.url, "_blank")}
                             className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
+                            disabled={index === 1}
                           >
-                            <ExternalLink className="w-4 h-4" />
+                            <ExternalLink className="w-4 h-4 mr-2" />
                             <span>View on Reddit</span>
                           </Button>
                           <Button
                             onClick={() => handleViewReply(lead.id)}
                             variant="outline"
                             className="flex-1"
+                            disabled={index === 1}
                           >
-                            <MessageSquare className="w-4 h-4" />
+                            <MessageSquare className="w-4 h-4 mr-2" />
                             <span>
                               {expandedReplies.has(lead.id)
                                 ? "Hide Reply"
@@ -925,11 +910,26 @@ function Onboarding() {
                         <AnimatePresence>
                           {expandedReplies.has(lead.id) && (
                             <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
+                              initial={{
+                                opacity: 0,
+                                height: 0,
+                                marginTop: 0,
+                                paddingTop: 0,
+                              }}
+                              animate={{
+                                opacity: 1,
+                                height: "auto",
+                                marginTop: 16,
+                                paddingTop: 16,
+                              }}
+                              exit={{
+                                opacity: 0,
+                                height: 0,
+                                marginTop: 0,
+                                paddingTop: 0,
+                              }}
                               transition={{ duration: 0.3, ease: "easeOut" }}
-                              className="mt-4 pt-4 border-t border-gray-200"
+                              className="border-t border-gray-200 overflow-hidden"
                             >
                               <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                                 <div className="flex items-start space-x-3 mb-4">
@@ -938,14 +938,14 @@ function Onboarding() {
                                   </div>
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-2 mb-2">
-                                      <h5 className="text-sm font-medium text-gray-900">
+                                      <h5 className="text-sm font-semibold text-gray-900 tracking-tight">
                                         AI Generated Reply
                                       </h5>
                                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
                                         Personalized
                                       </span>
                                     </div>
-                                    <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                    <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap tracking-tight">
                                       {lead.comment}
                                     </p>
                                   </div>
@@ -961,8 +961,11 @@ function Onboarding() {
                                     {copiedReplyId === lead.id ? (
                                       <Check className="w-4 h-4 mr-2" />
                                     ) : (
-                                      "Copy Reply"
+                                      <Copy className="w-4 h-4 mr-2" />
                                     )}
+                                    {copiedReplyId === lead.id
+                                      ? "Copied!"
+                                      : "Copy Reply"}
                                   </Button>
                                 </div>
                               </div>
@@ -977,8 +980,8 @@ function Onboarding() {
                   </div>
                 </div>
 
-                <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">
+                <div className="text-center py-6">
+                  <p className="text-lg text-gray-600 mb-4 leading-relaxed tracking-tight">
                     Get access to <strong>unlimited leads</strong> and{" "}
                     <strong>AI-generated replies</strong> with your free trial.
                   </p>
@@ -1005,7 +1008,7 @@ function Onboarding() {
                 ease: "easeOut",
                 delay: currentStep === 2 ? 1.0 : 0.6, // Wait for content animations to complete
               }}
-              className="flex justify-between items-center mt-12"
+              className="flex justify-between items-center mt-8"
             >
               <Button
                 onClick={handleBack}
@@ -1017,11 +1020,9 @@ function Onboarding() {
                 Back
               </Button>
 
-              {currentStep < 4 && (
+              {currentStep === 2 && (
                 <Button
-                  onClick={
-                    currentStep === 2 ? () => setCurrentStep(3) : handleNext
-                  }
+                  onClick={() => setCurrentStep(3)}
                   className="bg-gray-900 hover:bg-gray-800 text-white flex items-center px-8 py-3"
                 >
                   Continue

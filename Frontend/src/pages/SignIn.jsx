@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { ArrowLeft, Target } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 const SignIn = () => {
@@ -95,11 +95,15 @@ const SignIn = () => {
         >
           <motion.div variants={itemVariants}>
             <motion.div
-              className="mx-auto h-12 w-12 flex items-center justify-center rounded-lg bg-gray-900"
+              className="mx-auto h-12 w-12 flex items-center justify-center"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <Target className="h-6 w-6 text-white" />
+              <img
+                src="/src/assets/logo.png"
+                alt="Leaad Logo"
+                className="h-10 w-10"
+              />
             </motion.div>
             <motion.h2
               className="mt-6 text-center text-2xl font-semibold text-gray-900"
