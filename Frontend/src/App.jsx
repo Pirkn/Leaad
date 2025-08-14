@@ -26,8 +26,23 @@ import { Navigate } from "react-router-dom";
 
 // Component to handle root path redirects
 const RootRedirect = () => {
-  const { user } = useAuth();
-  return user ? <Navigate to="/dashboard" replace /> : <Homepage />;
+  const { user, loading, onboardingComplete, onboardingStatusLoading } =
+    useAuth();
+
+  // Don't redirect while loading
+  if (loading) {
+    return <Homepage />;
+  }
+
+  if (user && !onboardingStatusLoading) {
+    if (onboardingComplete) {
+      return <Navigate to="/dashboard" replace />;
+    } else {
+      return <Navigate to="/onboarding" replace />;
+    }
+  }
+
+  return <Homepage />;
 };
 
 function App() {
@@ -41,10 +56,19 @@ function App() {
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<RootRedirect />} />
-                <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+
+                {/* Protected routes that require onboarding completion */}
+                <Route
+                  path="/onboarding"
+                  element={
+                    <ProtectedRoute requireOnboarding={false}>
+                      <Onboarding />
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Protected routes */}
                 <Route

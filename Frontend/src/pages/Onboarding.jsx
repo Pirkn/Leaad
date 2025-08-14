@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   useAnalyzeProduct,
   useOnboardingLeadGeneration,
+  useCreateProduct,
 } from "../hooks/useApi";
+import { useAuth } from "../contexts/AuthContext";
 import {
   ArrowRight,
   ArrowLeft,
@@ -108,12 +110,13 @@ const steps = [
     subtitle:
       "We found real people discussing problems your product solves. These are actual Reddit posts from the last 48 hours.",
     icon: TrendingUp,
-    action: "See More Leads",
+    action: "Complete Onboarding",
   },
 ];
 
 function Onboarding() {
   const navigate = useNavigate();
+  const { user, onboardingComplete, markOnboardingComplete } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [productUrl, setProductUrl] = useState("");
   const [hasUserEditedUrl, setHasUserEditedUrl] = useState(false);
@@ -131,10 +134,28 @@ function Onboarding() {
   const [isGeneratingLeads, setIsGeneratingLeads] = useState(false);
   const [hasTriggeredLeadGeneration, setHasTriggeredLeadGeneration] =
     useState(false);
+  const [isCompletingOnboarding, setIsCompletingOnboarding] = useState(false);
+  const [isCreatingProduct, setIsCreatingProduct] = useState(false);
+  const hasCreatedProduct = useRef(false);
 
   const analyzeProductMutation = useAnalyzeProduct();
   const isAnalyzing = analyzeProductMutation.isPending;
   const onboardingLeadsMutation = useOnboardingLeadGeneration();
+  const createProductMutation = useCreateProduct();
+
+  // Redirect if user is not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate("/signin");
+      return;
+    }
+
+    // If onboarding is already complete, redirect to dashboard
+    if (onboardingComplete) {
+      navigate("/dashboard");
+      return;
+    }
+  }, [user, onboardingComplete, navigate]);
 
   const deriveNameFromUrl = (url) => {
     if (!url) return "Product";
@@ -176,6 +197,34 @@ function Onboarding() {
     }
   }, [currentStep, generatedLeads.length, isGeneratingLeads]);
 
+  // Auto-create product when productAnalysis is set (either from analysis or manual input)
+  useEffect(() => {
+    if (productAnalysis && !hasCreatedProduct.current) {
+      hasCreatedProduct.current = true;
+      setIsCreatingProduct(true);
+
+      const productData = {
+        name: deriveNameFromUrl(productUrl),
+        url: productUrl,
+        description: productAnalysis.description,
+        target_audience: productAnalysis.target_audience,
+        problem_solved: productAnalysis.problem_solved,
+      };
+
+      // Create product in background
+      createProductMutation
+        .mutateAsync(productData)
+        .then(() => {
+          console.log("Product created successfully");
+          setIsCreatingProduct(false);
+        })
+        .catch((error) => {
+          console.error("Failed to create product:", error);
+          setIsCreatingProduct(false);
+        });
+    }
+  }, [productAnalysis, productUrl, createProductMutation]);
+
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     if (!productUrl.trim()) return;
@@ -201,14 +250,33 @@ function Onboarding() {
       // Start generating onboarding leads in background
       triggerOnboardingLeadGeneration({
         name: analysisResult?.name || deriveNameFromUrl(productUrl),
-        description: analysisResult?.description,
-        target_audience: analysisResult?.target_audience,
-        problem_solved: analysisResult?.problem_solved,
+        description: analysisResult.description,
+        target_audience: analysisResult.target_audience,
+        problem_solved: analysisResult.problem_solved,
       });
     } catch (error) {
       console.error("Analysis failed:", error);
       // Keep the manual fields open so user can fill them manually if API fails
       alert("Analysis failed. Please fill in the details manually.");
+    }
+  };
+
+  const handleCompleteOnboarding = async () => {
+    if (!productAnalysis) return;
+
+    setIsCompletingOnboarding(true);
+
+    try {
+      // Product is already created when analysis info was ready, so just mark onboarding complete
+      await markOnboardingComplete();
+
+      // Navigate to dashboard
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Failed to complete onboarding:", error);
+      alert("Failed to complete onboarding. Please try again.");
+    } finally {
+      setIsCompletingOnboarding(false);
     }
   };
 
@@ -250,8 +318,8 @@ function Onboarding() {
   };
 
   const handleNext = () => {
-    if (currentStep === 5) {
-      navigate("/signup");
+    if (currentStep === 4) {
+      handleCompleteOnboarding();
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -263,11 +331,12 @@ function Onboarding() {
     }
   };
 
-  const handleSkipToSignup = () => {
-    navigate("/signup");
-  };
-
   const currentStepData = steps.find((step) => step.id === currentStep);
+
+  // Show loading while checking authentication
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -299,17 +368,27 @@ function Onboarding() {
             className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:text-sm px-2 sm:px-3"
           >
             <span className="hidden sm:inline">← Back to Homepage</span>
-            <span className="sm:hidden">Back to Home</span>
+            <span className="sm:hidden">Back to Homepage</span>
           </Button>
 
           <Button
-            onClick={() => navigate("/signin")}
+            onClick={() => {
+              // Navigate to dashboard immediately (optimistically)
+              navigate("/dashboard");
+
+              // Call the API in the background (don't await)
+              markOnboardingComplete()
+                .then(() => console.log("Onboarding marked complete"))
+                .catch((error) =>
+                  console.error("Failed to mark onboarding complete:", error)
+                );
+            }}
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:text-sm px-2 sm:px-3"
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:px-3"
           >
-            <span className="hidden sm:inline">Skip to Sign In</span>
-            <span className="sm:hidden">Skip to Sign In</span>
+            <span className="hidden sm:inline">Skip to Dashboard</span>
+            <span className="sm:hidden">Skip to Dashboard</span>
           </Button>
         </div>
       </div>
@@ -581,11 +660,13 @@ function Onboarding() {
                             <Button
                               onClick={() => {
                                 // Process manual data and move to next step
-                                setProductAnalysis({
+                                const manualAnalysis = {
                                   description: manualData.description,
                                   target_audience: manualData.target_audience,
                                   problem_solved: manualData.problem_solved,
-                                });
+                                };
+                                setProductAnalysis(manualAnalysis);
+
                                 // Kick off onboarding lead generation in background with manual inputs
                                 triggerOnboardingLeadGeneration({
                                   name: deriveNameFromUrl(productUrl),
@@ -1013,16 +1094,25 @@ function Onboarding() {
 
                 <div className="text-center py-6">
                   <p className="text-lg text-gray-600 mb-4 leading-relaxed tracking-tight">
-                    Get access to <strong>unlimited leads</strong> and{" "}
-                    <strong>AI-generated replies</strong> with your free trial.
+                    Ready to start generating leads and building your business?
                   </p>
                   <Button
-                    onClick={() => navigate("/signin")}
+                    onClick={handleCompleteOnboarding}
                     size="lg"
                     className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg"
+                    disabled={isCompletingOnboarding}
                   >
-                    <Rocket className="w-5 h-5 mr-2" />
-                    Get Started
+                    {isCompletingOnboarding ? (
+                      <>
+                        <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Setting up your account...
+                      </>
+                    ) : (
+                      <>
+                        <Rocket className="w-5 h-5 mr-2" />
+                        Complete Onboarding
+                      </>
+                    )}
                   </Button>
                 </div>
               </motion.div>

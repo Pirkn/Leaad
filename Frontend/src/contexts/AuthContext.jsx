@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { authService } from "../services/supabase";
+import apiService from "../services/api";
 import karmaService from "../services/karmaService";
 
 const AuthContext = createContext();
@@ -15,15 +16,40 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
+  const [onboardingStatusLoading, setOnboardingStatusLoading] = useState(true);
+
+  // Use refs to prevent multiple API calls
+  const hasCheckedOnboarding = useRef(false);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
+    // Prevent multiple initializations
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     // Get initial user
     const getInitialUser = async () => {
       try {
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
+
+        // Only check onboarding status if user is authenticated and we haven't checked yet
+        if (currentUser && !hasCheckedOnboarding.current) {
+          hasCheckedOnboarding.current = true;
+          console.log("Checking onboarding status (first time only)");
+          await checkOnboardingStatus();
+        } else if (!currentUser) {
+          // If no user, set onboarding status to false and stop loading
+          setOnboardingComplete(false);
+          setOnboardingStatusLoading(false);
+        }
       } catch (error) {
         console.error("Error getting initial user:", error);
+        // If there's an error, assume no user and stop loading
+        setUser(null);
+        setOnboardingComplete(false);
+        setOnboardingStatusLoading(false);
       } finally {
         setLoading(false);
       }
@@ -36,20 +62,56 @@ export const AuthProvider = ({ children }) => {
       data: { subscription },
     } = authService.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false);
 
-      // Generate karma content when user signs in (only if no content exists)
-      if (event === "SIGNED_IN" && session?.user) {
-        console.log("User signed in, checking for karma content...");
-        // Start karma generation in the background only if no content exists
+      // Don't check onboarding status here - only on initial load
+      if (session?.user && event === "SIGNED_IN") {
+        // Generate karma content when user signs in (only if no content exists)
         setTimeout(() => {
           karmaService.generateKarmaContent(false); // false = don't force refresh
         }, 1000); // Small delay to ensure user is fully loaded
+      } else if (!session?.user) {
+        // User signed out, reset onboarding status
+        setOnboardingComplete(false);
+        setOnboardingStatusLoading(false);
+        hasCheckedOnboarding.current = false; // Reset for next sign-in
       }
+
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkOnboardingStatus = async () => {
+    try {
+      setOnboardingStatusLoading(true);
+      const data = await apiService.getOnboardingStatus();
+      // Handle null status - treat as not completed
+      setOnboardingComplete(data.status === true);
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+      // If it's a 404 or network error, assume onboarding is not complete
+      setOnboardingComplete(false);
+    } finally {
+      setOnboardingStatusLoading(false);
+    }
+  };
+
+  const markOnboardingComplete = async () => {
+    try {
+      // Update local state immediately for optimistic updates
+      setOnboardingComplete(true);
+
+      // Call the API in the background
+      await apiService.setOnboardingComplete();
+      return { success: true };
+    } catch (error) {
+      // Revert the optimistic update if the API call fails
+      setOnboardingComplete(false);
+      console.error("Error marking onboarding complete:", error);
+      throw error;
+    }
+  };
 
   const signUp = async (email, password) => {
     const { data, error } = await authService.signUp(email, password);
@@ -78,6 +140,7 @@ export const AuthProvider = ({ children }) => {
   const signOut = async () => {
     const { error } = await authService.signOut();
     if (error) throw error;
+    setOnboardingComplete(false);
   };
 
   const resetPassword = async (email) => {
@@ -89,11 +152,15 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    onboardingComplete,
+    onboardingStatusLoading,
     signUp,
     signIn,
     signInWithGoogle,
     signOut,
     resetPassword,
+    markOnboardingComplete,
+    checkOnboardingStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

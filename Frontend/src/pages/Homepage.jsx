@@ -124,7 +124,8 @@ export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading, onboardingComplete, onboardingStatusLoading } =
+    useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -145,13 +146,29 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Redirect authenticated users based on onboarding status
+  // Only redirect if user is authenticated and not loading
+  useEffect(() => {
+    if (user && !loading && !onboardingStatusLoading) {
+      if (onboardingComplete) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
+    }
+  }, [user, loading, onboardingComplete, onboardingStatusLoading, navigate]);
+
   const handleAuthAction = (action) => {
-    if (user) {
-      // If user is authenticated, redirect to dashboard
-      navigate("/dashboard");
+    if (user && !loading) {
+      // If user is authenticated, check onboarding status
+      if (onboardingComplete) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
     } else if (action === "/signup" || action === "/signin") {
-      // For signup/signin CTAs, redirect to onboarding first
-      navigate("/onboarding");
+      // For signup/signin CTAs, redirect to signin first
+      navigate(action);
     } else {
       // For other actions, proceed with the original action
       navigate(action);
@@ -249,7 +266,7 @@ export default function HomePage() {
                     className="border-gray-300 text-gray-700 hover:bg-gray-50"
                     onClick={() => handleAuthAction("/signin")}
                   >
-                    {user ? "Dashboard" : "Log in"}
+                    {user && !loading ? "Dashboard" : "Log in"}
                   </Button>
                 </motion.div>
                 <motion.div
@@ -261,7 +278,7 @@ export default function HomePage() {
                     className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
                     onClick={() => handleAuthAction("/signup")}
                   >
-                    {user ? "Dashboard" : "Get Started"}
+                    {user && !loading ? "Dashboard" : "Get Started"}
                   </Button>
                 </motion.div>
               </div>
@@ -393,7 +410,7 @@ export default function HomePage() {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {user ? "Dashboard" : "Sign In"}
+                      {user && !loading ? "Dashboard" : "Sign In"}
                     </Button>
                     <Button
                       size="sm"
@@ -403,7 +420,7 @@ export default function HomePage() {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {user ? "Dashboard" : "Get Started"}
+                      {user && !loading ? "Dashboard" : "Get Started"}
                     </Button>
                   </motion.div>
                 </motion.div>
@@ -466,7 +483,9 @@ export default function HomePage() {
                     className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 pl-5 pr-3 py-2 text-base font-medium rounded-lg flex items-center justify-center"
                     onClick={() => handleAuthAction("/signup")}
                   >
-                    {user ? "Go to Dashboard" : "Find your next users"}
+                    {user && !loading
+                      ? "Go to Dashboard"
+                      : "Find your next users"}
                     <ChevronRight className="ml-2 w-4 h-4" />
                     {/* <ArrowRight className="ml-2 w-4 h-4" /> */}
                   </button>
