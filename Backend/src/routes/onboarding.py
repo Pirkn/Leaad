@@ -154,7 +154,6 @@ class SaveGeneratedLeads(MethodView):
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
         supabase: Client = create_client(supabase_url, supabase_key)
 
-        # Save search time with user ID and current time + 2 hours
         current_time = datetime.datetime.now(datetime.timezone.utc)
         search_time = current_time + datetime.timedelta(hours=2)
         
@@ -166,7 +165,7 @@ class SaveGeneratedLeads(MethodView):
         }
         
         try:
-            supabase.table('search_history').insert(search_record).execute()
+            supabase.table('search_time').insert(search_record).execute()
             print(f"Successfully saved search record for user {user_id}")
         except Exception as e:
             print(f"Error saving search record: {e}")
