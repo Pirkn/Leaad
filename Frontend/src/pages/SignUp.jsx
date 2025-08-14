@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
+    name: "",
   });
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
   const { signUp, signInWithGoogle, user } = useAuth();
@@ -61,10 +58,6 @@ const SignUp = () => {
   };
 
   const validateForm = () => {
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return false;
-    }
     if (formData.password.length < 8) {
       setError("Password must be at least 8 characters long");
       return false;
@@ -268,48 +261,24 @@ const SignUp = () => {
             </motion.div>
 
             <motion.div className="space-y-4" variants={itemVariants}>
-              <motion.div
-                className="grid grid-cols-2 gap-4"
-                variants={itemVariants}
-              >
-                <motion.div variants={itemVariants}>
-                  <label
-                    htmlFor="firstName"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    First Name
-                  </label>
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    autoComplete="given-name"
-                    required
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
-                    placeholder="First name"
-                  />
-                </motion.div>
-                <motion.div variants={itemVariants}>
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    autoComplete="family-name"
-                    required
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
-                    placeholder="Last name"
-                  />
-                </motion.div>
+              <motion.div variants={itemVariants}>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm transition-colors duration-200"
+                  placeholder="Enter your full name"
+                />
               </motion.div>
 
               <motion.div variants={itemVariants}>
@@ -361,39 +330,9 @@ const SignUp = () => {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center z-10 pointer-events-auto hover:text-gray-600 transition-colors duration-200"
                   >
                     {showPassword ? (
-                      <svg
-                        className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                        />
-                      </svg>
+                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                     ) : (
-                      <svg
-                        className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
+                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                     )}
                   </button>
                 </div>
@@ -433,73 +372,6 @@ const SignUp = () => {
                     </div>
                   </motion.div>
                 )}
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="appearance-none relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 sm:text-sm pr-10 transition-colors duration-200"
-                    placeholder="Confirm your password"
-                  />
-                  <button
-                    type="button"
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setShowConfirmPassword(!showConfirmPassword);
-                    }}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center z-10 pointer-events-auto hover:text-gray-600 transition-colors duration-200"
-                  >
-                    {showConfirmPassword ? (
-                      <svg
-                        className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
               </motion.div>
             </motion.div>
 

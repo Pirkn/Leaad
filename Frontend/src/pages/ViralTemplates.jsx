@@ -2,7 +2,8 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import staticDataService from "../services/staticData";
 import { motion, AnimatePresence, animate } from "framer-motion";
-import Snackbar from "@mui/material/Snackbar";
+import { Toaster, toast } from "sonner";
+import { CircleCheck } from "lucide-react";
 import redditPng from "../assets/reddit.png";
 
 function ViralTemplates() {
@@ -62,10 +63,6 @@ function ViralTemplates() {
   const [originalTitle, setOriginalTitle] = useState("");
   const [originalPostText, setOriginalPostText] = useState("");
 
-  // Snackbar state
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-
   // Get all viral posts once - static data is immediately available
   const allPosts = useMemo(() => staticDataService.getViralPosts(), []);
 
@@ -100,22 +97,22 @@ function ViralTemplates() {
     const content = `${editedTitle}\n\n${editedPostText}`;
     try {
       await navigator.clipboard.writeText(content);
-      setSnackbarMessage("Template copied to clipboard!");
-      setSnackbarOpen(true);
+      toast("Template copied to clipboard!", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
-      setSnackbarMessage("Failed to copy to clipboard. Please try again.");
-      setSnackbarOpen(true);
+      toast("Failed to copy to clipboard. Please try again.", {
+        duration: 2000,
+        icon: <CircleCheck className="w-4 h-4 text-green-600" />,
+      });
     }
   };
 
   const handleResetChanges = () => {
     setEditedTitle(originalTitle);
     setEditedPostText(originalPostText);
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
   };
 
   const clearFilters = () => {
@@ -152,31 +149,6 @@ function ViralTemplates() {
           <h1 className="text-2xl font-semibold text-gray-900">
             Viral Templates
           </h1>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.15 }}
-          >
-            <button
-              onClick={() => navigate("/posts")}
-              className="bg-[#FF4500] text-white px-3 py-2 rounded-md hover:bg-[#CC3700] transition-colors text-sm font-medium flex items-center"
-            >
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-              Generate your own
-            </button>
-          </motion.div>
         </div>
       </motion.div>
 
@@ -504,14 +476,17 @@ function ViralTemplates() {
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <label className="block text-sm font-medium text-gray-700">
-                          Template Title (Edit this section to make it your
-                          own)own ar
+                          Template Title (Edit this section to make it your own)
                         </label>
                         <motion.button
                           onClick={() => {
                             navigator.clipboard.writeText(editedTitle);
-                            setSnackbarMessage("Title copied to clipboard!");
-                            setSnackbarOpen(true);
+                            toast("Title copied to clipboard!", {
+                              duration: 2000,
+                              icon: (
+                                <CircleCheck className="w-4 h-4 text-green-600" />
+                              ),
+                            });
                           }}
                           className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
                           title="Copy title to clipboard"
@@ -553,8 +528,12 @@ function ViralTemplates() {
                         <motion.button
                           onClick={() => {
                             navigator.clipboard.writeText(editedPostText);
-                            setSnackbarMessage("Content copied to clipboard!");
-                            setSnackbarOpen(true);
+                            toast("Content copied to clipboard!", {
+                              duration: 2000,
+                              icon: (
+                                <CircleCheck className="w-4 h-4 text-green-600" />
+                              ),
+                            });
                           }}
                           className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
                           title="Copy content to clipboard"
@@ -757,8 +736,12 @@ function ViralTemplates() {
                               selectedTemplate.originalPostTitle ||
                                 selectedTemplate.title
                             );
-                            setSnackbarMessage("Title copied to clipboard!");
-                            setSnackbarOpen(true);
+                            toast("Title copied to clipboard!", {
+                              duration: 2000,
+                              icon: (
+                                <CircleCheck className="w-4 h-4 text-green-600" />
+                              ),
+                            });
                           }}
                           className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
                           title="Copy title to clipboard"
@@ -804,8 +787,12 @@ function ViralTemplates() {
                               selectedTemplate.originalPostText ||
                                 selectedTemplate.postText
                             );
-                            setSnackbarMessage("Content copied to clipboard!");
-                            setSnackbarOpen(true);
+                            toast("Content copied to clipboard!", {
+                              duration: 2000,
+                              icon: (
+                                <CircleCheck className="w-4 h-4 text-green-600" />
+                              ),
+                            });
                           }}
                           className="text-gray-400 hover:text-[#FF4500] transition-colors ml-2"
                           title="Copy content to clipboard"
@@ -862,17 +849,17 @@ function ViralTemplates() {
         )}
       </AnimatePresence>
 
-      {/* Snackbar for copy success/failure */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-      >
-        <div className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
-          {snackbarMessage}
-        </div>
-      </Snackbar>
+      {/* Sonner Toaster */}
+      <Toaster
+        position="bottom-right"
+        theme="light"
+        toastOptions={{
+          classNames: {
+            toast: "max-w-xs p-3",
+            closeButton: "hidden",
+          },
+        }}
+      />
     </motion.div>
   );
 }
