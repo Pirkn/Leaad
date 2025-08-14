@@ -168,19 +168,19 @@ class SetOnboardingComplete(MethodView):
         supabase: Client = create_client(supabase_url, supabase_key)
         
         # Check if user record exists
-        result = supabase.table('users').select('id').eq('id', user_id).execute()
+        result = supabase.table('onboarding').select('user_id').eq('user_id', user_id).execute()
         
         if result.data:
             # User exists, update status
-            supabase.table('users').update({'status': True}).eq('id', user_id).execute()
+            supabase.table('onboarding').update({'status': True}).eq('user_id', user_id).execute()
         else:
             # User doesn't exist, insert new record
             user_data = {
-                'id': user_id,
+                'user_id': user_id,
                 'status': True,
                 'created_at': datetime.datetime.now(datetime.timezone.utc).isoformat()
             }
-            supabase.table('users').insert(user_data).execute()
+            supabase.table('onboarding').insert(user_data).execute()
         
         current_time = datetime.datetime.now(datetime.timezone.utc)
         search_time = current_time + datetime.timedelta(hours=2)
@@ -209,7 +209,7 @@ class GetOnboardingStatus(MethodView):
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
         supabase: Client = create_client(supabase_url, supabase_key)
         
-        result = supabase.table('users').select('status').eq('id', user_id).execute()
+        result = supabase.table('onboarding').select('status').eq('user_id', user_id).execute()
         
         if result.data:
             return jsonify({"status": result.data[0]['status']})
