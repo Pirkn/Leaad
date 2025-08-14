@@ -213,7 +213,6 @@ class DeleteLead(MethodView):
     
 
 def generate_leads(user_id):
-
     supabase_url = current_app.config['SUPABASE_URL']
     supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
     supabase: Client = create_client(supabase_url, supabase_key)

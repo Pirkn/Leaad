@@ -20,6 +20,7 @@ blp = Blueprint('Onboarding', __name__, description='Onboarding Operations')
 
 @blp.route('/onboarding-lead-generation')
 class OnboardingLeadGeneration(MethodView):
+    @verify_supabase_token
     def post(self):
         #product_data = {name, target_audience, problem_solved, description}
         product_data = request.get_json()
@@ -83,15 +84,6 @@ class OnboardingLeadGeneration(MethodView):
                 new_post['date'] = unformatted_post['date']
                 new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                 generated_leads.append(new_post)
-
-        return jsonify({"generated_leads": generated_leads, "subreddits": subreddits})
-
-@blp.route('/save-generated-leads')
-class SaveGeneratedLeads(MethodView):
-    @verify_supabase_token
-    def post(self):
-        data = request.get_json()
-        generated_leads = data['generated_leads']
 
         user_id = g.current_user['id']
 
@@ -174,10 +166,10 @@ class SaveGeneratedLeads(MethodView):
             try:
                 supabase.table('leads').insert(leads_to_insert).execute()
                 print(f"Successfully saved {len(leads_to_insert)} leads to database")
-                return jsonify({"status": 200, "message": f"Successfully saved {len(leads_to_insert)} leads to database"})
             except Exception as e:
                 print(f"Error saving leads to database: {e}")
-                return jsonify({"status": 500, "message": f"Error saving leads to database: {e}"}), 500
         else:
-            return jsonify({"status": 400, "message": "No leads to save"}), 400
+            print("No leads to save")
+
+        return jsonify({"generated_leads": generated_leads[:2], "subreddits": subreddits})
         
