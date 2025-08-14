@@ -12,17 +12,27 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { signIn, signInWithGoogle, user } = useAuth();
+  const {
+    signIn,
+    signInWithGoogle,
+    user,
+    onboardingComplete,
+    onboardingStatusLoading,
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Redirect authenticated users to dashboard
+  // Redirect authenticated users based on onboarding status
   useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
+    if (user && !loading && !onboardingStatusLoading) {
+      if (onboardingComplete) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
     }
-  }, [user, navigate]);
+  }, [user, loading, onboardingComplete, onboardingStatusLoading, navigate]);
 
   useEffect(() => {
     if (location.state?.message) {
@@ -39,7 +49,7 @@ const SignIn = () => {
 
     try {
       await signIn(email, password);
-      navigate("/dashboard");
+      // Navigation will be handled by the useEffect above
     } catch (error) {
       setError(error.message);
     } finally {
@@ -53,7 +63,7 @@ const SignIn = () => {
 
     try {
       await signInWithGoogle();
-      // Google sign-in will redirect automatically
+      // Google sign-in will redirect automatically, and navigation will be handled by useEffect
     } catch (error) {
       setError(error.message);
       setGoogleLoading(false);

@@ -89,6 +89,17 @@ class ApiService {
     });
   }
 
+  // Onboarding status endpoints
+  async getOnboardingStatus() {
+    return this.request("/get-onboarding-status");
+  }
+
+  async setOnboardingComplete() {
+    return this.request("/set-onboarding-complete", {
+      method: "POST",
+    });
+  }
+
   // Reddit endpoints
   async generateRedditPost(productData) {
     return this.request("/generate-reddit-post", {

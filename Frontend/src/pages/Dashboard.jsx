@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 import {
   useHealthCheck,
   useLeads,
@@ -26,9 +27,24 @@ import {
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
+import { useAuth } from "../contexts/AuthContext";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { user, onboardingComplete, onboardingStatusLoading, loading } =
+    useAuth();
+
+  // Redirect to onboarding if not completed
+  useEffect(() => {
+    if (user && !loading && !onboardingStatusLoading && !onboardingComplete) {
+      navigate("/onboarding");
+    }
+  }, [user, loading, onboardingComplete, onboardingStatusLoading, navigate]);
+
+  // Show loading while checking authentication or onboarding status
+  if (loading || onboardingStatusLoading || !user) {
+    return null;
+  }
 
   // API hooks for real data
   const { data: healthData, isLoading: healthLoading } = useHealthCheck();

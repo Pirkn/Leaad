@@ -16,15 +16,25 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const { signUp, signInWithGoogle, user } = useAuth();
+  const {
+    signUp,
+    signInWithGoogle,
+    user,
+    onboardingComplete,
+    onboardingStatusLoading,
+  } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect authenticated users to dashboard
+  // Redirect authenticated users based on onboarding status
   useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
+    if (user && !loading && !onboardingStatusLoading) {
+      if (onboardingComplete) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
     }
-  }, [user, navigate]);
+  }, [user, loading, onboardingComplete, onboardingStatusLoading, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +111,7 @@ const SignUp = () => {
 
     try {
       await signInWithGoogle();
-      // Google sign-in will redirect automatically
+      // Google sign-in will redirect automatically, and navigation will be handled by useEffect
     } catch (error) {
       setError(error.message);
       setGoogleLoading(false);
