@@ -61,6 +61,12 @@ class CreateProduct(MethodView):
             supabase_url = current_app.config['SUPABASE_URL']
             supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
             supabase: Client = create_client(supabase_url, supabase_key)
+
+            if supabase.table('products').select('*').eq('user_id', user_id).execute().data:
+                old_product_id = supabase.table('products').select('*').eq('user_id', user_id).execute().data[0]['id']
+                supabase.table('products').delete().eq('user_id', user_id).execute()
+                supabase.table('lead_subreddits').delete().eq('product_id', old_product_id).execute()
+            
             result = supabase.table('products').insert(product_data).execute()
             
             if not result.data:

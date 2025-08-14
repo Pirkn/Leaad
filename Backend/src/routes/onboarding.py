@@ -38,8 +38,6 @@ class OnboardingLeadGeneration(MethodView):
             subreddits.append(clean_subreddit)        
 
         unformatted_posts, posts = lead_posts(subreddits)
-        print("posts found: ", len(posts))
-
         # Process posts in batches of 10
         batch_size = 10
         selected_posts = []
@@ -65,7 +63,7 @@ class OnboardingLeadGeneration(MethodView):
         response = model.gemini_chat_completion(messages)
         response_data = json.loads(response)
         comments = response_data.get('comments', [])
-
+        
         generated_leads = []
         for comment in comments:
             for key, value in comment.items():
