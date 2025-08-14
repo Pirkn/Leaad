@@ -1,6 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   useHealthCheck,
   useLeads,
@@ -34,17 +33,8 @@ function Dashboard() {
   const { user, onboardingComplete, onboardingStatusLoading, loading } =
     useAuth();
 
-  // Redirect to onboarding if not completed
-  useEffect(() => {
-    if (user && !loading && !onboardingStatusLoading && !onboardingComplete) {
-      navigate("/onboarding");
-    }
-  }, [user, loading, onboardingComplete, onboardingStatusLoading, navigate]);
-
-  // Show loading while checking authentication or onboarding status
-  if (loading || onboardingStatusLoading || !user) {
-    return null;
-  }
+  // ProtectedRoute handles all authentication and onboarding logic
+  // This component only renders when user is authenticated and onboarding is complete
 
   // API hooks for real data
   const { data: healthData, isLoading: healthLoading } = useHealthCheck();

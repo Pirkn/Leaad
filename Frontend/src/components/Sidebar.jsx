@@ -21,6 +21,13 @@ function Sidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -218,8 +225,8 @@ function Sidebar() {
                 </div>
 
                 <button
-                  onClick={() => {
-                    signOut();
+                  onClick={async () => {
+                    await handleSignOut();
                     setIsOpen(false);
                   }}
                   className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200"
@@ -251,7 +258,7 @@ function Sidebar() {
         initial={{ x: -256, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="hidden lg:block w-64 bg-white border-r border-gray-200 h-screen flex flex-col"
+        className="lg:block w-64 bg-white border-r border-gray-200 h-screen flex flex-col"
         style={{ borderColor: "#e5e7eb" }}
       >
         <div className="h-full flex flex-col">
@@ -487,7 +494,7 @@ function Sidebar() {
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              onClick={signOut}
+              onClick={handleSignOut}
               className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200"
             >
               <div className="w-5 h-5">

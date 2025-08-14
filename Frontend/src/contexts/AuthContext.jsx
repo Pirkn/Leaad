@@ -61,16 +61,23 @@ export const AuthProvider = ({ children }) => {
     const {
       data: { subscription },
     } = authService.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
+      const newUser = session?.user ?? null;
+      console.log("Auth state change:", {
+        event,
+        newUser: !!newUser,
+        session: !!session,
+      });
+      setUser(newUser);
 
       // Don't check onboarding status here - only on initial load
-      if (session?.user && event === "SIGNED_IN") {
+      if (newUser && event === "SIGNED_IN") {
         // Generate karma content when user signs in (only if no content exists)
         setTimeout(() => {
           karmaService.generateKarmaContent(false); // false = don't force refresh
         }, 1000); // Small delay to ensure user is fully loaded
-      } else if (!session?.user) {
-        // User signed out, reset onboarding status
+      } else if (event === "SIGNED_OUT") {
+        // User signed out, reset onboarding status only when we're sure they're signed out
+        console.log("User signed out, resetting onboarding status");
         setOnboardingComplete(false);
         setOnboardingStatusLoading(false);
         hasCheckedOnboarding.current = false; // Reset for next sign-in
@@ -140,7 +147,12 @@ export const AuthProvider = ({ children }) => {
   const signOut = async () => {
     const { error } = await authService.signOut();
     if (error) throw error;
+    // Ensure immediate local sign-out state to prevent bounce-backs
+    setUser(null);
     setOnboardingComplete(false);
+    setOnboardingStatusLoading(false);
+    hasCheckedOnboarding.current = false;
+    setLoading(false);
   };
 
   const resetPassword = async (email) => {

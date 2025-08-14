@@ -6,6 +6,15 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
     useAuth();
   const location = useLocation();
 
+  console.log("ProtectedRoute state:", {
+    user: !!user,
+    loading,
+    onboardingComplete,
+    onboardingStatusLoading,
+    requireOnboarding,
+    pathname: location.pathname,
+  });
+
   // Show loading only if we're checking authentication status
   if (loading) {
     return (
