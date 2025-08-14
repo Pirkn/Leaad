@@ -146,6 +146,42 @@ class OnboardingLeadGeneration(MethodView):
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
         supabase: Client = create_client(supabase_url, supabase_key)
 
+        if leads_to_insert:
+            try:
+                supabase.table('leads').insert(leads_to_insert).execute()
+                print(f"Successfully saved {len(leads_to_insert)} leads to database")
+            except Exception as e:
+                print(f"Error saving leads to database: {e}")
+        else:
+            print("No leads to save")
+
+        return jsonify({"generated_leads": generated_leads[:2], "subreddits": subreddits})
+        
+
+@blp.route('/set-onboarding-complete')
+class SetOnboardingComplete(MethodView):
+    @verify_supabase_token
+    def post(self):
+        user_id = g.current_user['id']
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+        
+        # Check if user record exists
+        result = supabase.table('users').select('id').eq('id', user_id).execute()
+        
+        if result.data:
+            # User exists, update status
+            supabase.table('users').update({'status': True}).eq('id', user_id).execute()
+        else:
+            # User doesn't exist, insert new record
+            user_data = {
+                'id': user_id,
+                'status': True,
+                'created_at': datetime.datetime.now(datetime.timezone.utc).isoformat()
+            }
+            supabase.table('users').insert(user_data).execute()
+        
         current_time = datetime.datetime.now(datetime.timezone.utc)
         search_time = current_time + datetime.timedelta(hours=2)
         
@@ -161,15 +197,22 @@ class OnboardingLeadGeneration(MethodView):
             print(f"Successfully saved search record for user {user_id}")
         except Exception as e:
             print(f"Error saving search record: {e}")
-
-        if leads_to_insert:
-            try:
-                supabase.table('leads').insert(leads_to_insert).execute()
-                print(f"Successfully saved {len(leads_to_insert)} leads to database")
-            except Exception as e:
-                print(f"Error saving leads to database: {e}")
-        else:
-            print("No leads to save")
-
-        return jsonify({"generated_leads": generated_leads[:2], "subreddits": subreddits})
         
+        return jsonify({"message": "Onboarding complete"})
+    
+@blp.route('/get-onboarding-status')
+class GetOnboardingStatus(MethodView):
+    @verify_supabase_token
+    def get(self):
+        user_id = g.current_user['id']
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+        
+        result = supabase.table('users').select('status').eq('id', user_id).execute()
+        
+        if result.data:
+            return jsonify({"status": result.data[0]['status']})
+        else:
+            # User doesn't exist in database, return False (not completed)
+            return jsonify({"status": False})
