@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import logoImage from "/src/assets/logo.png";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -158,7 +159,7 @@ const SignUp = () => {
               transition={{ duration: 0.2 }}
             >
               <img
-                src="/src/assets/logo.png"
+                src={logoImage}
                 alt="Leaad Logo"
                 className="h-10 w-10"
               />

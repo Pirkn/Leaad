@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import logoImage from "/src/assets/logo.png";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -154,7 +155,7 @@ const ForgotPassword = () => {
               transition={{ duration: 0.2 }}
             >
               <img
-                src="/src/assets/logo.png"
+                src={logoImage}
                 alt="Leaad Logo"
                 className="h-10 w-10"
               />
