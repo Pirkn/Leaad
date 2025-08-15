@@ -67,7 +67,13 @@ const Navigation = () => {
   };
 
   const handleLogoClick = () => {
-    navigate("/");
+    if (isHomepage) {
+      // If we're already on homepage, scroll to top
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // If we're on another page, navigate to homepage
+      navigate("/");
+    }
   };
 
   return (

@@ -123,6 +123,7 @@ const slideInFromRight = {
 };
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const { user, loading, onboardingComplete, onboardingStatusLoading } =
     useAuth();
 
@@ -145,6 +146,20 @@ export default function HomePage() {
         behavior: "smooth",
         block: "start",
       });
+    }
+  };
+
+  const handleAuthAction = (action) => {
+    if (user && !loading) {
+      if (onboardingComplete) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
+    } else if (action === "/signup" || action === "/signin") {
+      navigate(action);
+    } else {
+      navigate(action);
     }
   };
 
@@ -937,17 +952,15 @@ export default function HomePage() {
                 marketing
               </motion.p>
             </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-            >
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem
-                  value="item-1"
-                  className="border-b border-gray-200 pb-3 mb-3"
-                >
+            <Accordion type="single" collapsible className="w-full">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="border-b border-gray-200 pb-3 mb-3"
+              >
+                <AccordionItem value="item-1">
                   <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
                     Is there a free plan available?
                   </AccordionTrigger>
@@ -961,28 +974,39 @@ export default function HomePage() {
                     </p>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
-                  value="item-2"
-                  className="border-b border-gray-200 pb-3 mb-3"
-                >
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="border-b border-gray-200 pb-3 mb-3"
+              >
+                <AccordionItem value="item-2">
                   <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
                     How does Karma Builder work?
                   </AccordionTrigger>
                   <AccordionContent className="px-0 pb-0">
                     <p className="text-base text-gray-600 leading-relaxed tracking-tight">
                       Karma Builder is our AI-powered tool that helps you build
-                      genuine social media presence and credibility. It analyzes
-                      your target audience, suggests relevant content topics,
-                      and helps you create engaging posts that build trust and
-                      authority in your niche. Think of it as your personal
-                      social media strategist.
+                      genuine Reddit presence and credibility. It generates
+                      relevant comments and posts for karma building. This helps
+                      you establish a legitimate Reddit presence before engaging
+                      with potential leads.
                     </p>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
-                  value="item-3"
-                  className="border-b border-gray-200 pb-3 mb-3"
-                >
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="border-b border-gray-200 pb-3 mb-3"
+              >
+                <AccordionItem value="item-3">
                   <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
                     Will I get banned from Reddit?
                   </AccordionTrigger>
@@ -997,29 +1021,39 @@ export default function HomePage() {
                     </p>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
-                  value="item-4"
-                  className="border-b border-gray-200 pb-3 mb-3"
-                >
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="border-b border-gray-200 pb-3 mb-3"
+              >
+                <AccordionItem value="item-4">
                   <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
                     How does Leaad actually work?
                   </AccordionTrigger>
                   <AccordionContent className="px-0 pb-0">
                     <p className="text-base text-gray-600 leading-relaxed tracking-tight">
-                      Leaad works by scanning social media conversations in
-                      real-time to identify people actively discussing problems
-                      your product or service can solve. We use AI to analyze
-                      intent, engagement patterns, and buying signals to find
-                      high-quality leads. You then get a curated list of people
-                      ready to hear from you, along with context about their
-                      needs and conversation history.
+                      Leaad works by scanning reddit conversations in real-time
+                      to identify people actively discussing problems your
+                      product or service can solve. We use AI to analyze intent,
+                      engagement patterns, and buying signals to find
+                      high-quality leads.
                     </p>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
-                  value="item-5"
-                  className="border-b border-gray-200 pb-3 mb-3"
-                >
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="border-b border-gray-200 pb-3 mb-3"
+              >
+                <AccordionItem value="item-5">
                   <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
                     How are the posts generated?
                   </AccordionTrigger>
@@ -1034,26 +1068,31 @@ export default function HomePage() {
                     </p>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
-                  value="item-6"
-                  className="border-b border-gray-200 pb-3 mb-3"
-                >
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="border-b border-gray-200 pb-3 mb-3"
+              >
+                <AccordionItem value="item-6">
                   <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
                     How quickly can I start seeing results?
                   </AccordionTrigger>
                   <AccordionContent className="px-0 pb-0">
                     <p className="text-base text-gray-600 leading-relaxed tracking-tight">
                       Most users start finding qualified leads within the first
-                      24-48 hours of using Leaad. The AI learns your business
-                      better over time, so results typically improve
+                      2-6 hours of using Leaad. Results typically improve
                       significantly after the first week. You'll see immediate
-                      value from our viral post templates and karma building
-                      tools.
+                      value from our post generator, viral post templates and
+                      karma building tools.
                     </p>
                   </AccordionContent>
                 </AccordionItem>
-              </Accordion>
-            </motion.div>
+              </motion.div>
+            </Accordion>
           </div>
         </section>
 
