@@ -105,7 +105,7 @@ class GenerateRedditPost(MethodView):
                     print(f"Error saving posts to database: {e}")
                     # Continue even if database save fails
 
-            return jsonify({'response': response})
+            return jsonify({'response': posts_to_insert})
             
         except Exception as e:
             print(f"Error generating reddit post: {str(e)}")

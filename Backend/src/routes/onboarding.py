@@ -64,24 +64,46 @@ class OnboardingLeadGeneration(MethodView):
         response_data = json.loads(response)
         comments = response_data.get('comments', [])
         
+        # Handle case where comments might be a JSON string
+        if isinstance(comments, str):
+            try:
+                comments = json.loads(comments)
+            except json.JSONDecodeError as e:
+                print(f"Failed to parse comments string: {e}")
+                comments = []
+        
+        open('comments.json', 'w').write(json.dumps(comments))
+        
         generated_leads = []
         for comment in comments:
-            for key, value in comment.items():
-                new_post = {}
-                unformatted_post = unformatted_posts[int(key)]
-                new_post['id'] = str(uuid.uuid4())
-                new_post['comment'] = value
-                new_post['selftext'] = unformatted_post['selftext']
-                new_post['title'] = unformatted_post['title']
-                new_post['url'] = unformatted_post['url']
-                new_post['score'] = unformatted_post['score']
-                new_post['read'] = False
-                new_post['num_comments'] = unformatted_post['num_comments']
-                new_post['author'] = unformatted_post['author']
-                new_post['subreddit'] = unformatted_post['subreddit']
-                new_post['date'] = unformatted_post['date']
-                new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-                generated_leads.append(new_post)
+            # Handle different comment formats
+            if isinstance(comment, dict):
+                for key, value in comment.items():
+                    try:
+                        new_post = {}
+                        unformatted_post = unformatted_posts[int(key)]
+                        new_post['id'] = str(uuid.uuid4())
+                        new_post['comment'] = value
+                        new_post['selftext'] = unformatted_post['selftext']
+                        new_post['title'] = unformatted_post['title']
+                        new_post['url'] = unformatted_post['url']
+                        new_post['score'] = unformatted_post['score']
+                        new_post['read'] = False
+                        new_post['num_comments'] = unformatted_post['num_comments']
+                        new_post['author'] = unformatted_post['author']
+                        new_post['subreddit'] = unformatted_post['subreddit']
+                        new_post['date'] = unformatted_post['date']
+                        new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+                        generated_leads.append(new_post)
+                    except (ValueError, KeyError, IndexError) as e:
+                        print(f"Error processing comment with key {key}: {e}")
+                        continue
+            elif isinstance(comment, str):
+                print(f"Skipping string comment: {comment[:100]}...")
+                continue
+            else:
+                print(f"Skipping unknown comment type: {type(comment)}")
+                continue
 
         user_id = g.current_user['id']
 
