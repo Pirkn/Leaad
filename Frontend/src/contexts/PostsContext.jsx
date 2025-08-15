@@ -22,6 +22,16 @@ export const PostsProvider = ({ children }) => {
     setNewlyGeneratedPosts([]);
   };
 
+  const removeNewlyGeneratedPost = (postId) => {
+    setNewlyGeneratedPosts((prev) => prev.filter((post) => post.id !== postId));
+  };
+
+  const updateNewlyGeneratedPost = (postId, updates) => {
+    setNewlyGeneratedPosts((prev) =>
+      prev.map((post) => (post.id === postId ? { ...post, ...updates } : post))
+    );
+  };
+
   const setGeneratingPosts = (isGenerating) => {
     setIsGeneratingPosts(isGenerating);
   };
@@ -32,6 +42,8 @@ export const PostsProvider = ({ children }) => {
         newlyGeneratedPosts,
         addNewlyGeneratedPosts,
         clearNewlyGeneratedPosts,
+        removeNewlyGeneratedPost,
+        updateNewlyGeneratedPost,
         isGeneratingPosts,
         setGeneratingPosts,
       }}

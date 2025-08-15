@@ -34,7 +34,9 @@ function Leads() {
   const [postedFilter, setPostedFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [viewFilter, setViewFilter] = useState("all");
+  // Read functionality states - track both read and unread leads optimistically
   const [optimisticReads, setOptimisticReads] = useState(new Set());
+  const [optimisticUnreads, setOptimisticUnreads] = useState(new Set());
   const [expandedReplies, setExpandedReplies] = useState(new Set());
   const [copiedReplyId, setCopiedReplyId] = useState(null);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -52,11 +54,7 @@ function Leads() {
   const handleToggleReadStatus = async (leadId, currentReadStatus) => {
     if (currentReadStatus) {
       // Currently read, mark as unread
-      setOptimisticReads((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(leadId);
-        return newSet;
-      });
+      setOptimisticUnreads((prev) => new Set([...prev, leadId]));
 
       // Show success toast immediately
       toast("Lead marked as unread!", {
@@ -69,7 +67,11 @@ function Leads() {
       } catch (error) {
         console.error("Failed to mark lead as unread:", error);
         // Revert optimistic update on error
-        setOptimisticReads((prev) => new Set([...prev, leadId]));
+        setOptimisticUnreads((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(leadId);
+          return newSet;
+        });
         // Show error toast
         toast("Failed to mark lead as unread. Please try again.", {
           duration: 3000,
@@ -93,6 +95,13 @@ function Leads() {
     } else {
       // Currently unread, mark as read
       setOptimisticReads((prev) => new Set([...prev, leadId]));
+
+      // Clear any optimistic unread for this lead
+      setOptimisticUnreads((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(leadId);
+        return newSet;
+      });
 
       // Show success toast immediately
       toast("Lead marked as read!", {
@@ -154,8 +163,33 @@ function Leads() {
       await navigator.clipboard.writeText(replyText);
       setCopiedReplyId(leadId);
       setTimeout(() => setCopiedReplyId(null), 2000);
+
+      // Show success toast
+      toast("Reply copied to clipboard!", {
+        duration: 2000,
+        icon: <Check className="w-4 h-4 text-green-600" />,
+      });
     } catch (err) {
       console.error("Failed to copy reply:", err);
+      // Show error toast
+      toast("Failed to copy reply. Please try again.", {
+        duration: 3000,
+        icon: (
+          <svg
+            className="w-4 h-4 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ),
+      });
     }
   };
 
@@ -181,7 +215,15 @@ function Leads() {
     allLeads.filter((lead) => {
       // Apply optimistic updates to the lead data
       const isOptimisticallyRead = optimisticReads.has(lead.id);
-      const effectiveReadStatus = lead.read || isOptimisticallyRead;
+      const isOptimisticallyUnread = optimisticUnreads.has(lead.id);
+
+      // If lead was optimistically marked as unread, treat it as unread regardless of original status
+      let effectiveReadStatus;
+      if (isOptimisticallyUnread) {
+        effectiveReadStatus = false;
+      } else {
+        effectiveReadStatus = lead.read || isOptimisticallyRead;
+      }
 
       // Apply view filter (read/unread)
       if (viewFilter === "read" && !effectiveReadStatus) return false;
@@ -545,7 +587,9 @@ function Leads() {
           <div className="grid grid-cols-1 gap-4">
             {sortedLeads.map((lead, index) => {
               const isOptimisticallyRead = optimisticReads.has(lead.id);
-              const isRead = lead.read || isOptimisticallyRead;
+              const isOptimisticallyUnread = optimisticUnreads.has(lead.id);
+              const isRead =
+                (lead.read || isOptimisticallyRead) && !isOptimisticallyUnread;
 
               return (
                 <motion.div
