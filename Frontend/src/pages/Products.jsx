@@ -228,46 +228,22 @@ function Products() {
           </div>
         ) : !product ? (
           <div className="flex items-center justify-center min-h-[400px]">
-            <div className="bg-white border border-gray-200 rounded-lg p-8 text-center max-w-md">
+            <div className="rounded-lg p-8 text-center max-w-md">
               <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-8 h-8 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
+                <Package className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No product configured
               </h3>
-              <p className="text-gray-500 mb-4">
-                Get started by adding your first product
+              <p className="text-gray-600 mb-6">
+                Add your product to start generating leads and Reddit posts.
               </p>
               <button
                 onClick={handleAddProduct}
-                className="bg-[#FF4500] text-white px-6 py-3 rounded-lg hover:bg-[#CC3700] transition-all duration-200 flex items-center mx-auto shadow-sm hover:shadow-md"
+                className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center mx-auto"
               >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                Add Your First Product
+                <Package className="w-4 h-4 mr-2" />
+                Create Product
               </button>
             </div>
           </div>

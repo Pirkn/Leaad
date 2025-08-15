@@ -209,16 +209,7 @@ function Dashboard() {
             </h1>
           </div>
           <div className="flex items-center space-x-3">
-            {!productsLoading && !hasProduct && (
-              <Button
-                onClick={handleAnalyzeProduct}
-                className="bg-[#FF4500] hover:bg-[#CC3700] text-white text-sm sm:text-base px-3 sm:px-4 py-2"
-              >
-                <Package className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Add Product</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
-            )}
+            {/* Removed Add Product button from top right */}
           </div>
         </div>
       </motion.div>
@@ -415,27 +406,30 @@ function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: 0.3 }}
-              className="bg-orange-50 border border-orange-200 rounded-lg p-4"
+              className="bg-white border border-gray-200 rounded-lg p-4"
             >
-              <div className="flex items-start space-x-3">
-                <div className="w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <AlertCircle className="w-5 h-5 text-orange-600" />
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-3 lg:space-y-0">
+                <div className="flex items-start space-x-3">
+                  <div className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <AlertCircle className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-medium text-gray-900 mb-1">
+                      No product configured
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Add your product to start generating leads and Reddit
+                      posts.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-orange-900 mb-1">
-                    No product configured
-                  </h3>
-                  <p className="text-sm text-orange-700 mb-3">
-                    Add your product to start generating leads and Reddit posts.
-                  </p>
-                  <Button
-                    onClick={handleAnalyzeProduct}
-                    className="bg-orange-600 hover:bg-orange-700 text-white text-sm"
-                  >
-                    <Package className="w-4 h-4 mr-2" />
-                    Add Your Product
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleAnalyzeProduct}
+                  className="w-full lg:w-auto bg-gray-900 hover:bg-gray-800 text-white text-sm"
+                >
+                  <Package className="w-4 h-4 mr-2" />
+                  Create Product
+                </Button>
               </div>
             </motion.div>
           ) : product ? (
