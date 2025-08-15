@@ -51,17 +51,37 @@ function Karma() {
   const [generatedComment, setGeneratedComment] = useState(null);
   const [generatedPost, setGeneratedPost] = useState(null);
 
-  // Load stored data on component mount
+  // Load stored data on component mount and sync with background generation
   useEffect(() => {
-    const storedContent = karmaService.getStoredKarmaContent();
+    const loadStoredContent = () => {
+      const storedContent = karmaService.getStoredKarmaContent();
 
-    if (storedContent.comment) {
-      setGeneratedComment(storedContent.comment);
+      if (storedContent.comment) {
+        setGeneratedComment(storedContent.comment);
+      }
+      if (storedContent.post) {
+        setGeneratedPost(storedContent.post);
+      }
+    };
+
+    // Load initial content
+    loadStoredContent();
+
+    // If background generation is already running, check immediately and then set up interval
+    if (isKarmaGenerating || isBackgroundGenerating) {
+      // Check immediately
+      setTimeout(loadStoredContent, 100);
+
+      // Set up interval to check for updates when background generation is running
+      const interval = setInterval(() => {
+        if (isKarmaGenerating || isBackgroundGenerating) {
+          loadStoredContent();
+        }
+      }, 1000); // Check every second
+
+      return () => clearInterval(interval);
     }
-    if (storedContent.post) {
-      setGeneratedPost(storedContent.post);
-    }
-  }, []);
+  }, [isKarmaGenerating, isBackgroundGenerating]);
 
   const handleCopyText = (text, type) => {
     // Prevent spam clicking

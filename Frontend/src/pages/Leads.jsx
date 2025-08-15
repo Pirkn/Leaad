@@ -5,7 +5,6 @@ import {
   useMarkLeadAsRead,
   useMarkLeadAsUnread,
   useProducts,
-  useGenerateLeads,
 } from "../hooks/useApi";
 import { useLeadsContext } from "../contexts/LeadsContext";
 import {
@@ -21,7 +20,6 @@ import {
   MessageCircle,
   Clock,
   EyeOff,
-  RotateCcw,
   Copy,
   Search,
 } from "lucide-react";
@@ -46,44 +44,10 @@ function Leads() {
   const { data: productsResponse } = useProducts();
   const markAsReadMutation = useMarkLeadAsRead();
   const markAsUnreadMutation = useMarkLeadAsUnread();
-  const generateLeadsMutation = useGenerateLeads();
-  const { newlyGeneratedLeads, addNewlyGeneratedLeads } = useLeadsContext();
+  const { newlyGeneratedLeads } = useLeadsContext();
 
   const products = productsResponse?.products || [];
   const product = products[0]; // Assuming single product setup
-
-  const handleGenerateLeads = async () => {
-    if (!product) {
-      alert("No product configured. Please add a product first.");
-      return;
-    }
-
-    try {
-      const result = await generateLeadsMutation.mutateAsync(product.id);
-
-      // Add newly generated leads to context
-      if (result && Array.isArray(result)) {
-        const transformedLeads = result.map((lead, index) => ({
-          ...lead,
-          id: `new-${Date.now()}-${index}`,
-          created_at: new Date().toISOString(),
-          isNew: true,
-        }));
-        addNewlyGeneratedLeads(transformedLeads);
-      }
-    } catch (error) {
-      console.error("Failed to generate leads:", error);
-
-      // Check if it's a model overload error
-      if (error.message && error.message.includes("overloaded")) {
-        alert(
-          "The AI model is currently overloaded. Please try again in a few minutes."
-        );
-      } else {
-        alert("Failed to generate leads. Please try again.");
-      }
-    }
-  };
 
   const handleToggleReadStatus = async (leadId, currentReadStatus) => {
     if (currentReadStatus) {
@@ -374,25 +338,27 @@ function Leads() {
           transition={{ duration: 0.3, delay: 0.1 }}
           className="space-y-6"
         >
-          {/* Generate Leads Button - Separate row above filter card */}
+          {/* Active Searching Status */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="bg-white border border-gray-200 rounded-lg p-4"
+            className="bg-blue-50 border border-blue-200 rounded-lg p-4"
           >
-            <Button
-              onClick={handleGenerateLeads}
-              disabled={generateLeadsMutation.isPending || !product}
-              className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              <span>
-                {generateLeadsMutation.isPending
-                  ? "Generating..."
-                  : "Generate Leads"}
-              </span>
-            </Button>
+            <div className="flex items-center space-x-3">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-blue-900">
+                  Actively searching for leads
+                </h3>
+                <p className="text-sm text-blue-700">
+                  We're monitoring Reddit 24/7 and will notify you when new
+                  leads are found
+                </p>
+              </div>
+            </div>
           </motion.div>
 
           {/* Filter Card */}
@@ -577,60 +543,6 @@ function Leads() {
               </div>
             </div>
           </motion.div>
-
-          {/* Error Notification */}
-          {generateLeadsMutation.isError && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg
-                    className="w-3 h-3 text-red-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-sm font-medium text-red-900">
-                    Failed to generate leads
-                  </h4>
-                  <p className="text-sm text-red-700 mt-1">
-                    {generateLeadsMutation.error?.message ||
-                      "Please try again in a few minutes"}
-                  </p>
-                </div>
-                <button
-                  onClick={() => generateLeadsMutation.reset()}
-                  className="text-red-600 hover:text-red-800 transition-colors"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </motion.div>
-          )}
 
           {/* Leads Grid */}
           <div className="grid grid-cols-1 gap-4">
@@ -826,22 +738,26 @@ function Leads() {
                 <MessageSquare className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No leads found
-              </h3>
-              <p className="text-gray-500 mb-4">
                 {viewFilter === "all"
-                  ? "Generate your first leads to get started"
+                  ? "No leads yet"
                   : `No ${viewFilter} leads found`}
+              </h3>
+              <p className="text-gray-500 mb-4 max-w-md mx-auto">
+                {viewFilter === "all"
+                  ? "We're actively searching Reddit for leads. You'll be notified when we find relevant opportunities."
+                  : `No ${viewFilter} leads match your current filters`}
               </p>
-              {viewFilter === "all" && (
+              {viewFilter !== "all" && (
                 <Button
-                  onClick={handleGenerateLeads}
-                  disabled={generateLeadsMutation.isPending || !product}
-                  className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                  onClick={() => {
+                    setViewFilter("all");
+                    setPostedFilter("all");
+                    setSortBy("newest");
+                  }}
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
                 >
-                  {generateLeadsMutation.isPending
-                    ? "Generating..."
-                    : "Generate Leads"}
+                  View All Leads
                 </Button>
               )}
             </motion.div>

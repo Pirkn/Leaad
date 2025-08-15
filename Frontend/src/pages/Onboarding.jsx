@@ -111,6 +111,10 @@ const steps = [
       "We found real people discussing problems your product solves. These are actual Reddit posts from the last 48 hours.",
     icon: TrendingUp,
     action: "Complete Onboarding",
+    getDynamicTitle: (leadCount) =>
+      `Here ${leadCount === 1 ? "is" : "are"} your first ${
+        leadCount === 1 ? "lead" : "leads"
+      }!`,
   },
 ];
 
@@ -414,7 +418,11 @@ function Onboarding() {
               className="text-center mb-8"
             >
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tighter">
-                {currentStepData.title}
+                {currentStep === 4 && currentStepData.getDynamicTitle
+                  ? currentStepData.getDynamicTitle(
+                      generatedLeads?.length || mockLeads.length
+                    )
+                  : currentStepData.title}
               </h1>
               <p className="text-base text-gray-600 max-w-2xl mx-auto text-center leading-relaxed tracking-tight">
                 {currentStepData.subtitle}
@@ -910,7 +918,10 @@ function Onboarding() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tighter">
-                      Your First Leads
+                      Your First{" "}
+                      {(generatedLeads?.length || mockLeads.length) === 1
+                        ? "Lead"
+                        : "Leads"}
                     </h3>
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
@@ -922,181 +933,189 @@ function Onboarding() {
                     {(generatedLeads?.length
                       ? generatedLeads.slice(0, 2)
                       : mockLeads.slice(0, 2)
-                    ).map((lead, index) => (
-                      <motion.div
-                        key={lead.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                        className={`bg-white border border-gray-200 rounded-xl p-6 transition-shadow ${
-                          index === 1
-                            ? "opacity-50 pointer-events-none"
-                            : "hover:shadow-sm"
-                        }`}
-                      >
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 tracking-tight">
-                              {lead.title}
-                            </h4>
-                            <div className="flex items-center space-x-4 text-sm text-gray-500">
-                              <div className="flex items-center space-x-1">
-                                <User className="w-4 h-4" />
-                                <span className="font-medium">
-                                  {lead.author}
-                                </span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <Calendar className="w-4 h-4" />
-                                <span className="hidden sm:inline">
-                                  Posted {formatDate(lead.date)}
-                                </span>
-                                <span className="sm:hidden">
-                                  {formatDate(lead.date)}
-                                </span>
+                    ).map((lead, index) => {
+                      const isSingleLead =
+                        (generatedLeads?.length || mockLeads.length) === 1;
+                      const shouldFade = !isSingleLead && index === 1;
+
+                      return (
+                        <motion.div
+                          key={lead.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          className={`bg-white border border-gray-200 rounded-xl p-6 transition-shadow ${
+                            shouldFade
+                              ? "opacity-50 pointer-events-none"
+                              : "hover:shadow-sm"
+                          }`}
+                        >
+                          {/* Header */}
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <h4 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 tracking-tight">
+                                {lead.title}
+                              </h4>
+                              <div className="flex items-center space-x-4 text-sm text-gray-500">
+                                <div className="flex items-center space-x-1">
+                                  <User className="w-4 h-4" />
+                                  <span className="font-medium">
+                                    {lead.author}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <Calendar className="w-4 h-4" />
+                                  <span className="hidden sm:inline">
+                                    Posted {formatDate(lead.date)}
+                                  </span>
+                                  <span className="sm:hidden">
+                                    {formatDate(lead.date)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <span className="hidden sm:inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
-                            r/{lead.subreddit}
-                          </span>
-                        </div>
-
-                        {/* Mobile subreddit tag - positioned below title for small screens */}
-                        <div className="sm:hidden mb-3">
-                          <span className="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">
-                            r/{lead.subreddit}
-                          </span>
-                        </div>
-
-                        {/* Content */}
-                        <p className="text-gray-600 text-base mb-4 leading-relaxed line-clamp-3">
-                          {lead.selftext}
-                        </p>
-
-                        {/* Stats */}
-                        <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
-                          <div className="flex items-center space-x-1">
-                            <ArrowUp className="w-4 h-4" />
-                            <span className="font-medium">
-                              {lead.score} upvotes
+                            <span className="hidden sm:inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
+                              r/{lead.subreddit}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <MessageCircle className="w-4 h-4" />
-                            <span className="font-medium">
-                              {lead.num_comments} comments
+
+                          {/* Mobile subreddit tag - positioned below title for small screens */}
+                          <div className="sm:hidden mb-3">
+                            <span className="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">
+                              r/{lead.subreddit}
                             </span>
                           </div>
-                        </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex space-x-2">
-                          <Button
-                            onClick={() => window.open(lead.url, "_blank")}
-                            className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
-                            disabled={index === 1}
-                          >
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            <span className="hidden sm:inline">
-                              View on Reddit
-                            </span>
-                            <span className="sm:hidden">View</span>
-                          </Button>
-                          <Button
-                            onClick={() => handleViewReply(lead.id)}
-                            variant="outline"
-                            className="flex-1"
-                            disabled={index === 1}
-                          >
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            <span>
-                              {expandedReplies.has(lead.id) ? (
-                                "Hide Reply"
-                              ) : (
-                                <>
-                                  <span className="hidden sm:inline">
-                                    View AI Reply
-                                  </span>
-                                  <span className="sm:hidden">AI Reply</span>
-                                </>
-                              )}
-                            </span>
-                          </Button>
-                        </div>
+                          {/* Content */}
+                          <p className="text-gray-600 text-base mb-4 leading-relaxed line-clamp-3">
+                            {lead.selftext}
+                          </p>
 
-                        {/* Reply Section */}
-                        <AnimatePresence>
-                          {expandedReplies.has(lead.id) && (
-                            <motion.div
-                              initial={{
-                                opacity: 0,
-                                height: 0,
-                                marginTop: 0,
-                                paddingTop: 0,
-                              }}
-                              animate={{
-                                opacity: 1,
-                                height: "auto",
-                                marginTop: 16,
-                                paddingTop: 16,
-                              }}
-                              exit={{
-                                opacity: 0,
-                                height: 0,
-                                marginTop: 0,
-                                paddingTop: 0,
-                              }}
-                              transition={{ duration: 0.3, ease: "easeOut" }}
-                              className="border-t border-gray-200 overflow-hidden"
+                          {/* Stats */}
+                          <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
+                            <div className="flex items-center space-x-1">
+                              <ArrowUp className="w-4 h-4" />
+                              <span className="font-medium">
+                                {lead.score} upvotes
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <MessageCircle className="w-4 h-4" />
+                              <span className="font-medium">
+                                {lead.num_comments} comments
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex space-x-2">
+                            <Button
+                              onClick={() => window.open(lead.url, "_blank")}
+                              className="flex-1 bg-gray-800 hover:bg-gray-700 text-white"
+                              disabled={shouldFade}
                             >
-                              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                                <div className="flex items-start space-x-3 mb-4">
-                                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <MessageSquare className="w-4 h-4 text-gray-600" />
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-2">
-                                      <h5 className="text-sm font-semibold text-gray-900 tracking-tight">
-                                        AI Generated Reply
-                                      </h5>
-                                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                        Personalized
-                                      </span>
-                                    </div>
-                                    <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap tracking-tight">
-                                      {lead.comment}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="flex space-x-3">
-                                  <Button
-                                    onClick={() =>
-                                      handleCopyReply(lead.comment, lead.id)
-                                    }
-                                    variant="outline"
-                                    className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium"
-                                  >
-                                    {copiedReplyId === lead.id ? (
-                                      <Check className="w-4 h-4 mr-2" />
-                                    ) : (
-                                      <Copy className="w-4 h-4 mr-2" />
-                                    )}
-                                    {copiedReplyId === lead.id
-                                      ? "Copied!"
-                                      : "Copy Reply"}
-                                  </Button>
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
-                    ))}
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              <span className="hidden sm:inline">
+                                View on Reddit
+                              </span>
+                              <span className="sm:hidden">View</span>
+                            </Button>
+                            <Button
+                              onClick={() => handleViewReply(lead.id)}
+                              variant="outline"
+                              className="flex-1"
+                              disabled={shouldFade}
+                            >
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              <span>
+                                {expandedReplies.has(lead.id) ? (
+                                  "Hide Reply"
+                                ) : (
+                                  <>
+                                    <span className="hidden sm:inline">
+                                      View AI Reply
+                                    </span>
+                                    <span className="sm:hidden">AI Reply</span>
+                                  </>
+                                )}
+                              </span>
+                            </Button>
+                          </div>
 
-                    {/* Fade to background effect */}
-                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent pointer-events-none"></div>
+                          {/* Reply Section */}
+                          <AnimatePresence>
+                            {expandedReplies.has(lead.id) && (
+                              <motion.div
+                                initial={{
+                                  opacity: 0,
+                                  height: 0,
+                                  marginTop: 0,
+                                  paddingTop: 0,
+                                }}
+                                animate={{
+                                  opacity: 1,
+                                  height: "auto",
+                                  marginTop: 16,
+                                  paddingTop: 16,
+                                }}
+                                exit={{
+                                  opacity: 0,
+                                  height: 0,
+                                  marginTop: 0,
+                                  paddingTop: 0,
+                                }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className="border-t border-gray-200 overflow-hidden"
+                              >
+                                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                                  <div className="flex items-start space-x-3 mb-4">
+                                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                      <MessageSquare className="w-4 h-4 text-gray-600" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center space-x-2 mb-2">
+                                        <h5 className="text-sm font-semibold text-gray-900 tracking-tight">
+                                          AI Generated Reply
+                                        </h5>
+                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                          Personalized
+                                        </span>
+                                      </div>
+                                      <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap tracking-tight">
+                                        {lead.comment}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="flex space-x-3">
+                                    <Button
+                                      onClick={() =>
+                                        handleCopyReply(lead.comment, lead.id)
+                                      }
+                                      variant="outline"
+                                      className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium"
+                                    >
+                                      {copiedReplyId === lead.id ? (
+                                        <Check className="w-4 h-4 mr-2" />
+                                      ) : (
+                                        <Copy className="w-4 h-4 mr-2" />
+                                      )}
+                                      {copiedReplyId === lead.id
+                                        ? "Copied!"
+                                        : "Copy Reply"}
+                                    </Button>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      );
+                    })}
+
+                    {/* Fade to background effect - only show when multiple leads */}
+                    {(generatedLeads?.length || mockLeads.length) > 1 && (
+                      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent pointer-events-none"></div>
+                    )}
                   </div>
                 </div>
 
