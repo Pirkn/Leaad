@@ -279,9 +279,6 @@ function Leads() {
           className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
         >
           <h1 className="text-2xl font-semibold text-gray-900">Your Leads</h1>
-          <p className="text-gray-600 mt-2">
-            View leads that AI found based on your product.
-          </p>
         </motion.div>
 
         {/* Main Content - Wider Layout */}
@@ -566,7 +563,7 @@ function Leads() {
                         {lead.title || "Lead"}
                       </h3>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <div className="flex items-center space-x-1 min-[700px]:flex hidden">
+                        <div className="flex items-center space-x-1 min-[700px]:flex max-[699px]:hidden">
                           <User className="w-4 h-4" />
                           <span>{lead.author || "Unknown"}</span>
                         </div>
@@ -587,7 +584,7 @@ function Leads() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 min-[700px]:flex hidden">
+                    <div className="flex items-center space-x-2 min-[700px]:flex max-[699px]:hidden">
                       <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
                         r/{lead.subreddit}
                       </span>

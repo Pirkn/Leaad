@@ -562,7 +562,10 @@ export default function HomePage() {
       </motion.section>
 
       {/* Core Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 relative">
+      <section
+        id="features"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 relative"
+      >
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
         <div className="max-w-7xl mx-auto">
           <motion.div
