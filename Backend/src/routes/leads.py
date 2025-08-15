@@ -265,9 +265,13 @@ def generate_leads(user_id):
     response_data = json.loads(response)
     comments = response_data.get('comments', [])
 
-    # Creates a file with the comments
-    with open('comments.json', 'w') as f:
-        json.dump(comments, f)
+    # Handle case where comments might be a JSON string
+    if isinstance(comments, str):
+        try:
+            comments = json.loads(comments)
+        except json.JSONDecodeError as e:
+            print(f"Failed to parse comments string: {e}")
+            comments = []
 
     generated_leads = []
     for comment in comments:
@@ -289,7 +293,6 @@ def generate_leads(user_id):
             generated_leads.append(new_post)
 
     # Save generated leads to the leads table
-    user_id = g.current_user['id']
     leads_to_insert = []
 
     # Calculate scheduling intervals using dynamic algorithm
@@ -338,13 +341,23 @@ def generate_leads(user_id):
 @blp.route('/next-lead-search')
 class NextLeadSearch(MethodView):
     def get(self):
+        # Get token from Authorization header
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': 'Missing or invalid Authorization header'}), 401
+        
+        token = auth_header.split(' ')[1]
+        cron_token = os.getenv('CRON_TOKEN')
+        
+        if token != cron_token:
+            return jsonify({'error': 'Invalid token'}), 401
+
         supabase_url = current_app.config['SUPABASE_URL']
         supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
         supabase: Client = create_client(supabase_url, supabase_key)
         
         current_time = datetime.datetime.now(datetime.timezone.utc)
         
-        # Get all search times for the current user that are past the current time
         result = supabase.table('search_time').select('*').lt('search_time', current_time.isoformat()).order('search_time', desc=True).execute()
         
         past_search_times = result.data if result.data else []

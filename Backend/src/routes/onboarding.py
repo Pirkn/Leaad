@@ -71,9 +71,7 @@ class OnboardingLeadGeneration(MethodView):
             except json.JSONDecodeError as e:
                 print(f"Failed to parse comments string: {e}")
                 comments = []
-        
-        open('comments.json', 'w').write(json.dumps(comments))
-        
+    
         generated_leads = []
         for comment in comments:
             # Handle different comment formats
@@ -213,7 +211,10 @@ class SetOnboardingComplete(MethodView):
         }
         
         try:
-            supabase.table('search_time').insert(search_record).execute()
+            if supabase.table('search_time').select('*').eq('user_id', user_id).execute().data:
+                supabase.table('search_time').update(search_record).eq('user_id', user_id).execute()
+            else:
+                supabase.table('search_time').insert(search_record).execute()
             print(f"Successfully saved search record for user {user_id}")
         except Exception as e:
             print(f"Error saving search record: {e}")
