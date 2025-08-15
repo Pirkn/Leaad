@@ -116,7 +116,8 @@ const steps = [
 
 function Onboarding() {
   const navigate = useNavigate();
-  const { user, onboardingComplete, markOnboardingComplete } = useAuth();
+  const { user, onboardingComplete, markOnboardingComplete, signOut } =
+    useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [productUrl, setProductUrl] = useState("");
   const [hasUserEditedUrl, setHasUserEditedUrl] = useState(false);
@@ -362,13 +363,20 @@ function Onboarding() {
       <div className="w-full px-6 pb-4">
         <div className="max-w-4xl mx-auto flex justify-between">
           <Button
-            onClick={() => navigate("/")}
+            onClick={async () => {
+              try {
+                await signOut();
+                navigate("/");
+              } catch (error) {
+                console.error("Error signing out:", error);
+              }
+            }}
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:text-sm px-2 sm:px-3"
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:px-3"
           >
-            <span className="hidden sm:inline">← Back to Homepage</span>
-            <span className="sm:hidden">Back to Homepage</span>
+            <span className="hidden sm:inline">Sign Out</span>
+            <span className="sm:hidden">Sign Out</span>
           </Button>
 
           <Button

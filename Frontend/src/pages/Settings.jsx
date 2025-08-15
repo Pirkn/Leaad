@@ -1,16 +1,15 @@
 import { User, AlertTriangle, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 function Settings() {
   const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
     }

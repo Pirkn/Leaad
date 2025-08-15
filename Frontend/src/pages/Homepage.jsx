@@ -146,17 +146,7 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Redirect authenticated users based on onboarding status
-  // Only redirect if user is authenticated and not loading
-  useEffect(() => {
-    if (user && !loading && !onboardingStatusLoading) {
-      if (onboardingComplete) {
-        navigate("/dashboard");
-      } else {
-        navigate("/onboarding");
-      }
-    }
-  }, [user, loading, onboardingComplete, onboardingStatusLoading, navigate]);
+  // RootRedirect controls redirection for '/'. Avoid duplicating that logic here.
 
   const handleAuthAction = (action) => {
     if (user && !loading) {
@@ -626,7 +616,7 @@ export default function HomePage() {
                 icon: Shield,
                 title: "Fit in before you stand out",
                 description:
-                  "We help you build an active presence—so when you post, people listen.",
+                  "We help you build an active Reddit presence—so when you post, people listen.",
                 bullets: [
                   "Karma builder to boost your credibility",
                   "Avoid low-effort bans and buried posts",
