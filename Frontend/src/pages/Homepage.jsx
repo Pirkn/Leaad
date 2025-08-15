@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -336,7 +337,7 @@ export default function HomePage() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
           <div className="max-w-7xl mx-auto">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-16 pt-8"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
@@ -524,7 +525,7 @@ export default function HomePage() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-white to-gray-50 pointer-events-none"></div>
           <div className="max-w-5xl mx-auto">
             <motion.div
-              className="text-center mb-20"
+              className="text-center mb-20 pt-4"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
@@ -648,7 +649,7 @@ export default function HomePage() {
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-gray-50 to-gray-50 pointer-events-none"></div>
           <div className="max-w-7xl mx-auto">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-16 pt-8"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
@@ -1157,134 +1158,7 @@ export default function HomePage() {
         </section>
 
         {/* Footer */}
-        <footer className="bg-black py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-              {/* Leaad + Description - Full width on mobile */}
-              <div className="col-span-2 md:col-span-1">
-                <motion.div
-                  className="flex items-center space-x-2 mb-4"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                  <img
-                    src={logoImage}
-                    alt="Leaad"
-                    className="w-5 h-5 brightness-0 invert"
-                  />
-                  <span className="text-xl font-bold text-white mt-0.5">
-                    Leaad
-                  </span>
-                </motion.div>
-                <p className="text-gray-300 text-sm">
-                  AI-powered lead generation for the modern entrepreneur.
-                </p>
-              </div>
-
-              {/* Product */}
-              <div className="col-span-1">
-                <h4 className="font-semibold mb-4 text-white text-base">
-                  Product
-                </h4>
-                <ul className="space-y-2 text-gray-400 text-sm">
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Features
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Pricing
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      FAQ
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Company */}
-              <div className="col-span-1">
-                <h4 className="font-semibold mb-4 text-white text-base">
-                  Company
-                </h4>
-                <ul className="space-y-2 text-gray-400 text-sm">
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      About
-                    </a>
-                  </li>
-                  <li>
-                    <Link
-                      to="/blog"
-                      className="hover:text-white transition-colors"
-                    >
-                      Blog
-                    </Link>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Team
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Support */}
-              <div className="col-span-1">
-                <h4 className="font-semibold mb-4 text-white text-base">
-                  Support
-                </h4>
-                <ul className="space-y-2 text-gray-400 text-sm">
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Help Center
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Contact
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Privacy
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Connect */}
-              <div className="col-span-1">
-                <h4 className="font-semibold mb-4 text-white text-base">
-                  Connect
-                </h4>
-                <ul className="space-y-2 text-gray-400 text-sm">
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Instagram
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      YouTube
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      TikTok
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2025 Leaad. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );

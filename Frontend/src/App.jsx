@@ -22,6 +22,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Homepage from "./pages/Homepage";
 import Onboarding from "./pages/Onboarding";
 import Blog from "./pages/Blog";
+import About from "./pages/About";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
@@ -61,6 +62,7 @@ function App() {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/about" element={<About />} />
 
                 {/* Protected routes that require onboarding completion */}
                 <Route

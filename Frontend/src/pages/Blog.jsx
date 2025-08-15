@@ -2,10 +2,13 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import SEOHead from "../components/SEOHead";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { Calendar, Clock, User, ArrowRight, Search } from "lucide-react";
 
 const Blog = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
 
   // Sample blog posts - you can replace with real data
   const blogPosts = [
@@ -95,15 +98,45 @@ const Blog = () => {
     "Case Study",
   ];
 
-  const filteredPosts = blogPosts.filter(
-    (post) =>
+  // Filter posts based on search term and selected category
+  const filteredPosts = blogPosts.filter((post) => {
+    const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      post.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.author.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const featuredPost = blogPosts.find((post) => post.featured);
-  const regularPosts = filteredPosts.filter((post) => !post.featured);
+    const matchesCategory =
+      selectedCategory === "All" || post.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort posts based on selected sort option
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (sortBy === "newest") {
+      return new Date(b.date) - new Date(a.date);
+    } else if (sortBy === "oldest") {
+      return new Date(a.date) - new Date(b.date);
+    } else if (sortBy === "title") {
+      return a.title.localeCompare(b.title);
+    } else if (sortBy === "category") {
+      return a.category.localeCompare(b.category);
+    }
+    return 0;
+  });
+
+  const featuredPost = sortedPosts.find((post) => post.featured);
+  const regularPosts = sortedPosts.filter((post) => !post.featured);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("All");
+    setSortBy("newest");
+  };
+
+  const hasActiveFilters =
+    searchTerm || selectedCategory !== "All" || sortBy !== "newest";
 
   return (
     <>
@@ -151,17 +184,51 @@ const Blog = () => {
                 />
               </div>
 
-              {/* Categories */}
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
+              {/* Sort and Clear Filters */}
+              <div className="flex items-center gap-3">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="title">Title A-Z</option>
+                  <option value="category">Category A-Z</option>
+                </select>
+
+                {hasActiveFilters && (
                   <button
-                    key={category}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors"
+                    onClick={clearFilters}
+                    className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    {category}
+                    Clear Filters
                   </button>
-                ))}
+                )}
               </div>
+            </div>
+
+            {/* Categories */}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                    selectedCategory === category
+                      ? "bg-gray-900 text-white border-gray-900"
+                      : "text-gray-700 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            {/* Results Count */}
+            <div className="mt-4 text-sm text-gray-600">
+              {filteredPosts.length} of {blogPosts.length} articles
+              {hasActiveFilters && " (filtered)"}
             </div>
           </div>
         </div>
@@ -287,9 +354,27 @@ const Blog = () => {
 
             {filteredPosts.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">
-                  No articles found matching your search.
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Search className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {hasActiveFilters
+                    ? "No articles match your filters"
+                    : "No articles found"}
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  {hasActiveFilters
+                    ? "Try adjusting your search terms or category selection"
+                    : "We couldn't find any articles matching your criteria"}
                 </p>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
+                )}
               </div>
             )}
           </motion.div>
@@ -324,6 +409,9 @@ const Blog = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );
