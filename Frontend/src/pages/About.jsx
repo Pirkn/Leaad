@@ -139,7 +139,7 @@ function About() {
         </section>
 
         {/* Spacing between Hero and Mission */}
-        <div className="h-16"></div>
+        <div className="h-8"></div>
 
         {/* Mission Section */}
         <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gray-50 relative">
@@ -177,10 +177,10 @@ function About() {
 
             <motion.div
               className="grid md:grid-cols-3 gap-8"
-              initial={{ opacity: 0, y: 30, filter: "blur(1px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, filter: "blur(1px)" }}
+              whileInView={{ opacity: 1, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
               {[
                 {
@@ -205,24 +205,44 @@ function About() {
                 <motion.div
                   key={index}
                   className="bg-white rounded-xl border border-gray-200 p-8 text-center hover:shadow-lg transition-all duration-300"
-                  initial={{ opacity: 0, y: 20, filter: "blur(1px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  initial={{ opacity: 0, filter: "blur(1px)" }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)" }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{
                     duration: 0.6,
-                    delay: 0.4 + index * 0.1,
+                    delay: 0.2 + index * 0.1,
                     ease: "easeOut",
                   }}
                 >
                   <div className="w-16 h-16 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
                     <feature.icon className="w-8 h-8 text-gray-700" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4 tracking-tight">
+                  <motion.h3
+                    className="text-xl font-semibold text-gray-900 mb-4 tracking-tight"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.3 + index * 0.1,
+                      ease: "easeOut",
+                    }}
+                  >
                     {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  </motion.h3>
+                  <motion.p
+                    className="text-gray-600 leading-relaxed"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.4 + index * 0.1,
+                      ease: "easeOut",
+                    }}
+                  >
                     {feature.description}
-                  </p>
+                  </motion.p>
                 </motion.div>
               ))}
             </motion.div>
@@ -400,10 +420,10 @@ function About() {
 
             <motion.div
               className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-              initial={{ opacity: 0, y: 30, filter: "blur(1px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, filter: "blur(1px)" }}
+              whileInView={{ opacity: 1, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
               {[
                 {
@@ -434,24 +454,44 @@ function About() {
                 <motion.div
                   key={index}
                   className="bg-white rounded-xl border border-gray-200 p-6 text-center hover:shadow-lg transition-all duration-300"
-                  initial={{ opacity: 0, y: 20, filter: "blur(1px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  initial={{ opacity: 0, filter: "blur(1px)" }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)" }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{
                     duration: 0.6,
-                    delay: 0.4 + index * 0.1,
+                    delay: 0.2 + index * 0.1,
                     ease: "easeOut",
                   }}
                 >
                   <div className="w-14 h-14 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                     <value.icon className="w-7 h-7 text-gray-700" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 tracking-tight">
+                  <motion.h3
+                    className="text-lg font-semibold text-gray-900 mb-3 tracking-tight"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.3 + index * 0.1,
+                      ease: "easeOut",
+                    }}
+                  >
                     {value.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  </motion.h3>
+                  <motion.p
+                    className="text-gray-600 text-sm leading-relaxed"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.4 + index * 0.1,
+                      ease: "easeOut",
+                    }}
+                  >
                     {value.description}
-                  </p>
+                  </motion.p>
                 </motion.div>
               ))}
             </motion.div>
