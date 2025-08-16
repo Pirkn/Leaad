@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=22.11.0",
     "npm": ">=10.0.0"
   },
   "scripts": {
@@ -12,8 +12,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview --port $PORT --host 0.0.0.0",
-    "start": "vite preview --port $PORT --host 0.0.0.0",
-    "install": "npm install --legacy-peer-deps"
+    "start": "vite preview --port $PORT --host 0.0.0.0"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
