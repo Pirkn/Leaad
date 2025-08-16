@@ -66,6 +66,8 @@ class OnboardingLeadGeneration(MethodView):
         
         # Handle case where comments might be a JSON string
         if isinstance(comments, str):
+            print(comments)
+            open('comments.json', 'w').write(comments)
             try:
                 comments = json.loads(comments)
             except json.JSONDecodeError as e:

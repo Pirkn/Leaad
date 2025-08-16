@@ -376,14 +376,18 @@ class NextLeadSearch(MethodView):
         
         result = supabase.table('search_time').select('*').lt('search_time', current_time.isoformat()).order('search_time', desc=True).execute()
         
-        print(f"Current time: {result.data}")
+        print(f"User Data: {result.data}")
         past_search_times = result.data if result.data else []
 
         for past_search_time in past_search_times:
             try:
                 generate_leads(past_search_time['user_id'])
                 print(f"Generated leads for user {past_search_time['user_id']}")
-                supabase.table('search_time').update({'search_time': current_time.isoformat() + datetime.timedelta(hours=2).isoformat()}).eq('id', past_search_time['id']).execute()
+
+                current_time = datetime.datetime.now(datetime.timezone.utc)
+                next_search_time = current_time + datetime.timedelta(hours=2)
+
+                supabase.table('search_time').update({'search_time': next_search_time.isoformat()}).eq('id', past_search_time['id']).execute()
             except Exception as e:
                 print(f"Error generating leads: {e}")
 
