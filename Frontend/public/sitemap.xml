@@ -31,6 +31,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://leaad.co/contact</loc>
+    <lastmod>2025-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://leaad.co/privacy</loc>
+    <lastmod>2025-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://leaad.co/blog</loc>
     <lastmod>2025-08-16</lastmod>
     <changefreq>weekly</changefreq>
@@ -38,37 +50,37 @@
   </url>
   <url>
     <loc>https://leaad.co/blog/1</loc>
-    <lastmod>2024-11-26</lastmod>
+    <lastmod>2025-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://leaad.co/blog/2</loc>
-    <lastmod>2024-11-23</lastmod>
+    <lastmod>2025-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://leaad.co/blog/3</loc>
-    <lastmod>2024-11-21</lastmod>
+    <lastmod>2025-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://leaad.co/blog/4</loc>
-    <lastmod>2024-11-19</lastmod>
+    <lastmod>2025-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://leaad.co/blog/5</loc>
-    <lastmod>2024-11-16</lastmod>
+    <lastmod>2025-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://leaad.co/blog/6</loc>
-    <lastmod>2024-11-14</lastmod>
+    <lastmod>2025-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
