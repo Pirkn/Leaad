@@ -464,7 +464,7 @@ function About() {
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-gray-50 to-gray-900 pointer-events-none"></div>
 
           {/* Smoother gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 via-gray-700 to-black"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black"></div>
 
           {/* Blurred overlay for smooth effect */}
           <div className="absolute inset-0 backdrop-blur-sm bg-black/5"></div>

@@ -44,7 +44,7 @@ import { useAuth } from "../contexts/AuthContext";
 import logoImage from "/src/assets/logo.png";
 import heroBackgroundImage from "/src/assets/herobg.png";
 import backgroundTextureImage from "/src/assets/background.png";
-import macbookImage from "/src/assets/macbook-air-medium.webp";
+import macbookImage from "/src/assets/macbook.webp";
 import postsVideo from "/src/assets/posts.webm";
 import templatesVideo from "/src/assets/templates.webm";
 import karmaVideo from "/src/assets/karma.webm";
@@ -320,7 +320,7 @@ export default function HomePage() {
               <motion.img
                 src={macbookImage}
                 alt="Leaad AI Platform Demo"
-                className="relative z-10 mx-auto max-w-full h-auto"
+                className="relative z-10 mx-auto mt-4 max-w-full h-auto"
                 style={{ maxHeight: "1000px" }}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
@@ -555,7 +555,7 @@ export default function HomePage() {
             </motion.div>
 
             <motion.div
-              className="space-y-20 sm:space-y-32 relative"
+              className="space-y-12 sm:space-y-16 relative"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -605,7 +605,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Content */}
-                    <div className="ml-24 pl-8  transition-colors duration-300">
+                    <div className="ml-24 pl-8 transition-colors duration-300">
                       <div className="mb-4">
                         <h3 className="text-2xl font-semibold text-gray-900 mb-3 tracking-tighter">
                           {step.title}
@@ -634,6 +634,11 @@ export default function HomePage() {
 
                   {/* Subtle background highlight on hover */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl -z-10"></div>
+
+                  {/* Simple horizontal divider between steps (except for the last step) */}
+                  {index < 2 && (
+                    <div className="w-full h-px bg-gray-200 mt-8 sm:mt-10"></div>
+                  )}
                 </motion.div>
               ))}
             </motion.div>
