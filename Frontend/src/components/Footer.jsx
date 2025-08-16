@@ -111,19 +111,28 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-white text-base">Support</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Help Center
-                </a>
+                <Link
+                  to="/contact"
+                  className="hover:text-white transition-colors"
+                >
+                  Help
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link
+                  to="/contact"
+                  className="hover:text-white transition-colors"
+                >
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link
+                  to="/privacy"
+                  className="hover:text-white transition-colors"
+                >
                   Privacy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

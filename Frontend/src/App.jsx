@@ -24,6 +24,8 @@ import Onboarding from "./pages/Onboarding";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
@@ -65,6 +67,8 @@ function App() {
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:id" element={<BlogPost />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/privacy" element={<Privacy />} />
 
                 {/* Protected routes that require onboarding completion */}
                 <Route
