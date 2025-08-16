@@ -258,7 +258,7 @@ function Sidebar() {
         initial={{ x: -256, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="lg:block w-64 bg-white border-r border-gray-200 h-screen flex flex-col"
+        className="hidden lg:block w-64 bg-white border-r border-gray-200 h-screen"
         style={{ borderColor: "#e5e7eb" }}
       >
         <div className="h-full flex flex-col">

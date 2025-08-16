@@ -40,6 +40,8 @@ function Posts() {
   const {
     newlyGeneratedPosts,
     addNewlyGeneratedPosts,
+    removeNewlyGeneratedPost,
+    updateNewlyGeneratedPost,
     isGeneratingPosts,
     setGeneratingPosts,
   } = usePostsContext();
@@ -58,8 +60,9 @@ function Posts() {
   const [saveFilter, setSaveFilter] = useState("all"); // "all" or "saved"
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
-  // Save functionality states
+  // Save functionality states - track both saved and unsaved posts optimistically
   const [optimisticSaves, setOptimisticSaves] = useState(new Set());
+  const [optimisticUnsaves, setOptimisticUnsaves] = useState(new Set());
 
   const products = productsResponse?.products || [];
   const product = products[0]; // Assuming single product setup
@@ -78,36 +81,40 @@ function Posts() {
         product_id: product.id,
       });
 
-      // Parse the response to extract the generated posts
+      // Extract the generated posts from the response
       if (result && result.response) {
         try {
-          const parsed = JSON.parse(result.response);
+          let parsed;
+
+          // Check if result.response is already an object or needs to be parsed
+          if (typeof result.response === "string") {
+            parsed = JSON.parse(result.response);
+          } else {
+            parsed = result.response;
+          }
+
           let postsList = [];
 
-          if (typeof parsed === "object" && parsed.response) {
-            postsList = Array.isArray(parsed.response) ? parsed.response : [];
+          // The generate-reddit-post endpoint returns { "response": [...] }
+          // while get-reddit-posts returns [...] directly
+          if (parsed && parsed.response && Array.isArray(parsed.response)) {
+            postsList = parsed.response;
           } else if (Array.isArray(parsed)) {
             postsList = parsed;
           }
 
           // Transform the posts to match the expected format
-          const transformedPosts = postsList.map((post, index) => {
-            // Clean up subreddit name - remove "r/" prefix if it exists
-            let subredditName = post["r/subreddit"] || post.subreddit || "";
-            if (subredditName.startsWith("r/")) {
-              subredditName = subredditName.substring(2);
-            }
+          const transformedPosts = postsList.map((post, index) => ({
+            id: post.id || `new-${Date.now()}-${index}`,
+            title: post.title || "",
+            description: post.description || "",
+            subreddit: post.subreddit || "",
+            created_at: post.created_at || new Date().toISOString(),
+            isNew: true,
+            source: "generated",
+          }));
 
-            return {
-              id: `new-${Date.now()}-${index}`,
-              title: post.Title || post.title || "",
-              description: post.Post || post.description || "",
-              subreddit: subredditName,
-              created_at: new Date().toISOString(),
-              isNew: true,
-            };
-          });
-
+          // Add to newly generated posts context - this will make them immediately visible
           addNewlyGeneratedPosts(transformedPosts);
         } catch (parseError) {
           console.error("Failed to parse generated posts:", parseError);
@@ -120,7 +127,7 @@ function Posts() {
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
     } catch (error) {
-      // Error handled by mutation
+      console.error("Error generating posts:", error);
     } finally {
       // Clear persistent loading state
       setGeneratingPosts(false);
@@ -178,6 +185,17 @@ function Posts() {
     // Optimistically update the UI
     setOptimisticSaves((prev) => new Set([...prev, postId]));
 
+    // Clear any optimistic unsave for this post
+    setOptimisticUnsaves((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(postId);
+      return newSet;
+    });
+
+    // Mark the post as saved in the newly generated posts context
+    // This ensures it shows up in the saved filter
+    updateNewlyGeneratedPost(postId, { read: true });
+
     // Show success toast immediately
     toast("Post saved successfully!", {
       duration: 2000,
@@ -194,6 +212,8 @@ function Posts() {
         newSet.delete(postId);
         return newSet;
       });
+      // Also revert the context update
+      updateNewlyGeneratedPost(postId, { read: false });
       // Show error toast
       toast("Failed to save post. Please try again.", {
         duration: 3000,
@@ -203,12 +223,11 @@ function Posts() {
   };
 
   const handleUnsavePost = async (postId) => {
-    // Optimistically update the UI
-    setOptimisticSaves((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(postId);
-      return newSet;
-    });
+    // Track that this post was optimistically unsaved
+    setOptimisticUnsaves((prev) => new Set([...prev, postId]));
+
+    // Also update newly generated posts if this post exists there
+    updateNewlyGeneratedPost(postId, { read: false });
 
     // Show success toast immediately
     toast("Post unsaved!", {
@@ -221,7 +240,13 @@ function Posts() {
     } catch (error) {
       console.error("Failed to unsave post:", error);
       // Revert optimistic update on error
-      setOptimisticSaves((prev) => new Set([...prev, postId]));
+      setOptimisticUnsaves((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(postId);
+        return newSet;
+      });
+      // Also revert the context update
+      updateNewlyGeneratedPost(postId, { read: true });
       // Show error toast
       toast("Failed to unsave post. Please try again.", {
         duration: 3000,
@@ -231,7 +256,23 @@ function Posts() {
   };
 
   // Combine existing posts with newly generated posts
-  const allPosts = [...(posts || []), ...newlyGeneratedPosts];
+  // Ensure newly generated posts are always shown first and don't get lost
+  const allPosts = [
+    ...newlyGeneratedPosts,
+    ...(posts || []).filter(
+      (existingPost) =>
+        // Don't show existing posts that have the same ID as newly generated ones
+        !newlyGeneratedPosts.some(
+          (newPost) => newPost.id === existingPost.id
+        ) &&
+        // Also filter out any posts that might have the same content (extra safety)
+        !newlyGeneratedPosts.some(
+          (newPost) =>
+            newPost.title === existingPost.title &&
+            newPost.description === existingPost.description
+        )
+    ),
+  ];
 
   // Filter and sort posts
   const filteredPosts = allPosts.filter((post) => {
@@ -265,10 +306,19 @@ function Posts() {
     // Save filter
     if (saveFilter !== "all") {
       const isOptimisticallySaved = optimisticSaves.has(post.id);
-      const effectiveSaveStatus = post.read || isOptimisticallySaved;
+      const isOptimisticallyUnsaved = optimisticUnsaves.has(post.id);
 
-      if (saveFilter === "saved" && !effectiveSaveStatus) {
-        return false;
+      // If post was optimistically unsaved, treat it as unsaved regardless of original status
+      if (isOptimisticallyUnsaved) {
+        if (saveFilter === "saved") {
+          return false;
+        }
+      } else {
+        // Use optimistic save status or original read status
+        const effectiveSaveStatus = post.read || isOptimisticallySaved;
+        if (saveFilter === "saved" && !effectiveSaveStatus) {
+          return false;
+        }
       }
     }
 
@@ -362,6 +412,16 @@ function Posts() {
     sortBy: "newest",
   });
 
+  const [lastNewlyGeneratedCount, setLastNewlyGeneratedCount] = useState(0);
+
+  // Monitor newlyGeneratedPosts changes to trigger animation
+  useEffect(() => {
+    if (newlyGeneratedPosts.length > lastNewlyGeneratedCount) {
+      // New posts were added, trigger animation
+      setLastNewlyGeneratedCount(newlyGeneratedPosts.length);
+    }
+  }, [newlyGeneratedPosts, lastNewlyGeneratedCount]);
+
   const shouldAnimate = !isGeneratingPosts;
 
   // Check if filters actually changed
@@ -373,6 +433,9 @@ function Posts() {
 
   // Always animate when switching between Saved/All views for better UX
   const shouldAnimateSaveFilter = saveFilter !== previousFilterState.saveFilter;
+
+  // Check if new posts were added
+  const newPostsAdded = newlyGeneratedPosts.length > lastNewlyGeneratedCount;
 
   return (
     <motion.div
@@ -701,14 +764,18 @@ function Posts() {
                     key={post.id}
                     initial={
                       shouldAnimate &&
-                      (filtersChanged || shouldAnimateSaveFilter)
+                      (filtersChanged ||
+                        shouldAnimateSaveFilter ||
+                        newPostsAdded)
                         ? { opacity: 0, y: 20 }
                         : false
                     }
                     animate={{ opacity: 1, y: 0 }}
                     transition={
                       shouldAnimate &&
-                      (filtersChanged || shouldAnimateSaveFilter)
+                      (filtersChanged ||
+                        shouldAnimateSaveFilter ||
+                        newPostsAdded)
                         ? { duration: 0.2, delay: 0.3 + index * 0.05 }
                         : { duration: 0 }
                     }
@@ -756,7 +823,12 @@ function Posts() {
                         const isOptimisticallySaved = optimisticSaves.has(
                           post.id
                         );
-                        const isSaved = post.read || isOptimisticallySaved;
+                        const isOptimisticallyUnsaved = optimisticUnsaves.has(
+                          post.id
+                        );
+                        const isSaved =
+                          (post.read || isOptimisticallySaved) &&
+                          !isOptimisticallyUnsaved;
 
                         return (
                           <Button

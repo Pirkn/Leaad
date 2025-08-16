@@ -382,26 +382,6 @@ function Onboarding() {
             <span className="hidden sm:inline">Sign Out</span>
             <span className="sm:hidden">Sign Out</span>
           </Button>
-
-          <Button
-            onClick={() => {
-              // Navigate to dashboard immediately (optimistically)
-              navigate("/dashboard");
-
-              // Call the API in the background (don't await)
-              markOnboardingComplete()
-                .then(() => console.log("Onboarding marked complete"))
-                .catch((error) =>
-                  console.error("Failed to mark onboarding complete:", error)
-                );
-            }}
-            variant="ghost"
-            size="sm"
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs sm:px-3"
-          >
-            <span className="hidden sm:inline">Skip to Dashboard</span>
-            <span className="sm:hidden">Skip to Dashboard</span>
-          </Button>
         </div>
       </div>
 

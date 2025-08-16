@@ -23,6 +23,7 @@ import {
   Activity,
   Sparkles,
   Flame,
+  Info,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
@@ -710,7 +711,7 @@ function Dashboard() {
           >
             <div className="flex items-start space-x-3">
               <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Activity className="w-5 h-5 text-blue-600" />
+                <Info className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-blue-900 mb-1">
