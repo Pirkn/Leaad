@@ -44,7 +44,7 @@ import { useAuth } from "../contexts/AuthContext";
 import logoImage from "/src/assets/logo.png";
 import heroBackgroundImage from "/src/assets/herobg.png";
 import backgroundTextureImage from "/src/assets/background.png";
-import macbookImage from "/src/assets/macbook.webp";
+import macbookImage from "/src/assets/macbook-air-medium.webp";
 import postsVideo from "/src/assets/posts.webm";
 import templatesVideo from "/src/assets/templates.webm";
 import karmaVideo from "/src/assets/karma.webm";
@@ -320,7 +320,7 @@ export default function HomePage() {
               <motion.img
                 src={macbookImage}
                 alt="Leaad AI Platform Demo"
-                className="relative z-10 mx-auto mt-4 max-w-full h-auto"
+                className="relative z-10 mx-auto max-w-full h-auto"
                 style={{ maxHeight: "1000px" }}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
@@ -958,7 +958,33 @@ export default function HomePage() {
                 marketing
               </motion.p>
             </motion.div>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              onValueChange={(value) => {
+                if (value) {
+                  // Small delay to allow accordion to expand first
+                  setTimeout(() => {
+                    const element =
+                      document.querySelector(`[data-state="open"]`);
+                    if (element) {
+                      // Get the element's position relative to viewport
+                      const rect = element.getBoundingClientRect();
+                      const isAboveCenter = rect.top < window.innerHeight / 2;
+
+                      // If element is above center, scroll to show it at top
+                      // If element is below center, scroll to show it at bottom
+                      element.scrollIntoView({
+                        behavior: "smooth",
+                        block: isAboveCenter ? "start" : "end",
+                        inline: "nearest",
+                      });
+                    }
+                  }, 150);
+                }
+              }}
+            >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
