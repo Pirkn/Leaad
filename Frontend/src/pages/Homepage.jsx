@@ -725,11 +725,10 @@ export default function HomePage() {
 
                 <ul className="space-y-4 flex-grow">
                   {[
-                    "5 product analyses",
-                    "15 leads per month",
-                    "15 post generations",
+                    "1 product analysis",
+                    "10 leads per month",
+                    "10 post generations",
                     "Basic support",
-                    "Community access",
                   ].map((feature, index) => (
                     <motion.li
                       key={index}
@@ -958,33 +957,7 @@ export default function HomePage() {
                 marketing
               </motion.p>
             </motion.div>
-            <Accordion
-              type="single"
-              collapsible
-              className="w-full"
-              onValueChange={(value) => {
-                if (value) {
-                  // Small delay to allow accordion to expand first
-                  setTimeout(() => {
-                    const element =
-                      document.querySelector(`[data-state="open"]`);
-                    if (element) {
-                      // Get the element's position relative to viewport
-                      const rect = element.getBoundingClientRect();
-                      const isAboveCenter = rect.top < window.innerHeight / 2;
-
-                      // If element is above center, scroll to show it at top
-                      // If element is below center, scroll to show it at bottom
-                      element.scrollIntoView({
-                        behavior: "smooth",
-                        block: isAboveCenter ? "start" : "end",
-                        inline: "nearest",
-                      });
-                    }
-                  }, 150);
-                }
-              }}
-            >
+            <Accordion type="single" collapsible className="w-full">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
