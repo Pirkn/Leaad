@@ -1,10 +1,5 @@
 import { authService } from "./supabase";
 
-<<<<<<< HEAD
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-=======
->>>>>>> origin/main
 class ApiService {
   constructor() {
     // Get config dynamically to avoid circular dependency issues
