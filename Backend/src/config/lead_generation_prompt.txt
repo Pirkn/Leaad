@@ -36,9 +36,9 @@ QUALITY STANDARDS:
 - Comments must be written as natural paragraphs.
 
 RETURN JSON FORMAT:
-{
+{{
   "comments": [
-    {"[post_id_1]": "Your crafted comment for this post_id_1"},
-    {"[post_id_2]": "Your crafted comment for this post_id_2"}
+    {{"[post_id_1]": "Your crafted comment for this post_id_1"}},
+    {{"[post_id_2]": "Your crafted comment for this post_id_2"}}
   ]
-}
+}}
