@@ -1,10 +1,19 @@
 import { authService } from "./supabase";
 
+<<<<<<< HEAD
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
+=======
+>>>>>>> origin/main
 class ApiService {
   constructor() {
-    this.baseURL = API_BASE_URL;
+    // Get config dynamically to avoid circular dependency issues
+    this.baseURL = this.getBaseUrl();
+  }
+
+  getBaseUrl() {
+    // Fallback to environment variable directly to avoid circular dependency
+    return import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   }
 
   // Get current session token
@@ -20,6 +29,11 @@ class ApiService {
 
   // Generic request method
   async request(endpoint, options = {}) {
+    // Enforce HTTPS in production
+    if (import.meta.env.PROD && !this.baseURL.startsWith("https://")) {
+      throw new Error("HTTPS is required in production environment");
+    }
+
     const url = `${this.baseURL}${endpoint}`;
 
     // Get authentication token
@@ -35,7 +49,19 @@ class ApiService {
     };
 
     try {
-      const response = await fetch(url, config);
+      // Add timeout to the request
+      const controller = new AbortController();
+      const timeoutId = setTimeout(
+        () => controller.abort(),
+        import.meta.env.VITE_API_TIMEOUT || 30000
+      );
+
+      const response = await fetch(url, {
+        ...config,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         // Handle authentication errors
@@ -61,6 +87,10 @@ class ApiService {
 
       return await response.json();
     } catch (error) {
+      if (error.name === "AbortError") {
+        console.error("API request timed out");
+        throw new Error("Request timed out. Please try again.");
+      }
       console.error("API request failed:", error);
       throw error;
     }

@@ -169,6 +169,48 @@
   line-height: 1.6;
 }
 
+/* Blog post content styles */
+.blog-content {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.blog-content h2 {
+  @apply text-2xl font-bold text-gray-900 mt-8 mb-4 tracking-tight;
+}
+
+.blog-content h3 {
+  @apply text-xl font-semibold text-gray-900 mt-6 mb-3 tracking-tight;
+}
+
+.blog-content p {
+  @apply mb-4 text-gray-700 leading-relaxed;
+}
+
+.blog-content ul,
+.blog-content ol {
+  @apply mb-4 pl-6;
+}
+
+.blog-content li {
+  @apply mb-2 text-gray-700;
+}
+
+.blog-content strong {
+  @apply font-semibold text-gray-900;
+}
+
+.blog-content em {
+  @apply italic text-gray-700;
+}
+
+.blog-content a {
+  @apply text-blue-600 hover:text-blue-800 underline;
+}
+
+.blog-content blockquote {
+  @apply border-l-4 border-gray-200 pl-4 italic text-gray-600 my-4;
+}
+
 /* Line clamp utilities for text truncation */
 .line-clamp-2 {
   display: -webkit-box;

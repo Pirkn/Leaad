@@ -47,7 +47,12 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 - Acknowledge that different tools work for different people/situations
 - Show you understand the landscape, not just pushing one solution
 
-## Output Format:
+## CRITICAL OUTPUT REQUIREMENTS:
+
+**You MUST respond with EXACTLY 3 posts in the following JSON format. NO EXCEPTIONS.**
+
+**IMPORTANT: Your response must be valid JSON only. Do not include any markdown formatting, explanations, or additional text outside the JSON structure.**
+
 ```json
 [
 {
@@ -56,7 +61,7 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 "Post": "<Body focusing on valuable insight/experience with casual product mentions woven in naturally. Start directly with your main point - NO greetings like 'Hey everyone' or 'Hello'>",
 "Reasoning": "<Brief explanation of why this subreddit and approach would work>"
 }, 
-(total 3 different approaches/subreddits)
+(return minimum 2 different approaches/subreddits)
 ]
 ```
 
@@ -67,5 +72,14 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 - Helpful comparison: "If you're choosing between X, Y, and Z..."
 - Trend analysis: "We've crossed a threshold where..."
 - Community insight: "For anyone struggling with..."
+
+## FINAL VALIDATION:
+Before responding, ensure:
+- [ ] Minimum 2 posts are generated
+- [ ] All subreddit names are real and active
+- [ ] Each post provides genuine value beyond product promotion
+- [ ] Product mentions are subtle and contextual
+- [ ] No greetings at the start of posts
+- [ ] Response is valid JSON format
 
 Remember: The best Reddit marketing doesn't feel like marketing at all - it feels like getting valuable advice from someone who genuinely knows what they're talking about.

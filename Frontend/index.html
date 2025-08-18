@@ -62,6 +62,19 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://leaad.co/" />
 
+    <!-- Content Security Policy - Secure with inline styles allowed -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' https://www.google-analytics.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https:;
+        connect-src 'self' http://localhost:5000 https://api.leaad.co https://eagkbdpnrxwxgyhxrrch.supabase.co;
+        "
+    />
+
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

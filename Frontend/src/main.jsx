@@ -5,6 +5,19 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import App from "./App.jsx";
 import "./index.css";
 import { HelmetProvider } from "react-helmet-async";
+// Simple environment validation
+const validateEnv = () => {
+  const required = ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"];
+  const missing = required.filter((key) => !import.meta.env[key]);
+
+  if (missing.length > 0) {
+    console.warn("Missing required environment variables:", missing);
+  }
+
+  return missing.length === 0;
+};
+
+validateEnv();
 
 // Create a client
 const queryClient = new QueryClient({
