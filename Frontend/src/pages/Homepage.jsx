@@ -196,7 +196,7 @@ export default function HomePage() {
               src={heroBackgroundImage}
               alt=""
               className="w-full h-full object-cover"
-              fetchpriority="high"
+              fetchPriority="high"
               decoding="async"
               width="1920"
               height="1080"
@@ -301,6 +301,10 @@ export default function HomePage() {
               src={backgroundTextureImage}
               alt=""
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              width="1920"
+              height="1080"
               style={{ minHeight: "600px" }}
             />
           </div>
@@ -326,6 +330,9 @@ export default function HomePage() {
                 alt="Leaad AI Platform Demo"
                 className="relative z-10 mx-auto max-w-full h-auto"
                 style={{ maxHeight: "1000px" }}
+                decoding="async"
+                width="1600"
+                height="1000"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               />
@@ -457,7 +464,10 @@ export default function HomePage() {
                   >
                     {index === 0 ? (
                       // Posts feature video for the first feature
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-96 flex items-center justify-center overflow-hidden">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 w-full flex items-center justify-center overflow-hidden"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <video
                           autoPlay
                           loop
@@ -472,7 +482,10 @@ export default function HomePage() {
                       </motion.div>
                     ) : index === 1 ? (
                       // Viral Templates feature video for the second feature
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-96 flex items-center justify-center overflow-hidden">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 w-full flex items-center justify-center overflow-hidden"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <video
                           autoPlay
                           loop
@@ -487,7 +500,10 @@ export default function HomePage() {
                       </motion.div>
                     ) : index === 2 ? (
                       // Karma Builder feature video for the third feature
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-96 flex items-center justify-center overflow-hidden">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 w-full flex items-center justify-center overflow-hidden"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <video
                           autoPlay
                           loop
@@ -502,7 +518,10 @@ export default function HomePage() {
                       </motion.div>
                     ) : (
                       // Regular demo placeholder for other features
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 h-96 flex items-center justify-center">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 w-full flex items-center justify-center"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <div className="text-center">
                           <div className="w-16 h-16 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <feature.icon className="w-8 h-8 text-orange-500" />
