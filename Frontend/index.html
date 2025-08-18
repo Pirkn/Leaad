@@ -80,6 +80,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://www.google-analytics.com" />
 
+    <!-- Preload LCP hero image early (Vite rewrites /src asset to hashed path in prod) -->
+    <link
+      rel="preload"
+      as="image"
+      href="/src/assets/herobg.webp"
+      fetchpriority="high"
+    />
+
     <!-- Google Fonts - Inter and Poppins -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
