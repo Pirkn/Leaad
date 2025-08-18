@@ -5,6 +5,7 @@ import {
   useMarkLeadAsRead,
   useMarkLeadAsUnread,
   useProducts,
+  useGenerateLeads,
 } from "../hooks/useApi";
 import { useLeadsContext } from "../contexts/LeadsContext";
 import {
@@ -25,7 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useSearchParams } from "react-router-dom";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 function Leads() {
   const [searchParams] = useSearchParams();
@@ -44,9 +45,16 @@ function Leads() {
   // API hooks
   const { data: leads, isLoading, error } = useLeads();
   const { data: productsResponse } = useProducts();
+  const generateLeadsMutation = useGenerateLeads();
   const markAsReadMutation = useMarkLeadAsRead();
   const markAsUnreadMutation = useMarkLeadAsUnread();
-  const { newlyGeneratedLeads } = useLeadsContext();
+  const {
+    newlyGeneratedLeads,
+    isLeadNew,
+    acknowledgeNewLeads,
+    simulateNewLead,
+    addNewlyGeneratedLeads,
+  } = useLeadsContext();
 
   const products = productsResponse?.products || [];
   const product = products[0]; // Assuming single product setup
@@ -208,8 +216,25 @@ function Leads() {
     }
   };
 
-  // Combine existing leads with newly generated leads
-  const allLeads = [...(leads || []), ...newlyGeneratedLeads];
+  // Combine existing leads with newly generated leads (dedupe by id, new first)
+  const allLeads = (() => {
+    const combined = [...(newlyGeneratedLeads || []), ...(leads || [])];
+    const seen = new Set();
+    const unique = [];
+    for (const l of combined) {
+      const id = l?.id;
+      if (id == null || seen.has(id)) continue;
+      seen.add(id);
+      unique.push(l);
+    }
+    return unique;
+  })();
+
+  // Acknowledge new leads when entering this page
+  useEffect(() => {
+    acknowledgeNewLeads();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filteredLeads =
     allLeads.filter((lead) => {
@@ -579,6 +604,54 @@ function Leads() {
                     </div>
                   )}
                 </div>
+
+                {/* Dev-only: simulate a new lead */}
+                {import.meta.env.DEV && (
+                  <Button
+                    onClick={() => simulateNewLead()}
+                    variant="outline"
+                    className="ml-2 whitespace-nowrap"
+                    title="Simulate an incoming lead (dev only)"
+                  >
+                    Simulate New Lead
+                  </Button>
+                )}
+
+                {/* Dev-only: trigger backend generation */}
+                {import.meta.env.DEV && (
+                  <Button
+                    onClick={async () => {
+                      if (!product?.id) {
+                        toast("No product found to generate leads for.");
+                        return;
+                      }
+                      try {
+                        toast("Generating leads...", { duration: 1200 });
+                        const generated =
+                          await generateLeadsMutation.mutateAsync(product.id);
+                        if (Array.isArray(generated) && generated.length > 0) {
+                          addNewlyGeneratedLeads(generated);
+                          toast(`${generated.length} leads generated!`, {
+                            duration: 2000,
+                          });
+                        } else {
+                          toast("No leads returned.");
+                        }
+                      } catch (e) {
+                        console.error(e);
+                        toast("Failed to generate leads.");
+                      }
+                    }}
+                    variant="outline"
+                    className="ml-2 whitespace-nowrap"
+                    disabled={generateLeadsMutation.isPending}
+                    title="Call backend /lead-generation (dev only)"
+                  >
+                    {generateLeadsMutation.isPending
+                      ? "Generating..."
+                      : "Generate Leads"}
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
@@ -605,6 +678,11 @@ function Leads() {
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
                         {lead.title || "Lead"}
+                        {isLeadNew(lead.id) && (
+                          <span className="ml-2 inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-[10px] font-medium min-[700px]:hidden">
+                            New
+                          </span>
+                        )}
                       </h3>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center space-x-1 min-[700px]:flex max-[699px]:hidden">
@@ -629,6 +707,11 @@ function Leads() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 min-[700px]:flex max-[699px]:hidden">
+                      {isLeadNew(lead.id) && (
+                        <span className="inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium mr-1">
+                          New
+                        </span>
+                      )}
                       <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium">
                         r/{lead.subreddit}
                       </span>
@@ -806,26 +889,7 @@ function Leads() {
         </motion.div>
       </div>
 
-      {/* Sonner Toaster */}
-      <Toaster
-        position="bottom-right"
-        theme="light"
-        toastOptions={{
-          classNames: {
-            toast:
-              "bg-white text-gray-900 border border-gray-200 shadow-lg rounded-lg px-3 py-2 max-w-xs",
-            content: "text-gray-900 text-sm",
-            title: "text-gray-900 text-sm",
-            description: "text-gray-700 text-xs",
-            icon: "hidden",
-            successIcon: "hidden",
-            infoIcon: "hidden",
-            warningIcon: "hidden",
-            errorIcon: "hidden",
-            loadingIcon: "hidden",
-          },
-        }}
-      />
+      {/* Toaster is rendered at app root */}
     </motion.div>
   );
 }

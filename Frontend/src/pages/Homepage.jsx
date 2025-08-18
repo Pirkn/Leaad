@@ -41,9 +41,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 // Import all images and videos for immediate loading
-import logoImage from "/src/assets/logo.png";
-import heroBackgroundImage from "/src/assets/herobg.png";
-import backgroundTextureImage from "/src/assets/background.png";
+import heroBackgroundImage from "/src/assets/herobg.webp";
+import backgroundTextureImage from "/src/assets/background.webp";
 import macbookImage from "/src/assets/macbook-air-medium.webp";
 import postsVideo from "/src/assets/posts.webm";
 import templatesVideo from "/src/assets/templates.webm";
@@ -171,6 +170,7 @@ export default function HomePage() {
         description="Generate qualified leads from Reddit with AI. Find people actively seeking solutions like yours, get personalized comments, and convert Reddit discussions into customers. Perfect for SaaS founders and startups."
         keywords="reddit lead generation, SaaS marketing, startup marketing, AI lead generation, reddit marketing, B2B leads, product marketing, customer acquisition, reddit automation, lead finding"
         url="https://leaad.co"
+        preloadImages={[heroBackgroundImage]}
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
@@ -196,6 +196,10 @@ export default function HomePage() {
               src={heroBackgroundImage}
               alt=""
               className="w-full h-full object-cover"
+              fetchPriority="high"
+              decoding="async"
+              width="1920"
+              height="1080"
             />
           </div>
 
@@ -297,6 +301,10 @@ export default function HomePage() {
               src={backgroundTextureImage}
               alt=""
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              width="1920"
+              height="1080"
               style={{ minHeight: "600px" }}
             />
           </div>
@@ -322,6 +330,9 @@ export default function HomePage() {
                 alt="Leaad AI Platform Demo"
                 className="relative z-10 mx-auto max-w-full h-auto"
                 style={{ maxHeight: "1000px" }}
+                decoding="async"
+                width="1600"
+                height="1000"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               />
@@ -453,12 +464,16 @@ export default function HomePage() {
                   >
                     {index === 0 ? (
                       // Posts feature video for the first feature
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-96 flex items-center justify-center overflow-hidden">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 w-full flex items-center justify-center overflow-hidden"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <video
                           autoPlay
                           loop
                           muted
                           playsInline
+                          preload="metadata"
                           className="w-full h-full object-cover rounded-lg"
                         >
                           <source src={postsVideo} type="video/webm" />
@@ -467,12 +482,16 @@ export default function HomePage() {
                       </motion.div>
                     ) : index === 1 ? (
                       // Viral Templates feature video for the second feature
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-96 flex items-center justify-center overflow-hidden">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 w-full flex items-center justify-center overflow-hidden"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <video
                           autoPlay
                           loop
                           muted
                           playsInline
+                          preload="metadata"
                           className="w-full h-full object-cover rounded-lg"
                         >
                           <source src={templatesVideo} type="video/webm" />
@@ -481,12 +500,16 @@ export default function HomePage() {
                       </motion.div>
                     ) : index === 2 ? (
                       // Karma Builder feature video for the third feature
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 h-96 flex items-center justify-center overflow-hidden">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-4 w-full flex items-center justify-center overflow-hidden"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <video
                           autoPlay
                           loop
                           muted
                           playsInline
+                          preload="metadata"
                           className="w-full h-full object-cover rounded-lg"
                         >
                           <source src={karmaVideo} type="video/webm" />
@@ -495,7 +518,10 @@ export default function HomePage() {
                       </motion.div>
                     ) : (
                       // Regular demo placeholder for other features
-                      <motion.div className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 h-96 flex items-center justify-center">
+                      <motion.div
+                        className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 w-full flex items-center justify-center"
+                        style={{ aspectRatio: "16 / 9" }}
+                      >
                         <div className="text-center">
                           <div className="w-16 h-16 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <feature.icon className="w-8 h-8 text-orange-500" />

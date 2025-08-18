@@ -46,10 +46,12 @@ class ApiService {
     try {
       // Add timeout to the request
       const controller = new AbortController();
-      const timeoutId = setTimeout(
-        () => controller.abort(),
-        import.meta.env.VITE_API_TIMEOUT || 30000
-      );
+      const perRequestTimeout = options.timeoutMs;
+      const timeoutMs =
+        typeof perRequestTimeout === "number"
+          ? perRequestTimeout
+          : import.meta.env.VITE_API_TIMEOUT || 30000;
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const response = await fetch(url, {
         ...config,
@@ -111,6 +113,8 @@ class ApiService {
     return this.request("/onboarding-lead-generation", {
       method: "POST",
       body: JSON.stringify(productData),
+      // Onboarding generation can be lengthy
+      timeoutMs: 300000,
     });
   }
 
@@ -190,6 +194,8 @@ class ApiService {
       body: JSON.stringify({
         product_id: productId,
       }),
+      // Lead gen can take longer due to scraping + LLM
+      timeoutMs: 300000,
     });
   }
 
