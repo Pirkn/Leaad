@@ -205,16 +205,19 @@ export default function HomePage() {
         <section className="pt-20 pb-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
           {/* Background Texture for Hero Section */}
           <div className="absolute inset-0 w-full h-full">
-            <img
-              src={heroBackgroundImage}
-              alt=""
-              className="w-full h-full object-cover"
-              fetchPriority="high"
-              decoding="async"
-              width="1920"
-              height="1080"
-              sizes="100vw"
-            />
+            <picture>
+              <source srcSet={heroBackgroundImage} type="image/webp" />
+              <img
+                src={heroBackgroundImage}
+                alt=""
+                className="w-full h-full object-cover"
+                fetchPriority="high"
+                decoding="async"
+                width="1920"
+                height="1080"
+                sizes="100vw"
+              />
+            </picture>
           </div>
 
           <div className="relative z-10">
