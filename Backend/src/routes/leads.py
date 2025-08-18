@@ -153,17 +153,14 @@ class GetLeads(MethodView):
 
         user_id = g.current_user['id']
 
-        result = supabase.table('leads').select('*').eq('uid', user_id).order('created_at', desc=True).execute()
-        leads = result.data
-
-        # current_time = datetime.datetime.now(datetime.timezone.utc)
+        current_time = datetime.datetime.now(datetime.timezone.utc)
         
-        # # Only return leads that have reached their scheduled time (drip-feed system)
-        # result = supabase.table('leads').select('id, selftext, title, url, score, read, num_comments, author, subreddit, date, comment').eq('uid', user_id).lte(
-        #     'scheduled_at', current_time.isoformat()
-        # ).order('scheduled_at', desc=True).execute()
+        # Only return leads that have reached their scheduled time (drip-feed system)
+        result = supabase.table('leads').select('id, selftext, title, url, score, read, num_comments, author, subreddit, date, comment').eq('uid', user_id).lte(
+            'scheduled_at', current_time.isoformat()
+        ).order('scheduled_at', desc=True).execute()
 
-        # leads = result.data
+        leads = result.data
 
         return jsonify(leads)
     
@@ -393,3 +390,67 @@ class NextLeadSearch(MethodView):
 
         
         return jsonify({'message': 'Leads generated successfully'})
+
+
+@blp.route('/move-leads')
+class MoveLeads(MethodView):
+    def get(self):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': 'Missing or invalid Authorization header'}), 401
+
+        token = auth_header.split(' ')[1]
+        cron_token = os.getenv('CRON_TOKEN')
+        if token != cron_token:
+            return jsonify({'error': 'Invalid token'}), 401
+
+        supabase_url = current_app.config['SUPABASE_URL']
+        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+        supabase: Client = create_client(supabase_url, supabase_key)
+
+        now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+        # Get all due and unread leads
+        due_res = supabase.table('leads') \
+            .select('*') \
+            .lte('scheduled_at', now_iso) \
+            .eq('read', False) \
+            .execute()
+        due_leads = due_res.data or []
+        if not due_leads:
+            return jsonify({'moved': 0})
+
+        # Avoid duplicates: fetch already moved lead_ids
+        lead_ids = [l['id'] for l in due_leads]
+        existing_res = supabase.table('active_leads') \
+            .select('lead_id') \
+            .in_('lead_id', lead_ids) \
+            .execute()
+        existing = {row['lead_id'] for row in (existing_res.data or [])}
+
+        rows = []
+        now_ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        for l in due_leads:
+            if l['id'] in existing:
+                continue
+            rows.append({
+                'lead_id': l['id'],
+                'uid': l['uid'],
+                'comment': l.get('comment'),
+                'selftext': l.get('selftext'),
+                'title': l.get('title'),
+                'url': l.get('url'),
+                'score': l.get('score'),
+                'read': l.get('read', False),
+                'num_comments': l.get('num_comments'),
+                'author': l.get('author'),
+                'subreddit': l.get('subreddit'),
+                'date': l.get('date'),
+            })
+
+        inserted = 0
+        if rows:
+            ins = supabase.table('active_leads').insert(rows).execute()
+            inserted = len(ins.data or [])
+
+        return jsonify({'moved': inserted})

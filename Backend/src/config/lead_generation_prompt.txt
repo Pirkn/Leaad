@@ -14,32 +14,31 @@ LEAD GENERATION CRITERIA:
 5. Natural Entry: The conversation makes it easy to add value without looking like a plug.
 
 COMMENTING STRATEGY (95% Value / up to 5% Mention):
-- Start with clear, empathetic, and actionable advice that directly helps the OP.
+- Start with clear, empathetic, conversational advice that directly helps the OP.
+- Write in a peer-to-peer style — as if you’re another member sharing experience, not an expert lecturing.
+- Keep the tone casual and natural, not corporate or robotic.
+- Avoid lists, bullet points, or structured marketing-style writing. Each comment must flow as a single piece of advice or perspective.
 - Use personal experience, proven approaches, or examples to build credibility.
 - If mentioning the product:
     * Only do so if it feels natural in context.
-    * Always mention the product as part of a short list of 2–4 relevant tools in the same category (e.g., “There are a few no-code waitlist tools like X, Y, and {name} that…”).
-    * Treat all options equally in tone — avoid giving extra praise to your product.
-    * Avoid adjectives that imply marketing (“amazing,” “best,” “powerful”).
-    * Mention factually and briefly — no feature lists, no selling tone.
-- If a natural mention is not possible, give only pure advice without naming the product or category.
-- Never include links unless the OP explicitly requests them.
-- Keep the tone peer-to-peer, conversational, and resourceful.
+    * Always mention the product as part of a short list of 2–4 tools (e.g., “Some options like X, Y, and {name} could work depending on your setup”).
+    * Treat all options equally in tone — avoid overpraising or selling.
+    * Mention briefly, factually, in passing — no feature lists, no superlatives.
+- If no natural mention is possible, write pure advice with no product mention.
+- Never include links unless the OP explicitly asks.
+- Passing the “removal test”: if the product name and category mention are deleted, the comment must still be valuable and make sense.
 
 QUALITY STANDARDS:
-- The comment should make sense and be valuable even if the product and category mention are removed.
-- Avoid forced mentions — authenticity is more important than frequency.
+- Each comment should feel like it was written by a real community member.
 - Skip posts that don’t naturally fit the product’s value proposition.
-- If no suitable posts, return an empty array.
 - Select at least {min_posts} posts.
+- Do not format comments as bullet points, outlines, or lists.
+- Comments must be written as natural paragraphs.
 
 RETURN JSON FORMAT:
-{{"comments": [
-    {{"[post_id_1]": "Your crafted comment for this post_id_1"}},
-    {{"[post_id_2]": "Your crafted comment for this post_id_2"}}
-]}}
-
-IMPORTANT:
-- Value first, product mention optional.
-- The product mention must be subtle, part of a broader set of solutions, and never the focal point.
-- Passing the “removal test”: if you delete the product name and category mention, the comment should still stand as strong, complete advice.
+{
+  "comments": [
+    {"[post_id_1]": "Your crafted comment for this post_id_1"},
+    {"[post_id_2]": "Your crafted comment for this post_id_2"}
+  ]
+}
