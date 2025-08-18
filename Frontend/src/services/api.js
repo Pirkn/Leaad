@@ -113,6 +113,8 @@ class ApiService {
     return this.request("/onboarding-lead-generation", {
       method: "POST",
       body: JSON.stringify(productData),
+      // Onboarding generation can be lengthy
+      timeoutMs: 300000,
     });
   }
 
