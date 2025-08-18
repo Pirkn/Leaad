@@ -16,10 +16,12 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
+import { useLeadsContext } from "../contexts/LeadsContext";
 
 function Sidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { unseenNewLeadCount } = useLeadsContext();
   const [isOpen, setIsOpen] = useState(false);
   const handleSignOut = async () => {
     try {
@@ -95,7 +97,9 @@ function Sidebar() {
           }}
         >
           <Users className="w-5 h-5" strokeWidth={1.5} />
-          <span className="text-sm font-medium">Leads</span>
+          <span className="text-sm font-medium">
+            Leads{unseenNewLeadCount > 0 ? ` (${unseenNewLeadCount})` : ""}
+          </span>
         </Link>
       </div>
 
@@ -360,7 +364,10 @@ function Sidebar() {
                   }}
                 >
                   <Users className="w-5 h-5" strokeWidth={1.5} />
-                  <span className="text-sm font-medium">Leads</span>
+                  <span className="text-sm font-medium">
+                    Leads
+                    {unseenNewLeadCount > 0 ? ` (${unseenNewLeadCount})` : ""}
+                  </span>
                 </Link>
               </motion.div>
 

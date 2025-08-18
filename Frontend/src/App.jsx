@@ -28,6 +28,7 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
+import { Toaster } from "sonner";
 
 // Component to handle root path redirects
 const RootRedirect = () => {
@@ -58,6 +59,25 @@ function App() {
           <KarmaProvider>
             <Router>
               <ScrollToTop />
+              <Toaster
+                position="bottom-right"
+                theme="light"
+                toastOptions={{
+                  classNames: {
+                    toast:
+                      "bg-white text-gray-900 border border-gray-200 shadow-lg rounded-lg px-3 py-2 max-w-xs",
+                    content: "text-gray-900 text-sm",
+                    title: "text-gray-900 text-sm",
+                    description: "text-gray-700 text-xs",
+                    icon: "hidden",
+                    successIcon: "hidden",
+                    infoIcon: "hidden",
+                    warningIcon: "hidden",
+                    errorIcon: "hidden",
+                    loadingIcon: "hidden",
+                  },
+                }}
+              />
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<RootRedirect />} />
