@@ -8,6 +8,7 @@ const SEOHead = ({
   url,
   type = "website",
   structuredData,
+  preloadImages = [],
 }) => {
   const defaultTitle =
     "Leaad - AI-Powered Reddit Lead Generation for SaaS & Startups";
@@ -48,6 +49,11 @@ const SEOHead = ({
 
       {/* Canonical URL */}
       <link rel="canonical" href={finalUrl} />
+
+      {/* Preload critical images (e.g., LCP) */}
+      {preloadImages.map((src, idx) => (
+        <link key={idx} rel="preload" as="image" href={src} />
+      ))}
 
       {/* Structured Data */}
       {structuredData && (

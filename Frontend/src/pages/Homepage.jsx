@@ -41,9 +41,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 // Import all images and videos for immediate loading
-import logoImage from "/src/assets/logo.png";
-import heroBackgroundImage from "/src/assets/herobg.png";
-import backgroundTextureImage from "/src/assets/background.png";
+import heroBackgroundImage from "/src/assets/herobg.webp";
+import backgroundTextureImage from "/src/assets/background.webp";
 import macbookImage from "/src/assets/macbook-air-medium.webp";
 import postsVideo from "/src/assets/posts.webm";
 import templatesVideo from "/src/assets/templates.webm";
@@ -171,6 +170,7 @@ export default function HomePage() {
         description="Generate qualified leads from Reddit with AI. Find people actively seeking solutions like yours, get personalized comments, and convert Reddit discussions into customers. Perfect for SaaS founders and startups."
         keywords="reddit lead generation, SaaS marketing, startup marketing, AI lead generation, reddit marketing, B2B leads, product marketing, customer acquisition, reddit automation, lead finding"
         url="https://leaad.co"
+        preloadImages={[heroBackgroundImage]}
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
@@ -196,6 +196,10 @@ export default function HomePage() {
               src={heroBackgroundImage}
               alt=""
               className="w-full h-full object-cover"
+              fetchpriority="high"
+              decoding="async"
+              width="1920"
+              height="1080"
             />
           </div>
 
@@ -459,6 +463,7 @@ export default function HomePage() {
                           loop
                           muted
                           playsInline
+                          preload="metadata"
                           className="w-full h-full object-cover rounded-lg"
                         >
                           <source src={postsVideo} type="video/webm" />
@@ -473,6 +478,7 @@ export default function HomePage() {
                           loop
                           muted
                           playsInline
+                          preload="metadata"
                           className="w-full h-full object-cover rounded-lg"
                         >
                           <source src={templatesVideo} type="video/webm" />
@@ -487,6 +493,7 @@ export default function HomePage() {
                           loop
                           muted
                           playsInline
+                          preload="metadata"
                           className="w-full h-full object-cover rounded-lg"
                         >
                           <source src={karmaVideo} type="video/webm" />
