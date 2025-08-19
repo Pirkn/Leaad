@@ -99,9 +99,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Team
-                </a>
+                <Link
+                  to="/guide"
+                  className="hover:text-white transition-colors"
+                >
+                  Guides
+                </Link>
               </li>
             </ul>
           </div>
@@ -142,17 +145,32 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-white text-base">Connect</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="https://www.instagram.com/leaad.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
                   Instagram
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="https://www.youtube.com/@Leaad-co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
                   YouTube
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="https://www.tiktok.com/@leaad.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
                   TikTok
                 </a>
               </li>

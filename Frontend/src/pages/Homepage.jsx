@@ -182,19 +182,87 @@ export default function HomePage() {
         keywords="reddit lead generation, SaaS marketing, startup marketing, AI lead generation, reddit marketing, B2B leads, product marketing, customer acquisition, reddit automation, lead finding"
         url="https://leaad.co"
         preloadImages={[heroBackgroundImage]}
-        structuredData={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "Leaad",
-          description:
-            "AI-powered Reddit lead generation platform for SaaS and startups",
-          url: "https://leaad.co",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: "https://leaad.co/search?q={search_term_string}",
-            "query-input": "required name=search_term_string",
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Leaad",
+            description:
+              "AI-powered Reddit lead generation platform for SaaS and startups",
+            url: "https://leaad.co",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://leaad.co/search?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
           },
-        }}
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Leaad",
+            url: "https://leaad.co",
+            logo: "https://leaad.co/og-image.png",
+            sameAs: [
+              "https://www.tiktok.com/@leaad.co",
+              "https://www.instagram.com/leaad.co",
+              "https://www.youtube.com/@Leaad-co",
+            ],
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Is there a free plan available?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Yes! We offer a completely free plan that includes basic lead generation features, limited lead discovery, and access to our core platform. You can start generating leads immediately without any cost or credit card required.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How does Karma Builder work?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Karma Builder is our AI-powered tool that helps you build genuine Reddit presence and credibility. It generates relevant comments and posts for karma building so you establish a legitimate presence before engaging with potential leads.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Will I get banned from Reddit?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "No. Leaad operates within Reddit's guidelines and uses only publicly available data. We don't automate posting, messaging, or any actions that could violate terms of service. Our tools are designed for research and lead discovery.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How does Leaad actually work?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Leaad scans Reddit conversations in real time to identify people actively discussing problems your product or service can solve. We use AI to analyze intent, engagement patterns, and buying signals to find high-quality leads.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How are the posts generated?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Our AI analyzes trending topics, viral content patterns, and your audience's interests to generate post ideas and templates. You maintain full control over the final content.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How quickly can I start seeing results?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Most users start finding qualified leads within the first 2–6 hours. Results typically improve after the first week as you leverage post generator, viral templates, and karma building tools.",
+                },
+              },
+            ],
+          },
+        ]}
       />
       <div className="min-h-screen bg-white">
         <Navigation />
