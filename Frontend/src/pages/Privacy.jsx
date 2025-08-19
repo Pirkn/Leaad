@@ -1,372 +1,317 @@
-import { motion } from "framer-motion";
+import React from "react";
 import SEOHead from "../components/SEOHead";
+import { Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
-import {
-  Shield,
-  Eye,
-  Lock,
-  Database,
-  Users,
-  Globe,
-  Calendar,
-  FileText,
-} from "lucide-react";
 
 const Privacy = () => {
-  const privacySections = [
-    {
-      icon: Eye,
-      title: "Information We Collect",
-      content: [
-        "Personal information (name, email, company) when you create an account",
-        "Usage data and analytics to improve our services",
-        "Reddit data that you authorize us to access",
-        "Communication data when you contact our support team",
-      ],
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Privacy Policy - Leaad",
+    description:
+      "Privacy policy and data protection information for Leaad AI-powered Reddit lead generation platform",
+    url: "https://leaad.co/privacy",
+    mainEntity: {
+      "@type": "Article",
+      name: "Privacy Policy",
+      author: {
+        "@type": "Organization",
+        name: "Leaad",
+      },
     },
-    {
-      icon: Database,
-      title: "How We Use Your Information",
-      content: [
-        "Provide and maintain our lead generation services",
-        "Analyze usage patterns to improve user experience",
-        "Send important updates about our services",
-        "Respond to your support requests and inquiries",
-        "Ensure compliance with legal obligations",
-      ],
-    },
-    {
-      icon: Users,
-      title: "Information Sharing",
-      content: [
-        "We do not sell, trade, or rent your personal information",
-        "Limited sharing with trusted service providers",
-        "Compliance with legal requirements when necessary",
-        "Aggregated, anonymized data for analytics purposes",
-      ],
-    },
-    {
-      icon: Lock,
-      title: "Data Security",
-      content: [
-        "Industry-standard encryption for data transmission",
-        "Secure servers with regular security audits",
-        "Access controls and authentication measures",
-        "Regular backup and disaster recovery procedures",
-      ],
-    },
-    {
-      icon: Globe,
-      title: "Data Retention",
-      content: [
-        "Account data retained while your account is active",
-        "Usage data retained for up to 2 years",
-        "Reddit data deleted upon account deletion",
-        "Legal compliance data retained as required by law",
-      ],
-    },
-    {
-      icon: Shield,
-      title: "Your Rights",
-      content: [
-        "Access and review your personal information",
-        "Request correction of inaccurate data",
-        "Request deletion of your account and data",
-        "Opt-out of marketing communications",
-        "Data portability upon request",
-      ],
-    },
-  ];
-
-  const legalSections = [
-    {
-      title: "Cookies and Tracking",
-      content:
-        "We use essential cookies to provide our services and optional analytics cookies to improve user experience. You can control cookie preferences through your browser settings.",
-    },
-    {
-      title: "Third-Party Services",
-      content:
-        "We may use third-party services for analytics, payment processing, and customer support. These services have their own privacy policies and data handling practices.",
-    },
-    {
-      title: "International Data Transfers",
-      content:
-        "Your data may be processed in countries other than your own. We ensure appropriate safeguards are in place for international data transfers.",
-    },
-    {
-      title: "Children's Privacy",
-      content:
-        "Our services are not intended for children under 13. We do not knowingly collect personal information from children under 13.",
-    },
-    {
-      title: "Changes to This Policy",
-      content:
-        "We may update this privacy policy from time to time. We will notify you of any material changes via email or through our platform.",
-    },
-    {
-      title: "Contact Information",
-      content:
-        "If you have questions about this privacy policy or our data practices, please contact us at privacy@leaad.co or through our contact form.",
-    },
-  ];
+  };
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Privacy Policy - How We Protect Your Data"
-        description="Learn how Leaad collects, uses, and protects your personal information. We're committed to transparency and data security."
-        keywords="privacy policy, data protection, GDPR compliance, data security, personal information, leaad privacy"
-        url="https://leaad.co/privacy"
+        title="Privacy Policy - Leaad | Data Protection & Privacy"
+        description="Learn about how Leaad collects, uses, and protects your personal information. Read our comprehensive privacy policy for data protection compliance."
+        keywords="privacy policy, data protection, GDPR, personal data, Leaad privacy"
+        structuredData={structuredData}
       />
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
 
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
-            >
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Shield className="w-8 h-8 text-gray-600" />
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tighter">
-                Privacy Policy
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                We're committed to protecting your privacy and being transparent
-                about how we collect, use, and safeguard your information.
+      <Navigation />
+
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">
+            Privacy Policy
+          </h1>
+
+          <div className="prose prose-gray max-w-none">
+            <p className="text-gray-600 mb-6">
+              <strong>Last updated:</strong>{" "}
+              {new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                1. Introduction
+              </h2>
+              <p className="text-gray-700 mb-4">
+                Leaad ("we," "our," or "us") is committed to protecting your
+                privacy. This Privacy Policy explains how we collect, use,
+                disclose, and safeguard your information when you use our
+                AI-powered Reddit lead generation platform.
               </p>
-              <div className="mt-6 flex items-center justify-center space-x-4 text-sm text-gray-500">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    Last updated:{" "}
-                    {new Date().toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FileText className="w-4 h-4" />
-                  <span>Version 1.0</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Introduction */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tighter">
-                Introduction
-              </h2>
-              <div className="prose prose-gray max-w-none">
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  At Leaad, we believe in transparency and protecting your
-                  privacy. This Privacy Policy explains how we collect, use,
-                  disclose, and safeguard your information when you use our
-                  Reddit lead generation platform.
-                </p>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  By using our services, you agree to the collection and use of
-                  information in accordance with this policy. We are committed
-                  to ensuring that your privacy is protected and will only use
-                  your information in ways that are described in this policy.
-                </p>
-                <p className="text-gray-600 leading-relaxed">
-                  This policy applies to all users of our platform, including
-                  visitors, registered users, and customers. If you have any
-                  questions about this policy, please contact us.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Privacy Principles Grid */}
-        <div className="bg-gray-50 border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-8 tracking-tighter text-center">
-                Our Privacy Principles
-              </h2>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {privacySections.map((section, index) => (
-                  <motion.div
-                    key={section.title}
-                    className="bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all duration-200"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 * index }}
-                    whileHover={{ y: -2 }}
-                  >
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                      <section.icon className="w-6 h-6 text-gray-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-4 text-lg">
-                      {section.title}
-                    </h3>
-                    <ul className="space-y-2">
-                      {section.content.map((item, itemIndex) => (
-                        <li
-                          key={itemIndex}
-                          className="text-gray-600 text-sm leading-relaxed flex items-start"
-                        >
-                          <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Legal Details */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-8 tracking-tighter">
-                Additional Legal Information
-              </h2>
-
-              <div className="space-y-8">
-                {legalSections.map((section, index) => (
-                  <motion.div
-                    key={section.title}
-                    className="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
-                  >
-                    <h3 className="font-semibold text-gray-900 mb-3 text-lg">
-                      {section.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {section.content}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* GDPR Compliance */}
-        <div className="bg-gray-50 border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tighter">
-                GDPR Compliance
-              </h2>
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  For users in the European Union, we comply with the General
-                  Data Protection Regulation (GDPR). This means you have
-                  additional rights regarding your personal data:
-                </p>
-                <ul className="space-y-2 text-gray-600 leading-relaxed">
-                  <li className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <strong>Right to be informed:</strong> You have the right to
-                    be informed about how we collect and use your personal data.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <strong>Right of access:</strong> You can request a copy of
-                    the personal data we hold about you.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <strong>Right to rectification:</strong> You can request
-                    that we correct any inaccurate personal data.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <strong>Right to erasure:</strong> You can request that we
-                    delete your personal data in certain circumstances.
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <strong>Right to data portability:</strong> You can request
-                    a copy of your data in a machine-readable format.
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Contact Section */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
-              className="text-center"
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tighter">
-                Questions About Privacy?
-              </h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                If you have any questions about this privacy policy or how we
-                handle your data, please don't hesitate to reach out to our
-                privacy team.
+              <p className="text-gray-700">
+                By using our service, you agree to the collection and use of
+                information in accordance with this policy.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => (window.location.href = "/contact")}
-                  className="px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  Contact Us
-                </button>
-                <button
-                  onClick={() =>
-                    window.open("mailto:privacy@leaad.co", "_blank")
-                  }
-                  className="px-6 py-3 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Email Privacy Team
-                </button>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                2. Information We Collect
+              </h2>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                2.1 Personal Information
+              </h3>
+              <ul className="list-disc pl-6 text-gray-700 mb-4">
+                <li>Name and email address</li>
+                <li>Company information</li>
+              </ul>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                2.2 Usage Information
+              </h3>
+              <ul className="list-disc pl-6 text-gray-700 mb-4">
+                <li>Platform usage data</li>
+                <li>Feature interactions</li>
+                <li>Performance metrics</li>
+                <li>Error logs</li>
+              </ul>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                2.3 Technical Information
+              </h3>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Browser type and version</li>
+                <li>Device information</li>
+                <li>Cookies and similar technologies</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                3. How We Use Your Information
+              </h2>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Provide and maintain our services</li>
+                <li>Send service-related communications</li>
+                <li>Improve our platform and user experience</li>
+                <li>Comply with legal obligations</li>
+                <li>Prevent fraud and ensure security</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                4. Information Sharing and Disclosure
+              </h2>
+              <p className="text-gray-700 mb-4">
+                We do not sell, trade, or rent your personal information to
+                third parties. We may share your information only in the
+                following circumstances:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>With your explicit consent</li>
+                <li>To comply with legal requirements</li>
+                <li>To protect our rights and safety</li>
+                <li>With service providers who assist in our operations</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                5. Data Security
+              </h2>
+              <p className="text-gray-700 mb-4">
+                We implement appropriate technical and organizational measures
+                to protect your personal information against unauthorized
+                access, alteration, disclosure, or destruction.
+              </p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Encryption of data in transit and at rest</li>
+                <li>Regular security assessments</li>
+                <li>Access controls and authentication</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                6. Your Rights
+              </h2>
+              <p className="text-gray-700 mb-4">
+                Depending on your location, you may have the following rights
+                regarding your personal information:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Access and review your data</li>
+                <li>Correct inaccurate information</li>
+                <li>Request deletion of your data</li>
+                <li>Object to processing</li>
+                <li>Data portability</li>
+                <li>Withdraw consent</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                7. Cookies and Tracking
+              </h2>
+              <p className="text-gray-700 mb-4">
+                We use cookies and similar technologies to enhance your
+                experience, analyze usage, and provide personalized content.
+              </p>
+              <p className="text-gray-700">
+                You can control cookie settings through your browser
+                preferences, though disabling certain cookies may affect
+                platform functionality.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                8. Third-Party Services
+              </h2>
+              <p className="text-gray-700 mb-4">
+                Our platform may integrate with third-party services (e.g.,
+                payment processors, analytics tools). These services have their
+                own privacy policies, and we are not responsible for their
+                practices.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                9. Data Retention
+              </h2>
+              <p className="text-gray-700">
+                We retain your personal information only as long as necessary to
+                provide our services, comply with legal obligations, resolve
+                disputes, and enforce agreements.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                10. International Data Transfers
+              </h2>
+              <p className="text-gray-700">
+                Your information may be transferred to and processed in
+                countries other than your own. We ensure appropriate safeguards
+                are in place to protect your data during such transfers.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                11. Children's Privacy
+              </h2>
+              <p className="text-gray-700">
+                Our services are not intended for individuals under 18 years of
+                age. We do not knowingly collect personal information from
+                children under 18.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                12. Changes to This Policy
+              </h2>
+              <p className="text-gray-700 mb-4">
+                We may update this Privacy Policy from time to time. We will
+                notify you of any changes by posting the new policy on this page
+                and updating the "Last updated" date.
+              </p>
+              <p className="text-gray-700">
+                Your continued use of our services after any changes constitutes
+                acceptance of the updated policy.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                13. Contact Us
+              </h2>
+              <p className="text-gray-700 mb-4">
+                If you have any questions about this Privacy Policy or our data
+                practices, please contact us:
+              </p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-gray-700 mb-2">
+                  <strong>Email:</strong> support@leaad.co
+                </p>
               </div>
-            </motion.div>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                14. Legal Basis for Processing (EU Users)
+              </h2>
+              <p className="text-gray-700 mb-4">
+                For users in the European Union, our legal basis for processing
+                personal information includes:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Contract performance</li>
+                <li>Legitimate business interests</li>
+                <li>Legal obligations</li>
+                <li>Your consent</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                15. California Privacy Rights (CCPA)
+              </h2>
+              <p className="text-gray-700 mb-4">
+                California residents have additional rights under the California
+                Consumer Privacy Act (CCPA), including:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Right to know what personal information is collected</li>
+                <li>Right to delete personal information</li>
+                <li>Right to opt-out of the sale of personal information</li>
+                <li>Right to non-discrimination for exercising CCPA rights</li>
+              </ul>
+            </section>
+          </div>
+
+          <div className="mt-12 pt-8 border-t border-gray-200">
+            <div className="flex flex-wrap gap-4">
+              <Link
+                to="/terms"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                to="/delivery-returns"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Delivery & Returns
+              </Link>
+              <Link
+                to="/about"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                About Us
+              </Link>
+            </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <Footer />
       </div>
-    </>
+
+      <Footer />
+    </div>
   );
 };
 

@@ -129,12 +129,35 @@ export default function Footer() {
                   Contact
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div className="col-span-1">
+            <h4 className="font-semibold mb-4 text-white text-base">Legal</h4>
+            <ul className="space-y-2 text-gray-400 text-sm">
               <li>
                 <Link
                   to="/privacy"
                   className="hover:text-white transition-colors"
                 >
-                  Privacy
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms"
+                  className="hover:text-white transition-colors"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/delivery-returns"
+                  className="hover:text-white transition-colors"
+                >
+                  Delivery & Returns
                 </Link>
               </li>
             </ul>
