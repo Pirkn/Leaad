@@ -26,6 +26,13 @@ import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
+import RedditLeadGeneration from "./pages/RedditLeadGeneration";
+import B2BSaaSRedditLeadGen from "./pages/B2BSaaSRedditLeadGen";
+import StartupRedditLeadGen from "./pages/StartupRedditLeadGen";
+import Guide from "./pages/Guide";
+import BestSubredditsLeadGen from "./pages/BestSubredditsLeadGen";
+import RedditBuyingIntentGuide from "./pages/RedditBuyingIntentGuide";
+import RedditReplyTemplates from "./pages/RedditReplyTemplates";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -73,6 +80,31 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="/guide" element={<Guide />} />
+                <Route
+                  path="/reddit-lead-generation"
+                  element={<RedditLeadGeneration />}
+                />
+                <Route
+                  path="/b2b-saas-reddit-lead-generation"
+                  element={<B2BSaaSRedditLeadGen />}
+                />
+                <Route
+                  path="/startup-reddit-lead-generation"
+                  element={<StartupRedditLeadGen />}
+                />
+                <Route
+                  path="/best-subreddits-for-lead-generation"
+                  element={<BestSubredditsLeadGen />}
+                />
+                <Route
+                  path="/reddit-buying-intent-guide"
+                  element={<RedditBuyingIntentGuide />}
+                />
+                <Route
+                  path="/reddit-reply-templates"
+                  element={<RedditReplyTemplates />}
+                />
 
                 {/* Protected routes that require onboarding completion */}
                 <Route

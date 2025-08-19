@@ -26,6 +26,16 @@ const SEOHead = ({
   const finalImage = image || defaultImage;
   const finalUrl = url || defaultUrl;
 
+  const renderStructuredData = (data) => {
+    if (!data) return null;
+    const dataArray = Array.isArray(data) ? data : [data];
+    return dataArray.map((obj, idx) => (
+      <script key={idx} type="application/ld+json">
+        {JSON.stringify(obj)}
+      </script>
+    ));
+  };
+
   return (
     <Helmet>
       {/* Primary Meta Tags */}
@@ -65,11 +75,7 @@ const SEOHead = ({
       ))}
 
       {/* Structured Data */}
-      {structuredData && (
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      )}
+      {renderStructuredData(structuredData)}
     </Helmet>
   );
 };
