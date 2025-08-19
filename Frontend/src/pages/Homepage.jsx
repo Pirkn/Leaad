@@ -43,7 +43,7 @@ import { useAuth } from "../contexts/AuthContext";
 // Import all images and videos for immediate loading
 import heroBackgroundImage from "/src/assets/herobg.webp";
 import backgroundTextureImage from "/src/assets/background.webp";
-import macbookImage from "/src/assets/macbook-air-medium.webp";
+import macbookImage from "/src/assets/macbook.webp";
 import postsVideo from "/src/assets/posts.webm";
 import templatesVideo from "/src/assets/templates.webm";
 import karmaVideo from "/src/assets/karma.webm";
