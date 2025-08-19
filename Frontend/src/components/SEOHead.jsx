@@ -9,6 +9,7 @@ const SEOHead = ({
   type = "website",
   structuredData,
   preloadImages = [],
+  noindex = false,
 }) => {
   const defaultTitle =
     "Leaad - AI-Powered Reddit Lead Generation for SaaS & Startups";
@@ -16,7 +17,7 @@ const SEOHead = ({
     "Generate qualified leads from Reddit with AI. Find people actively seeking solutions like yours, get personalized comments, and convert Reddit discussions into customers.";
   const defaultKeywords =
     "reddit lead generation, SaaS marketing, startup marketing, AI lead generation, reddit marketing, B2B leads, product marketing, customer acquisition";
-  const defaultImage = "/src/assets/logo.png";
+  const defaultImage = "/og-image.png";
   const defaultUrl = "https://leaad.co";
 
   const finalTitle = title ? `${title} | Leaad` : defaultTitle;
@@ -32,6 +33,14 @@ const SEOHead = ({
       <meta name="title" content={finalTitle} />
       <meta name="description" content={finalDescription} />
       <meta name="keywords" content={finalKeywords} />
+
+      {/* Robots */}
+      {noindex && (
+        <>
+          <meta name="robots" content="noindex, nofollow" />
+          <meta name="googlebot" content="noindex, nofollow" />
+        </>
+      )}
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />

@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useKarmaContext } from "../contexts/KarmaContext";
 import { Toaster, toast } from "sonner";
+import SEOHead from "../components/SEOHead";
 
 function Karma() {
   const { user } = useAuth();
@@ -39,6 +40,11 @@ function Karma() {
   const [copiedTitleState, setCopiedTitleState] = useState(false);
   const [copiedImageState, setCopiedImageState] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
+
+  // Set page title
+  useEffect(() => {
+    document.title = "Karma Builder | Leaad";
+  }, []);
 
   // State for expanded reasoning sections
   const [expandedReasoning, setExpandedReasoning] = useState({});
@@ -303,180 +309,338 @@ function Karma() {
   };
 
   return (
-    <motion.div
-      initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
-      animate={{ opacity: 1, y: 0 }}
-      transition={
-        shouldAnimate ? { duration: 0.3, ease: "easeOut" } : { duration: 0 }
-      }
-      className="p-6"
-    >
-      {/* Sticky Header */}
+    <>
+      <SEOHead title="Karma Builder" url="https://leaad.co/app/karma" noindex />
       <motion.div
-        initial={shouldAnimate ? { opacity: 0 } : false}
-        animate={{ opacity: 1 }}
+        initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+        animate={{ opacity: 1, y: 0 }}
         transition={
-          shouldAnimate ? { duration: 0.3, delay: 0.05 } : { duration: 0 }
+          shouldAnimate ? { duration: 0.3, ease: "easeOut" } : { duration: 0 }
         }
-        className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
+        className="p-6"
       >
-        <h1 className="text-2xl font-semibold text-gray-900">Karma Builder</h1>
-      </motion.div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto">
+        {/* Sticky Header */}
         <motion.div
-          initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
-          animate={{ opacity: 1, y: 0 }}
+          initial={shouldAnimate ? { opacity: 0 } : false}
+          animate={{ opacity: 1 }}
           transition={
-            shouldAnimate ? { duration: 0.3, delay: 0.1 } : { duration: 0 }
+            shouldAnimate ? { duration: 0.3, delay: 0.05 } : { duration: 0 }
           }
-          className="space-y-6"
+          className="sticky top-0 z-10 bg-white py-4 -mx-6 px-6 border-b border-gray-200 mb-6 -mt-6"
         >
-          {/* Filter Card */}
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Karma Builder
+          </h1>
+        </motion.div>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={
-              shouldAnimate ? { duration: 0.3, delay: 0.2 } : { duration: 0 }
+              shouldAnimate ? { duration: 0.3, delay: 0.1 } : { duration: 0 }
             }
-            className="bg-white border border-gray-200 rounded-lg p-4"
+            className="space-y-6"
           >
-            <div className="flex items-center justify-between">
-              {/* Left side - Action buttons */}
-              <div className="flex items-center space-x-2">
-                <Button
-                  onClick={() => {
-                    setActiveTab("comments");
-                  }}
-                  variant="ghost"
-                  className={
-                    activeTab === "comments"
-                      ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                      : "hover:bg-gray-100"
-                  }
-                >
-                  Comments
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setActiveTab("posts");
-                  }}
-                  variant="ghost"
-                  className={
-                    activeTab === "posts"
-                      ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
-                      : "hover:bg-gray-100"
-                  }
-                >
-                  Posts
-                </Button>
-              </div>
-
-              {/* Right side - Generate buttons */}
-              <div className="flex items-center space-x-3">
-                {activeTab === "comments" && (
+            {/* Filter Card */}
+            <motion.div
+              initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={
+                shouldAnimate ? { duration: 0.3, delay: 0.2 } : { duration: 0 }
+              }
+              className="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex items-center justify-between">
+                {/* Left side - Action buttons */}
+                <div className="flex items-center space-x-2">
                   <Button
-                    onClick={handleRefreshComments}
-                    disabled={
-                      generateCommentMutation.isPending ||
-                      isBackgroundGenerating
+                    onClick={() => {
+                      setActiveTab("comments");
+                    }}
+                    variant="ghost"
+                    className={
+                      activeTab === "comments"
+                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
+                        : "hover:bg-gray-100"
                     }
-                    className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
                   >
-                    <RotateCcw className="w-4 h-4" />
-                    <span>
-                      {generateCommentMutation.isPending ||
-                      isBackgroundGenerating
-                        ? "Generating..."
-                        : "Generate Comments"}
-                    </span>
+                    Comments
                   </Button>
-                )}
 
-                {activeTab === "posts" && (
                   <Button
-                    onClick={handleRefreshPosts}
-                    disabled={
-                      generatePostMutation.isPending || isBackgroundGenerating
+                    onClick={() => {
+                      setActiveTab("posts");
+                    }}
+                    variant="ghost"
+                    className={
+                      activeTab === "posts"
+                        ? "bg-gray-800 hover:bg-gray-700 text-white hover:text-white"
+                        : "hover:bg-gray-100"
                     }
-                    className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
                   >
-                    <RotateCcw className="w-4 h-4" />
-                    <span>
-                      {generatePostMutation.isPending || isBackgroundGenerating
-                        ? "Generating..."
-                        : "Generate Post"}
-                    </span>
+                    Posts
                   </Button>
-                )}
-              </div>
-            </div>
-          </motion.div>
+                </div>
 
-          {/* Comments Tab */}
-          <AnimatePresence mode="wait">
-            {activeTab === "comments" && (
-              <motion.div
-                key="comments"
-                initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={shouldAnimate ? { duration: 0.3 } : { duration: 0 }}
-                className="space-y-6"
-              >
-                {generatedComment ? (
-                  <div className="space-y-4">
-                    {(() => {
-                      // Parse the response if it's a string, otherwise use as is
-                      let comments = generatedComment;
-                      if (
-                        typeof generatedComment === "object" &&
-                        generatedComment.response
-                      ) {
-                        try {
-                          comments = JSON.parse(generatedComment.response);
-                        } catch (e) {
-                          console.error("Failed to parse comment response:", e);
-                          comments = [];
-                        }
+                {/* Right side - Generate buttons */}
+                <div className="flex items-center space-x-3">
+                  {activeTab === "comments" && (
+                    <Button
+                      onClick={handleRefreshComments}
+                      disabled={
+                        generateCommentMutation.isPending ||
+                        isBackgroundGenerating
                       }
+                      className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>
+                        {generateCommentMutation.isPending ||
+                        isBackgroundGenerating
+                          ? "Generating..."
+                          : "Generate Comments"}
+                      </span>
+                    </Button>
+                  )}
 
-                      if (Array.isArray(comments)) {
-                        return (
-                          <div className="grid grid-cols-1 gap-4">
-                            {comments.map((commentData, index) => (
-                              <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                  duration: 0.3,
-                                  delay: 0.3 + index * 0.05,
-                                  ease: "easeOut",
-                                }}
-                                className="bg-white border border-gray-200 rounded-lg p-6 pb-2 max-[800px]:pb-6 hover:shadow-sm transition-shadow"
-                              >
-                                <div className="space-y-4">
-                                  <div className="flex justify-between items-start">
-                                    <div className="flex-1">
-                                      <div className="flex items-center space-x-2 mb-2">
-                                        <h3 className="text-lg font-semibold text-gray-900">
-                                          Target Post
-                                        </h3>
+                  {activeTab === "posts" && (
+                    <Button
+                      onClick={handleRefreshPosts}
+                      disabled={
+                        generatePostMutation.isPending || isBackgroundGenerating
+                      }
+                      className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>
+                        {generatePostMutation.isPending ||
+                        isBackgroundGenerating
+                          ? "Generating..."
+                          : "Generate Post"}
+                      </span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Comments Tab */}
+            <AnimatePresence mode="wait">
+              {activeTab === "comments" && (
+                <motion.div
+                  key="comments"
+                  initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={
+                    shouldAnimate ? { duration: 0.3 } : { duration: 0 }
+                  }
+                  className="space-y-6"
+                >
+                  {generatedComment ? (
+                    <div className="space-y-4">
+                      {(() => {
+                        // Parse the response if it's a string, otherwise use as is
+                        let comments = generatedComment;
+                        if (
+                          typeof generatedComment === "object" &&
+                          generatedComment.response
+                        ) {
+                          try {
+                            comments = JSON.parse(generatedComment.response);
+                          } catch (e) {
+                            console.error(
+                              "Failed to parse comment response:",
+                              e
+                            );
+                            comments = [];
+                          }
+                        }
+
+                        if (Array.isArray(comments)) {
+                          return (
+                            <div className="grid grid-cols-1 gap-4">
+                              {comments.map((commentData, index) => (
+                                <motion.div
+                                  key={index}
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{
+                                    duration: 0.3,
+                                    delay: 0.3 + index * 0.05,
+                                    ease: "easeOut",
+                                  }}
+                                  className="bg-white border border-gray-200 rounded-lg p-6 pb-2 max-[800px]:pb-6 hover:shadow-sm transition-shadow"
+                                >
+                                  <div className="space-y-4">
+                                    <div className="flex justify-between items-start">
+                                      <div className="flex-1">
+                                        <div className="flex items-center space-x-2 mb-2">
+                                          <h3 className="text-lg font-semibold text-gray-900">
+                                            Target Post
+                                          </h3>
+                                        </div>
+                                        <a
+                                          href={commentData.post_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-blue-600 hover:text-blue-700 text-sm break-all flex items-center"
+                                        >
+                                          {commentData.post_title}
+                                          <ExternalLink className="w-4 h-4 ml-1" />
+                                        </a>
                                       </div>
-                                      <a
-                                        href={commentData.post_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:text-blue-700 text-sm break-all flex items-center"
-                                      >
-                                        {commentData.post_title}
-                                        <ExternalLink className="w-4 h-4 ml-1" />
-                                      </a>
+                                      <div className="flex items-center space-x-2 ml-4 max-[800px]:hidden">
+                                        <Button
+                                          onClick={() =>
+                                            handleCopyText(
+                                              commentData.comment,
+                                              `comment-${index}`
+                                            )
+                                          }
+                                          variant="outline"
+                                          className="px-3 py-2"
+                                        >
+                                          {copiedCommentStates[
+                                            `comment-${index}`
+                                          ] ? (
+                                            <>
+                                              <Check className="w-4 h-4 mr-2" />
+                                              <span>Copied!</span>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Copy className="w-4 h-4 mr-2" />
+                                              <span>Copy Comment</span>
+                                            </>
+                                          )}
+                                        </Button>
+                                        <Button
+                                          onClick={() =>
+                                            window.open(
+                                              commentData.post_url,
+                                              "_blank"
+                                            )
+                                          }
+                                          variant="outline"
+                                          className="px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                                        >
+                                          <svg
+                                            className="w-4 h-4 mr-2"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
+                                          </svg>
+                                          Reply
+                                        </Button>
+                                      </div>
                                     </div>
-                                    <div className="flex items-center space-x-2 ml-4 max-[800px]:hidden">
+
+                                    <div>
+                                      <div className="flex items-center justify-between mb-2">
+                                        <h4 className="font-medium text-gray-900">
+                                          Generated Comment:
+                                        </h4>
+                                        <Button
+                                          onClick={() =>
+                                            toggleReasoning(`comment-${index}`)
+                                          }
+                                          variant="ghost"
+                                          size="sm"
+                                          className="hidden max-[800px]:flex h-auto p-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex-shrink-0 max-[800px]:flex-row max-[800px]:items-center"
+                                        >
+                                          <Sparkles className="w-4 h-4 mr-1.5 max-[500px]:hidden max-[400px]:block" />
+                                          <span className="max-[800px]:ml-1.5 max-[430px]:hidden">
+                                            See reasoning
+                                          </span>
+                                        </Button>
+                                      </div>
+                                      <div className="text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 px-2 py-1 rounded border text-md border-gray-200">
+                                        <div className="flex items-center gap-4">
+                                          <div className="flex-1">
+                                            {commentData.comment
+                                              .replace(/\*\*(.*?)\*\*/g, "$1")
+                                              .replace(/\*(.*?)\*/g, "$1")
+                                              .replace(/`(.*?)`/g, "$1")
+                                              .replace(
+                                                /\[(.*?)\]\(.*?\)/g,
+                                                "$1"
+                                              )
+                                              .replace(/#{1,6}\s/g, "")
+                                              .replace(/>\s/g, "")
+                                              .replace(/\n\s*-\s/g, "\n• ")
+                                              .replace(/\n\s*\d+\.\s/g, "\n")
+                                              .trim()
+                                              .split("\n")
+                                              .map((line, i) => (
+                                                <div key={i} className="mb-1">
+                                                  {line.startsWith("- ") ? (
+                                                    <div className="flex items-start">
+                                                      <span className="mr-2 text-gray-500">
+                                                        •
+                                                      </span>
+                                                      <span>
+                                                        {line.substring(2)}
+                                                      </span>
+                                                    </div>
+                                                  ) : (
+                                                    <span>{line}</span>
+                                                  )}
+                                                </div>
+                                              ))}
+                                          </div>
+                                          <Button
+                                            onClick={() =>
+                                              toggleReasoning(
+                                                `comment-${index}`
+                                              )
+                                            }
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-auto p-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex-shrink-0 max-[800px]:hidden"
+                                          >
+                                            <Sparkles className="w-4 h-4 mr-1.5" />
+                                            See reasoning
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <AnimatePresence>
+                                      {expandedReasoning[
+                                        `comment-${index}`
+                                      ] && (
+                                        <motion.div
+                                          initial={{ height: 0, opacity: 0 }}
+                                          animate={{
+                                            height: "auto",
+                                            opacity: 1,
+                                          }}
+                                          transition={{
+                                            height: {
+                                              duration: 0.3,
+                                              ease: "easeOut",
+                                            },
+                                            opacity: {
+                                              duration: 0.2,
+                                              ease: "easeOut",
+                                            },
+                                          }}
+                                          className="overflow-hidden"
+                                        >
+                                          <div className="pt-0 pb-1">
+                                            <p className="text-gray-500 text-sm italic px-0.5 pt-0.5">
+                                              {commentData.reasoning}
+                                            </p>
+                                          </div>
+                                        </motion.div>
+                                      )}
+                                    </AnimatePresence>
+
+                                    {/* Responsive buttons for mobile - shown below 800px */}
+                                    <div className="hidden max-[800px]:flex space-x-2 mt-4">
                                       <Button
                                         onClick={() =>
                                           handleCopyText(
@@ -485,7 +649,7 @@ function Karma() {
                                           )
                                         }
                                         variant="outline"
-                                        className="px-3 py-2"
+                                        className="flex-1 px-3 py-2"
                                       >
                                         {copiedCommentStates[
                                           `comment-${index}`
@@ -497,7 +661,12 @@ function Karma() {
                                         ) : (
                                           <>
                                             <Copy className="w-4 h-4 mr-2" />
-                                            <span>Copy Comment</span>
+                                            <span className="max-[500px]:hidden">
+                                              Copy Comment
+                                            </span>
+                                            <span className="hidden max-[500px]:inline">
+                                              Copy
+                                            </span>
                                           </>
                                         )}
                                       </Button>
@@ -509,7 +678,7 @@ function Karma() {
                                           )
                                         }
                                         variant="outline"
-                                        className="px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                                        className="flex-1 px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
                                       >
                                         <svg
                                           className="w-4 h-4 mr-2"
@@ -518,363 +687,185 @@ function Karma() {
                                         >
                                           <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
                                         </svg>
-                                        Reply
-                                      </Button>
-                                    </div>
-                                  </div>
-
-                                  <div>
-                                    <div className="flex items-center justify-between mb-2">
-                                      <h4 className="font-medium text-gray-900">
-                                        Generated Comment:
-                                      </h4>
-                                      <Button
-                                        onClick={() =>
-                                          toggleReasoning(`comment-${index}`)
-                                        }
-                                        variant="ghost"
-                                        size="sm"
-                                        className="hidden max-[800px]:flex h-auto p-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex-shrink-0 max-[800px]:flex-row max-[800px]:items-center"
-                                      >
-                                        <Sparkles className="w-4 h-4 mr-1.5 max-[500px]:hidden max-[400px]:block" />
-                                        <span className="max-[800px]:ml-1.5 max-[430px]:hidden">
-                                          See reasoning
+                                        <span className="max-[500px]:hidden">
+                                          Post to r/{commentData.subreddit}
+                                        </span>
+                                        <span className="hidden max-[500px]:inline">
+                                          Reply
                                         </span>
                                       </Button>
                                     </div>
-                                    <div className="text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 px-2 py-1 rounded border text-md border-gray-200">
-                                      <div className="flex items-center gap-4">
-                                        <div className="flex-1">
-                                          {commentData.comment
-                                            .replace(/\*\*(.*?)\*\*/g, "$1")
-                                            .replace(/\*(.*?)\*/g, "$1")
-                                            .replace(/`(.*?)`/g, "$1")
-                                            .replace(/\[(.*?)\]\(.*?\)/g, "$1")
-                                            .replace(/#{1,6}\s/g, "")
-                                            .replace(/>\s/g, "")
-                                            .replace(/\n\s*-\s/g, "\n• ")
-                                            .replace(/\n\s*\d+\.\s/g, "\n")
-                                            .trim()
-                                            .split("\n")
-                                            .map((line, i) => (
-                                              <div key={i} className="mb-1">
-                                                {line.startsWith("- ") ? (
-                                                  <div className="flex items-start">
-                                                    <span className="mr-2 text-gray-500">
-                                                      •
-                                                    </span>
-                                                    <span>
-                                                      {line.substring(2)}
-                                                    </span>
-                                                  </div>
-                                                ) : (
-                                                  <span>{line}</span>
-                                                )}
-                                              </div>
-                                            ))}
-                                        </div>
-                                        <Button
-                                          onClick={() =>
-                                            toggleReasoning(`comment-${index}`)
-                                          }
-                                          variant="ghost"
-                                          size="sm"
-                                          className="h-auto p-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex-shrink-0 max-[800px]:hidden"
-                                        >
-                                          <Sparkles className="w-4 h-4 mr-1.5" />
-                                          See reasoning
-                                        </Button>
-                                      </div>
-                                    </div>
                                   </div>
-                                  <AnimatePresence>
-                                    {expandedReasoning[`comment-${index}`] && (
-                                      <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        transition={{
-                                          height: {
-                                            duration: 0.3,
-                                            ease: "easeOut",
-                                          },
-                                          opacity: {
-                                            duration: 0.2,
-                                            ease: "easeOut",
-                                          },
-                                        }}
-                                        className="overflow-hidden"
-                                      >
-                                        <div className="pt-0 pb-1">
-                                          <p className="text-gray-500 text-sm italic px-0.5 pt-0.5">
-                                            {commentData.reasoning}
-                                          </p>
-                                        </div>
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-
-                                  {/* Responsive buttons for mobile - shown below 800px */}
-                                  <div className="hidden max-[800px]:flex space-x-2 mt-4">
-                                    <Button
-                                      onClick={() =>
-                                        handleCopyText(
-                                          commentData.comment,
-                                          `comment-${index}`
-                                        )
-                                      }
-                                      variant="outline"
-                                      className="flex-1 px-3 py-2"
-                                    >
-                                      {copiedCommentStates[
-                                        `comment-${index}`
-                                      ] ? (
-                                        <>
-                                          <Check className="w-4 h-4 mr-2" />
-                                          <span>Copied!</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Copy className="w-4 h-4 mr-2" />
-                                          <span className="max-[500px]:hidden">
-                                            Copy Comment
-                                          </span>
-                                          <span className="hidden max-[500px]:inline">
-                                            Copy
-                                          </span>
-                                        </>
-                                      )}
-                                    </Button>
-                                    <Button
-                                      onClick={() =>
-                                        window.open(
-                                          commentData.post_url,
-                                          "_blank"
-                                        )
-                                      }
-                                      variant="outline"
-                                      className="flex-1 px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
-                                    >
-                                      <svg
-                                        className="w-4 h-4 mr-2"
-                                        fill="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
-                                      </svg>
-                                      <span className="max-[500px]:hidden">
-                                        Post to r/{commentData.subreddit}
-                                      </span>
-                                      <span className="hidden max-[500px]:inline">
-                                        Reply
-                                      </span>
-                                    </Button>
-                                  </div>
-                                </div>
-                              </motion.div>
-                            ))}
-                          </div>
-                        );
-                      } else {
-                        // Handle single comment (fallback)
-                        return (
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.2 }}
-                            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow"
-                          >
-                            <div className="flex justify-between items-start mb-4">
-                              <h3 className="text-lg font-semibold text-gray-900">
-                                Generated Comment
-                              </h3>
-                              <Button
-                                onClick={() =>
-                                  handleCopyText(
-                                    generatedComment.response,
-                                    "comment"
-                                  )
-                                }
-                                variant="outline"
-                                className="px-3 py-2"
-                              >
-                                {copiedCommentStates["comment"] ? (
-                                  <>
-                                    <Check className="w-4 h-4 mr-2" />
-                                    <span>Copied!</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="w-4 h-4 mr-2" />
-                                    <span>Copy Comment</span>
-                                  </>
-                                )}
-                              </Button>
+                                </motion.div>
+                              ))}
                             </div>
-                            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                              {generatedComment.response}
-                            </p>
-                          </motion.div>
-                        );
-                      }
-                    })()}
+                          );
+                        } else {
+                          // Handle single comment (fallback)
+                          return (
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.2 }}
+                              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow"
+                            >
+                              <div className="flex justify-between items-start mb-4">
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                  Generated Comment
+                                </h3>
+                                <Button
+                                  onClick={() =>
+                                    handleCopyText(
+                                      generatedComment.response,
+                                      "comment"
+                                    )
+                                  }
+                                  variant="outline"
+                                  className="px-3 py-2"
+                                >
+                                  {copiedCommentStates["comment"] ? (
+                                    <>
+                                      <Check className="w-4 h-4 mr-2" />
+                                      <span>Copied!</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-4 h-4 mr-2" />
+                                      <span>Copy Comment</span>
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                {generatedComment.response}
+                              </p>
+                            </motion.div>
+                          );
+                        }
+                      })()}
 
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.4 }}
+                        className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                      >
+                        <h4 className="font-medium text-blue-900 mb-2">
+                          How to use:
+                        </h4>
+                        <ul className="text-sm text-blue-800 space-y-1">
+                          <li>
+                            • Find a trending post in a relevant subreddit
+                          </li>
+                          <li>• Copy the generated comment</li>
+                          <li>• Paste and post it on Reddit</li>
+                          <li>• Wait for upvotes to build karma</li>
+                        </ul>
+                      </motion.div>
+                    </div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-center py-12"
+                    >
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <MessageCircle className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No comments generated yet
+                      </h3>
+                      <p className="text-gray-500 mb-4">
+                        Generate your first AI-optimized comment to start
+                        building karma
+                      </p>
+                      <Button
+                        onClick={handleGenerateComment}
+                        disabled={generateCommentMutation.isPending}
+                        className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        <span>Generate Comment</span>
+                      </Button>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Posts Tab */}
+            <AnimatePresence mode="wait">
+              {activeTab === "posts" && (
+                <motion.div
+                  key="posts"
+                  initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={
+                    shouldAnimate ? { duration: 0.3 } : { duration: 0 }
+                  }
+                  className="space-y-6"
+                >
+                  {generatedPost ? (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.4 }}
-                      className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                      transition={{ duration: 0.3, delay: 0.2 }}
+                      className="space-y-4"
                     >
-                      <h4 className="font-medium text-blue-900 mb-2">
-                        How to use:
-                      </h4>
-                      <ul className="text-sm text-blue-800 space-y-1">
-                        <li>• Find a trending post in a relevant subreddit</li>
-                        <li>• Copy the generated comment</li>
-                        <li>• Paste and post it on Reddit</li>
-                        <li>• Wait for upvotes to build karma</li>
-                      </ul>
-                    </motion.div>
-                  </div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center py-12"
-                  >
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                      <MessageCircle className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No comments generated yet
-                    </h3>
-                    <p className="text-gray-500 mb-4">
-                      Generate your first AI-optimized comment to start building
-                      karma
-                    </p>
-                    <Button
-                      onClick={handleGenerateComment}
-                      disabled={generateCommentMutation.isPending}
-                      className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      <span>Generate Comment</span>
-                    </Button>
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Posts Tab */}
-          <AnimatePresence mode="wait">
-            {activeTab === "posts" && (
-              <motion.div
-                key="posts"
-                initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={shouldAnimate ? { duration: 0.3 } : { duration: 0 }}
-                className="space-y-6"
-              >
-                {generatedPost ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
-                    className="space-y-4"
-                  >
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-[800px]:gap-4">
-                      {/* First Column - Title, Subreddit, and Image */}
-                      <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.3 }}
-                        className="space-y-4"
-                      >
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow">
-                          <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                              Generated Post
-                            </h3>
-                            <Button
-                              onClick={() =>
-                                window.open(
-                                  `https://www.reddit.com/r/${generatedPost.subreddit}/submit`,
-                                  "_blank"
-                                )
-                              }
-                              variant="outline"
-                              className="px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
-                            >
-                              <svg
-                                className="w-4 h-4 mr-2"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-[800px]:gap-4">
+                        {/* First Column - Title, Subreddit, and Image */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: 0.3 }}
+                          className="space-y-4"
+                        >
+                          <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow">
+                            <div className="flex justify-between items-center mb-6">
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                Generated Post
+                              </h3>
+                              <Button
+                                onClick={() =>
+                                  window.open(
+                                    `https://www.reddit.com/r/${generatedPost.subreddit}/submit`,
+                                    "_blank"
+                                  )
+                                }
+                                variant="outline"
+                                className="px-3 py-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
                               >
-                                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
-                              </svg>
-                              Post to r/{generatedPost.subreddit}
-                            </Button>
-                          </div>
-
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-medium text-gray-900 mb-1">
-                                Title:
-                              </h4>
-                              <div className="relative">
-                                <p className="text-gray-700 bg-gray-50 p-3 pr-10 rounded border border-gray-200">
-                                  {generatedPost.title}
-                                </p>
-                                <button
-                                  onClick={() =>
-                                    handleCopyText(generatedPost.title, "title")
-                                  }
-                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                <svg
+                                  className="w-4 h-4 mr-2"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
                                 >
-                                  {copiedTitleState ? (
-                                    <Check className="w-5 h-5" />
-                                  ) : (
-                                    <Copy className="w-5 h-5" />
-                                  )}
-                                </button>
-                              </div>
+                                  <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
+                                </svg>
+                                Post to r/{generatedPost.subreddit}
+                              </Button>
                             </div>
 
-                            {generatedPost.description && (
-                              <div>
-                                <h4 className="font-medium text-gray-900 mb-2">
-                                  Description:
-                                </h4>
-                                <p className="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded border border-gray-200">
-                                  {generatedPost.description}
-                                </p>
-                              </div>
-                            )}
-
-                            {generatedPost.image_url && (
+                            <div className="space-y-4">
                               <div>
                                 <h4 className="font-medium text-gray-900 mb-1">
-                                  Generated Image:
+                                  Title:
                                 </h4>
                                 <div className="relative">
-                                  <div className="bg-gray-50 p-3 pr-12 rounded border border-gray-200">
-                                    <img
-                                      src={generatedPost.image_url}
-                                      alt="Generated post image"
-                                      className="max-w-full h-auto rounded block"
-                                    />
-                                  </div>
+                                  <p className="text-gray-700 bg-gray-50 p-3 pr-10 rounded border border-gray-200">
+                                    {generatedPost.title}
+                                  </p>
                                   <button
                                     onClick={() =>
-                                      handleCopyImage(
-                                        generatedPost.image_url,
-                                        "image"
+                                      handleCopyText(
+                                        generatedPost.title,
+                                        "title"
                                       )
                                     }
-                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                   >
-                                    {copiedImageState ? (
+                                    {copiedTitleState ? (
                                       <Check className="w-5 h-5" />
                                     ) : (
                                       <Copy className="w-5 h-5" />
@@ -882,164 +873,209 @@ function Karma() {
                                   </button>
                                 </div>
                               </div>
-                            )}
+
+                              {generatedPost.description && (
+                                <div>
+                                  <h4 className="font-medium text-gray-900 mb-2">
+                                    Description:
+                                  </h4>
+                                  <p className="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded border border-gray-200">
+                                    {generatedPost.description}
+                                  </p>
+                                </div>
+                              )}
+
+                              {generatedPost.image_url && (
+                                <div>
+                                  <h4 className="font-medium text-gray-900 mb-1">
+                                    Generated Image:
+                                  </h4>
+                                  <div className="relative">
+                                    <div className="bg-gray-50 p-3 pr-12 rounded border border-gray-200">
+                                      <img
+                                        src={generatedPost.image_url}
+                                        alt="Generated post image"
+                                        className="max-w-full h-auto rounded block"
+                                      />
+                                    </div>
+                                    <button
+                                      onClick={() =>
+                                        handleCopyImage(
+                                          generatedPost.image_url,
+                                          "image"
+                                        )
+                                      }
+                                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                      {copiedImageState ? (
+                                        <Check className="w-5 h-5" />
+                                      ) : (
+                                        <Copy className="w-5 h-5" />
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-
-                      {/* Second Column - How to use */}
-                      <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.4 }}
-                        className="space-y-4"
-                      >
-                        <motion.div
-                          initial={{ opacity: 0, x: 30 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: 0.5 }}
-                          className="bg-orange-50 border border-orange-200 rounded-lg p-4"
-                        >
-                          <h4 className="font-medium text-orange-900 mb-2">
-                            How to use:
-                          </h4>
-                          <ul className="text-sm text-orange-800 space-y-1">
-                            <li>• Go to r/{generatedPost.subreddit}</li>
-                            <li>• Create a new post</li>
-                            <li>• Use the generated title and description</li>
-                            <li>• Add the generated image if available</li>
-                            <li>• Post and wait for karma to build</li>
-                          </ul>
                         </motion.div>
 
+                        {/* Second Column - How to use */}
                         <motion.div
-                          initial={{ opacity: 0, x: 30 }}
+                          initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: 0.6 }}
-                          className="bg-orange-50 border border-orange-200 rounded-lg p-4"
+                          transition={{ duration: 0.3, delay: 0.4 }}
+                          className="space-y-4"
                         >
-                          <h4 className="font-medium text-orange-900 mb-2">
-                            Best Posting Times:
-                          </h4>
-                          <ul className="text-sm text-orange-800 space-y-1">
-                            <li>
-                              • <strong>Weekdays:</strong> 9 AM - 11 AM EST
-                            </li>
-                            <li>
-                              • <strong>Weekends:</strong> 10 AM - 2 PM EST
-                            </li>
-                            <li>
-                              • <strong>Avoid:</strong> 2 AM - 6 AM EST
-                            </li>
-                          </ul>
-                        </motion.div>
+                          <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.5 }}
+                            className="bg-orange-50 border border-orange-200 rounded-lg p-4"
+                          >
+                            <h4 className="font-medium text-orange-900 mb-2">
+                              How to use:
+                            </h4>
+                            <ul className="text-sm text-orange-800 space-y-1">
+                              <li>• Go to r/{generatedPost.subreddit}</li>
+                              <li>• Create a new post</li>
+                              <li>• Use the generated title and description</li>
+                              <li>• Add the generated image if available</li>
+                              <li>• Post and wait for karma to build</li>
+                            </ul>
+                          </motion.div>
 
-                        <motion.div
-                          initial={{ opacity: 0, x: 30 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: 0.7 }}
-                          className="bg-orange-50 border border-orange-200 rounded-lg p-4"
-                        >
-                          <h4 className="font-medium text-orange-900 mb-2">
-                            Reddit Best Practices:
-                          </h4>
-                          <ul className="text-sm text-orange-800 space-y-1">
-                            <li>• Read subreddit rules before posting</li>
-                            <li>• Engage with comments on your posts</li>
-                            <li>• Don't post too frequently (max 3-4/day)</li>
-                            <li>• Be authentic and genuine in interactions</li>
-                            <li>• Avoid karma farming or spam behavior</li>
-                          </ul>
+                          <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.6 }}
+                            className="bg-orange-50 border border-orange-200 rounded-lg p-4"
+                          >
+                            <h4 className="font-medium text-orange-900 mb-2">
+                              Best Posting Times:
+                            </h4>
+                            <ul className="text-sm text-orange-800 space-y-1">
+                              <li>
+                                • <strong>Weekdays:</strong> 9 AM - 11 AM EST
+                              </li>
+                              <li>
+                                • <strong>Weekends:</strong> 10 AM - 2 PM EST
+                              </li>
+                              <li>
+                                • <strong>Avoid:</strong> 2 AM - 6 AM EST
+                              </li>
+                            </ul>
+                          </motion.div>
+
+                          <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.7 }}
+                            className="bg-orange-50 border border-orange-200 rounded-lg p-4"
+                          >
+                            <h4 className="font-medium text-orange-900 mb-2">
+                              Reddit Best Practices:
+                            </h4>
+                            <ul className="text-sm text-orange-800 space-y-1">
+                              <li>• Read subreddit rules before posting</li>
+                              <li>• Engage with comments on your posts</li>
+                              <li>• Don't post too frequently (max 3-4/day)</li>
+                              <li>
+                                • Be authentic and genuine in interactions
+                              </li>
+                              <li>• Avoid karma farming or spam behavior</li>
+                            </ul>
+                          </motion.div>
                         </motion.div>
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center py-12"
-                  >
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                      <FileText className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No post generated yet
-                    </h3>
-                    <p className="text-gray-500 mb-4">
-                      Generate your first AI-optimized post to start building
-                      karma
-                    </p>
-                    <Button
-                      onClick={handleGeneratePost}
-                      disabled={generatePostMutation.isPending}
-                      className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-center py-12"
                     >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      <span>Generate Post</span>
-                    </Button>
-                  </motion.div>
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <FileText className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No post generated yet
+                      </h3>
+                      <p className="text-gray-500 mb-4">
+                        Generate your first AI-optimized post to start building
+                        karma
+                      </p>
+                      <Button
+                        onClick={handleGeneratePost}
+                        disabled={generatePostMutation.isPending}
+                        className="bg-[#FF4500] hover:bg-[#CC3700] text-white"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        <span>Generate Post</span>
+                      </Button>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
+
+        {/* Background Generation Overlay */}
+        <AnimatePresence>
+          {(isBackgroundGenerating || isKarmaGenerating) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-16 lg:top-0 left-0 right-0 bottom-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center lg:left-64"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.98, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white border border-gray-200 rounded-xl shadow-lg p-6 w-full max-w-sm text-center"
+              >
+                <div className="w-10 h-10 mx-auto mb-4 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+                {(karmaGeneratingMode || activeTab) === "comments" ? (
+                  <>
+                    <h3 className="text-base font-medium text-gray-900 mb-1">
+                      Generating your comments...
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      This may take ~15–30 seconds.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-base font-medium text-gray-900 mb-1">
+                      Generating your post...
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      This may take ~15–30 seconds.
+                    </p>
+                  </>
                 )}
               </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      </div>
-
-      {/* Background Generation Overlay */}
-      <AnimatePresence>
-        {(isBackgroundGenerating || isKarmaGenerating) && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed top-16 lg:top-0 left-0 right-0 bottom-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center lg:left-64"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.98, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white border border-gray-200 rounded-xl shadow-lg p-6 w-full max-w-sm text-center"
-            >
-              <div className="w-10 h-10 mx-auto mb-4 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
-              {(karmaGeneratingMode || activeTab) === "comments" ? (
-                <>
-                  <h3 className="text-base font-medium text-gray-900 mb-1">
-                    Generating your comments...
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    This may take ~15–30 seconds.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <h3 className="text-base font-medium text-gray-900 mb-1">
-                    Generating your post...
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    This may take ~15–30 seconds.
-                  </p>
-                </>
-              )}
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
 
-      {/* Sonner Toaster */}
-      <Toaster
-        position="bottom-right"
-        theme="light"
-        toastOptions={{
-          classNames: {
-            toast: "max-w-xs p-3",
-            closeButton: "hidden",
-          },
-        }}
-      />
-    </motion.div>
+        {/* Sonner Toaster */}
+        <Toaster
+          position="bottom-right"
+          theme="light"
+          toastOptions={{
+            classNames: {
+              toast: "max-w-xs p-3",
+              closeButton: "hidden",
+            },
+          }}
+        />
+      </motion.div>
+    </>
   );
 }
 

@@ -102,6 +102,7 @@ const SignIn = () => {
         description="Sign in to your Leaad account to access AI-powered Reddit lead generation tools and start finding qualified leads for your business."
         keywords="sign in, login, leaad account, reddit lead generation, SaaS marketing"
         url="https://leaad.co/signin"
+        noindex
       />
       <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">

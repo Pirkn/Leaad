@@ -150,6 +150,7 @@ const SignUp = () => {
         description="Create your free Leaad account and start generating qualified leads from Reddit with AI-powered tools. Join thousands of SaaS founders and startups."
         keywords="sign up, register, create account, leaad, reddit lead generation, SaaS marketing, free trial"
         url="https://leaad.co/signup"
+        noindex
       />
       <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
