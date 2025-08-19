@@ -30,24 +30,8 @@ import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 
-// Component to handle root path redirects
+// Component for root path – always render Homepage (no auto-redirect)
 const RootRedirect = () => {
-  const { user, loading, onboardingComplete, onboardingStatusLoading } =
-    useAuth();
-
-  // Don't redirect while loading
-  if (loading) {
-    return <Homepage />;
-  }
-
-  if (user && !onboardingStatusLoading) {
-    if (onboardingComplete) {
-      return <Navigate to="/dashboard" replace />;
-    } else {
-      return <Navigate to="/onboarding" replace />;
-    }
-  }
-
   return <Homepage />;
 };
 

@@ -70,6 +70,7 @@ const ForgotPassword = () => {
           description="Password reset email has been sent. Check your inbox to reset your Leaad account password and regain access to your AI-powered lead generation tools."
           keywords="password reset, forgot password, leaad account, email sent"
           url="https://leaad.co/forgot-password"
+          noindex
         />
         <div className="min-h-screen bg-gray-50">
           <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -155,6 +156,7 @@ const ForgotPassword = () => {
         description="Reset your Leaad account password. Enter your email address and we'll send you a secure link to regain access to your AI-powered lead generation tools."
         keywords="forgot password, reset password, leaad account, password recovery"
         url="https://leaad.co/forgot-password"
+        noindex
       />
       <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
