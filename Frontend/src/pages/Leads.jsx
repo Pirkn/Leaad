@@ -29,7 +29,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 function Leads() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const highlightId = searchParams.get("highlight");
   const leadRefs = useRef({});
   const [postedFilter, setPostedFilter] = useState("all");
@@ -301,6 +301,17 @@ function Leads() {
             "ring-orange-500",
             "ring-opacity-50"
           );
+          // Clear the highlight param so it only triggers once
+          setTimeout(() => {
+            setSearchParams(
+              (prev) => {
+                const next = new URLSearchParams(prev);
+                next.delete("highlight");
+                return next;
+              },
+              { replace: true }
+            );
+          }, 50);
           setTimeout(() => {
             if (leadRefs.current[highlightId]) {
               leadRefs.current[highlightId].classList.remove(
@@ -313,7 +324,7 @@ function Leads() {
         }
       }, 500);
     }
-  }, [highlightId, sortedLeads]);
+  }, [highlightId, sortedLeads, setSearchParams]);
 
   // Close filter dropdown when clicking outside
   useEffect(() => {

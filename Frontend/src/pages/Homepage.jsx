@@ -162,18 +162,16 @@ export default function HomePage() {
     }
   };
 
-  const handleAuthAction = (action) => {
-    if (user && !loading) {
-      if (onboardingComplete) {
-        navigate("/dashboard");
-      } else {
-        navigate("/onboarding");
-      }
-    } else if (action === "/signup" || action === "/signin") {
-      navigate(action);
-    } else {
-      navigate(action);
-    }
+  const handlePrimaryCta = () => {
+    if (!user || loading) return navigate("/signup");
+    if (onboardingComplete) return navigate("/dashboard");
+    return navigate("/onboarding");
+  };
+
+  const handleSecondaryCta = () => {
+    if (!user || loading) return navigate("/signin");
+    if (onboardingComplete) return navigate("/onboarding");
+    return navigate("/dashboard");
   };
 
   return (
@@ -260,13 +258,14 @@ export default function HomePage() {
                   >
                     <button
                       className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 pl-5 pr-3 py-2 text-base font-medium rounded-lg flex items-center justify-center"
-                      onClick={() => handleAuthAction("/signup")}
+                      onClick={handlePrimaryCta}
                     >
                       {user && !loading
-                        ? "Go to Dashboard"
+                        ? onboardingComplete
+                          ? "Go to Dashboard"
+                          : "Continue Onboarding"
                         : "Find your next users"}
                       <ChevronRight className="ml-2 w-4 h-4" />
-                      {/* <ArrowRight className="ml-2 w-4 h-4" /> */}
                     </button>
                   </motion.div>
                 </motion.div>
@@ -770,9 +769,13 @@ export default function HomePage() {
                       size="lg"
                       variant="outline"
                       className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300"
-                      onClick={() => handleAuthAction("/signup")}
+                      onClick={handlePrimaryCta}
                     >
-                      Get Started Free
+                      {user && !loading
+                        ? onboardingComplete
+                          ? "Open Dashboard"
+                          : "Resume Onboarding"
+                        : "Get Started Free"}
                     </Button>
                   </motion.div>
 
@@ -849,9 +852,9 @@ export default function HomePage() {
                     <Button
                       size="lg"
                       className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
-                      onClick={() => handleAuthAction("/signup")}
+                      onClick={handlePrimaryCta}
                     >
-                      Upgrade to Premium
+                      {user && !loading ? "Manage Plan" : "Upgrade to Premium"}
                     </Button>
                   </motion.div>
 
@@ -1211,9 +1214,13 @@ export default function HomePage() {
               <div>
                 <button
                   className="px-8 py-3 bg-white text-gray-900 hover:bg-gray-100 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
-                  onClick={() => handleAuthAction("/signup")}
+                  onClick={handlePrimaryCta}
                 >
-                  Try it for free
+                  {user && !loading
+                    ? onboardingComplete
+                      ? "Go to Dashboard"
+                      : "Continue Onboarding"
+                    : "Try it for free"}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </button>
               </div>

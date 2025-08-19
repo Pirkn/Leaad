@@ -27,7 +27,7 @@ import { Toaster, toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 
 function Posts() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const highlightId = searchParams.get("highlight");
   const postRefs = useRef({});
   const { data: posts, isLoading, error } = useRedditPosts();
@@ -377,6 +377,17 @@ function Posts() {
             "ring-orange-500",
             "ring-opacity-50"
           );
+          // Clear the highlight param so it only triggers once
+          setTimeout(() => {
+            setSearchParams(
+              (prev) => {
+                const next = new URLSearchParams(prev);
+                next.delete("highlight");
+                return next;
+              },
+              { replace: true }
+            );
+          }, 50);
           setTimeout(() => {
             if (postRefs.current[highlightId]) {
               postRefs.current[highlightId].classList.remove(
@@ -389,7 +400,7 @@ function Posts() {
         }
       }, 500);
     }
-  }, [highlightId, sortedPosts]);
+  }, [highlightId, sortedPosts, setSearchParams]);
 
   // Close filter dropdown when clicking outside
   useEffect(() => {
@@ -906,7 +917,7 @@ function Posts() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center lg:left-64"
+            className="fixed top-16 lg:top-0 left-0 right-0 bottom-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center lg:left-64"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}

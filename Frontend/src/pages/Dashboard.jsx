@@ -128,8 +128,8 @@ function Dashboard() {
   const recentLeads =
     allLeads
       .sort((a, b) => {
-        const dateA = new Date(a.created_at);
-        const dateB = new Date(b.created_at);
+        const dateA = new Date(a.date || a.created_at);
+        const dateB = new Date(b.date || b.created_at);
         return dateB - dateA;
       })
       .slice(0, 3) || [];
@@ -167,7 +167,9 @@ function Dashboard() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "Unknown";
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Unknown";
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -182,7 +184,9 @@ function Dashboard() {
   };
 
   const isNew = (dateString) => {
+    if (!dateString) return false;
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return false;
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
@@ -580,8 +584,10 @@ function Dashboard() {
                           </p>
                           <div className="flex items-center space-x-2 text-xs text-gray-500">
                             <Clock className="w-3 h-3" />
-                            <span>{formatDate(lead.created_at)}</span>
-                            {isNew(lead.created_at) && (
+                            <span>
+                              {formatDate(lead.date || lead.created_at)}
+                            </span>
+                            {isNew(lead.date || lead.created_at) && (
                               <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 New
                               </span>

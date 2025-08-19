@@ -994,7 +994,7 @@ function Karma() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center lg:left-64"
+            className="fixed top-16 lg:top-0 left-0 right-0 bottom-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center lg:left-64"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
