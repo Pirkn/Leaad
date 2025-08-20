@@ -55,10 +55,12 @@ def create_app():
     from src.routes.reddit import blp as reddit_blp
     from src.routes.leads import blp as leads_blp
     from src.routes.onboarding import blp as onboarding_blp
+    from src.routes.subscriptions import blp as subscriptions_blp
     api.register_blueprint(product_blp)
     api.register_blueprint(reddit_blp)
     api.register_blueprint(leads_blp)
     api.register_blueprint(onboarding_blp)
+    api.register_blueprint(subscriptions_blp)
 
     return app
 

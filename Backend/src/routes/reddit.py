@@ -31,7 +31,7 @@ class GenerateRedditPost(MethodView):
             
             # Fetch product details from Supabase
             supabase_url = current_app.config['SUPABASE_URL']
-            supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_ANON_KEY')
+            supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
             supabase: Client = create_client(supabase_url, supabase_key)
             
             # Get product details, ensuring it belongs to the authenticated user
