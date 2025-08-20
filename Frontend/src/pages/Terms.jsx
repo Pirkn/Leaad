@@ -23,7 +23,7 @@ const Terms = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <SEOHead
         title="Terms of Service - Leaad | User Agreement & Legal Terms"
         description="Read Leaad's terms of service, user agreement, and legal terms for using our AI-powered Reddit lead generation platform."
@@ -34,7 +34,7 @@ const Terms = () => {
       <Navigation />
 
       <div className="max-w-4xl mx-auto px-4 py-2">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <div className="p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">
             Terms of Service
           </h1>
@@ -162,6 +162,59 @@ const Terms = () => {
               <p className="text-gray-700">
                 Refunds are provided according to our refund policy. No refunds
                 for partial months or unused portions of annual plans.
+              </p>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">
+                5.4 Cancellations
+              </h3>
+              <p className="text-gray-700 mb-4">
+                You may cancel your subscription at any time from your account
+                dashboard. Cancellation takes effect at the end of the current
+                billing cycle and you will continue to have access until that
+                date. We do not charge cancellation fees. If you need immediate
+                deactivation, contact support; note that cancelling does not
+                entitle you to a refund for the remaining period unless required
+                by law.
+              </p>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                5.5 Price Changes
+              </h3>
+              <p className="text-gray-700 mb-4">
+                We may update subscription fees from time to time. Any changes
+                will be communicated with reasonable advance notice and will
+                apply from the next renewal term. Your continued use of the
+                Service after the effective date constitutes acceptance of the
+                updated pricing.
+              </p>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                5.6 Managing Your Subscription
+              </h3>
+              <p className="text-gray-700 mb-4">
+                You can view invoices, update your payment method, and manage
+                renewals in your account settings. Where required by applicable
+                law, we will send pre-renewal reminders.
+              </p>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                5.7 Payment Processing and Security
+              </h3>
+              <p className="text-gray-700 mb-4">
+                Payments are processed by our payment partners and may include
+                applicable taxes (e.g., VAT/GST) based on your location. We do
+                not store full payment card details on our servers and use
+                industry-standard security measures to protect your information.
+                Receipts are issued electronically.
+              </p>
+
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                5.8 Failed Payments
+              </h3>
+              <p className="text-gray-700">
+                If a renewal payment fails, we may notify you and provide a
+                short grace period to update your payment method. Access may be
+                limited or suspended until payment is completed.
               </p>
             </section>
 
@@ -325,7 +378,7 @@ const Terms = () => {
             </section>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="mt-12 pt-8">
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/privacy"
@@ -347,6 +400,140 @@ const Terms = () => {
               </Link>
             </div>
           </div>
+
+          {/* Additional Terms merged and paraphrased from external policy */}
+          <section className="mb-8 mt-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              15. Cookies
+            </h2>
+            <p className="text-gray-700">
+              We use cookies and similar technologies to operate the Service and
+              improve your experience. By using the Service, you consent to our
+              use of cookies as described in our Privacy Policy, where you can
+              also find details about types of cookies and how to control them.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              16. Website Content Use
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Unless otherwise stated, Leaad and/or its licensors own the
+              intellectual property rights for materials on the Service. All
+              rights are reserved. You may use the website for your personal,
+              lawful use subject to these Terms. You must not:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700">
+              <li>Republish website material without permission</li>
+              <li>Sell, rent, or sub‑license website material</li>
+              <li>Reproduce, duplicate, or copy website material</li>
+              <li>Redistribute website content</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              17. Community Areas and User Comments
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Where the Service allows posting of opinions or other content,
+              submissions reflect the views of the individual users and not of
+              Leaad. We do not pre‑screen all submissions but reserve the right
+              to monitor and remove content that is unlawful, infringing, or
+              violates these Terms.
+            </p>
+            <p className="text-gray-700 mb-2">You confirm that:</p>
+            <ul className="list-disc pl-6 text-gray-700 mb-4">
+              <li>
+                You have all necessary rights and permissions to post your
+                submissions
+              </li>
+              <li>
+                Your submissions do not violate intellectual property or privacy
+                rights of others
+              </li>
+              <li>
+                Your submissions are not defamatory, obscene, or otherwise
+                unlawful
+              </li>
+              <li>
+                You will not use submissions for unsolicited promotions or
+                illegal activities
+              </li>
+            </ul>
+            <p className="text-gray-700">
+              By posting, you grant Leaad a non‑exclusive, worldwide license to
+              use, reproduce, and adapt your submissions as needed to operate
+              the Service.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              18. Linking to Our Service
+            </h2>
+            <p className="text-gray-700 mb-4">
+              You may link to public pages of the Service provided the link is
+              not misleading, does not imply sponsorship or endorsement, and is
+              consistent with the context of the linking site. Use of Leaad’s
+              logos or brand requires prior written permission. We may request
+              removal of links at any time at our discretion.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              19. Framing
+            </h2>
+            <p className="text-gray-700">
+              You may not frame or embed pages of the Service to alter their
+              presentation without our prior written consent.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              20. External Content and Link Removal
+            </h2>
+            <p className="text-gray-700 mb-4">
+              We are not responsible for content appearing on third‑party
+              websites that link to or from the Service. If you believe a link
+              on our site is inappropriate, please contact us and we will
+              consider your request, though we are not obligated to respond or
+              remove such links.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              21. Accuracy of Information
+            </h2>
+            <p className="text-gray-700">
+              We endeavor to keep information on the Service current, but do not
+              warrant its completeness or accuracy. We do not guarantee the
+              Service or its content will always be available or up to date.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              22. Governing Law and Dispute Resolution
+            </h2>
+            <p className="text-gray-700 mb-4">
+              These Terms are governed by the laws of the jurisdiction in which
+              Leaad is established, without regard to conflict‑of‑laws rules.
+              Mandatory consumer protections in your place of residence remain
+              unaffected. Where permitted by law, disputes will be resolved
+              through binding arbitration or the courts located in our principal
+              place of business, and you waive any right to a jury trial or
+              class action to the fullest extent permitted.
+            </p>
+            <p className="text-gray-700">
+              Nothing in these Terms limits liability where such limitation is
+              prohibited by law.
+            </p>
+          </section>
         </div>
       </div>
 
