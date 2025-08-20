@@ -23,7 +23,7 @@ const DeliveryReturns = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <SEOHead
         title="Delivery & Returns Policy - Leaad | Refund & Cancellation Terms"
         description="Learn about Leaad's delivery terms, return policy, refund conditions, and cancellation procedures for our AI-powered platform services."
@@ -34,7 +34,7 @@ const DeliveryReturns = () => {
       <Navigation />
 
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <div className="p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">
             Delivery & Returns Policy
           </h1>
@@ -342,7 +342,7 @@ const DeliveryReturns = () => {
             </section>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="mt-12 pt-8">
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/privacy"

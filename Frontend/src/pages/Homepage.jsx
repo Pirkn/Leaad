@@ -798,81 +798,12 @@ export default function HomePage() {
               </motion.div>
 
               <motion.div
-                className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+                className="grid grid-cols-1 gap-8 max-w-md mx-auto"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
               >
-                {/* Free Plan */}
-                <motion.div
-                  className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-500 ease-out relative p-8 shadow-sm hover:shadow-lg transform hover:scale-[1.005] flex flex-col"
-                  variants={itemVariants}
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                  <div className="mb-">
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                      Free
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-6">
-                      Perfect for individuals and early stage founders
-                    </p>
-                    <div className="mb-6">
-                      <span className="text-5xl font-bold text-gray-900">
-                        $0
-                      </span>
-                      <span className="text-sm text-gray-500 ml-1">
-                        / month
-                      </span>
-                    </div>
-                  </div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="mb-8"
-                  >
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300"
-                      onClick={handlePrimaryCta}
-                    >
-                      {user && !loading
-                        ? onboardingComplete
-                          ? "Open Dashboard"
-                          : "Resume Onboarding"
-                        : "Get Started Free"}
-                    </Button>
-                  </motion.div>
-
-                  <ul className="space-y-4 flex-grow">
-                    {[
-                      "1 product analysis",
-                      "10 leads per month",
-                      "10 post generations",
-                      "Basic support",
-                    ].map((feature, index) => (
-                      <motion.li
-                        key={index}
-                        className="flex items-center"
-                        initial={{ opacity: 0, x: -20, filter: "blur(2px)" }}
-                        whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                        transition={{
-                          delay: index * 0.06,
-                          duration: 0.6,
-                          ease: "easeOut",
-                        }}
-                        viewport={{ once: true }}
-                      >
-                        <CircleCheck className="w-5 h-5 text-gray-900 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700 text-sm">{feature}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-
                 {/* Premium Plan */}
                 <motion.div
                   className="bg-gradient-to-br from-black to-gray-800 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all duration-500 ease-out relative p-8 shadow-sm hover:shadow-lg transform hover:scale-[1.005] flex flex-col"
@@ -910,6 +841,11 @@ export default function HomePage() {
                         / month
                       </span>
                     </div>
+                    <div>
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20">
+                        3‑day free trial
+                      </span>
+                    </div>
                   </div>
 
                   <motion.div
@@ -922,7 +858,7 @@ export default function HomePage() {
                       className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
                       onClick={handlePrimaryCta}
                     >
-                      {user && !loading ? "Manage Plan" : "Upgrade to Premium"}
+                      {user && !loading ? "Manage Plan" : "Start Free Trial"}
                     </Button>
                   </motion.div>
 
@@ -952,6 +888,9 @@ export default function HomePage() {
                       </motion.li>
                     ))}
                   </ul>
+                  <div className="mt-6 text-xs text-gray-300">
+                    3‑day free trial included. Cancel anytime before renewal.
+                  </div>
                 </motion.div>
               </motion.div>
             </div>

@@ -23,7 +23,7 @@ const Privacy = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <SEOHead
         title="Privacy Policy - Leaad | Data Protection & Privacy"
         description="Learn about how Leaad collects, uses, and protects your personal information. Read our comprehensive privacy policy for data protection compliance."
@@ -34,7 +34,7 @@ const Privacy = () => {
       <Navigation />
 
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <div className="p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">
             Privacy Policy
           </h1>
@@ -175,6 +175,21 @@ const Privacy = () => {
                 preferences, though disabling certain cookies may affect
                 platform functionality.
               </p>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  7.1 Types of Cookies We Use
+                </h3>
+                <ul className="list-disc pl-6 text-gray-700 mb-4">
+                  <li>
+                    Essential cookies (session-based) needed for sign-in,
+                    security, and core features
+                  </li>
+                  <li className="text-gray-700">
+                    Cookies may be session (deleted when you close your browser)
+                    or persistent (stored until they expire or you delete them).
+                  </li>
+                </ul>
+              </div>
             </section>
 
             <section className="mb-8">
@@ -218,7 +233,9 @@ const Privacy = () => {
               <p className="text-gray-700">
                 Our services are not intended for individuals under 18 years of
                 age. We do not knowingly collect personal information from
-                children under 18.
+                children under 18. If you believe a minor has provided us with
+                information, please contact us so we can take appropriate
+                action.
               </p>
             </section>
 
@@ -234,6 +251,42 @@ const Privacy = () => {
               <p className="text-gray-700">
                 Your continued use of our services after any changes constitutes
                 acceptance of the updated policy.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                16. Delete Your Personal Information
+              </h2>
+              <p className="text-gray-700 mb-4">
+                You can request deletion of your personal information. We may
+                retain limited data where necessary to comply with legal
+                obligations, enforce agreements, or resolve disputes.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                17. Disclosures Required by Law
+              </h2>
+              <p className="text-gray-700 mb-4">
+                We may disclose information when required to comply with
+                applicable laws, lawful requests, or legal processes; to protect
+                the rights, property, or safety of Leaad, our users, or the
+                public; to prevent fraud or abuse; and in connection with a
+                merger, acquisition, financing, or sale of assets where user
+                information may be transferred as part of the transaction.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                18. Links to Other Websites
+              </h2>
+              <p className="text-gray-700">
+                Our services may include links to third‑party sites. We are not
+                responsible for their content or privacy practices. We encourage
+                you to review the privacy policies of those websites you visit.
               </p>
             </section>
 
@@ -285,7 +338,7 @@ const Privacy = () => {
             </section>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="mt-12 pt-8">
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/terms"
