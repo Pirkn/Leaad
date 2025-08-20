@@ -26,6 +26,8 @@ import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
+import Success from "./pages/Success";
+import Failure from "./pages/Failure";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -81,6 +83,8 @@ function App() {
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<RootRedirect />} />
+                <Route path="/success" element={<Success />} />
+                <Route path="/failure" element={<Failure />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />

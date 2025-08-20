@@ -239,6 +239,27 @@ class ApiService {
       }),
     });
   }
+
+  // Subscriptions
+  async startTrial(billing) {
+    return this.request("/subscriptions/start-trial", {
+      method: "POST",
+      body: JSON.stringify(billing),
+    });
+  }
+
+  async getMySubscription() {
+    return this.request("/subscriptions/me");
+  }
+
+  async getMyPaymentLogs(limit = 50) {
+    const search = new URLSearchParams({ limit: String(limit) }).toString();
+    return this.request(`/subscriptions/payment-logs?${search}`);
+  }
+
+  async cancelSubscription() {
+    return this.request("/subscriptions/cancel", { method: "POST" });
+  }
 }
 
 export default new ApiService();
