@@ -51,7 +51,7 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 
 **You MUST respond with EXACTLY 3 posts in the following JSON format. NO EXCEPTIONS.**
 
-**IMPORTANT: Your response must be valid JSON only. Do not include any markdown formatting, explanations, or additional text outside the JSON structure.**
+**IMPORTANT: Your response must be valid JSON only. Every key-value pair on example is mandotary to fill. Do not include any markdown formatting, explanations, or additional text outside the JSON structure.**
 
 ```json
 [
@@ -61,7 +61,7 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 "Post": "<Body focusing on valuable insight/experience with casual product mentions woven in naturally. Start directly with your main point - NO greetings like 'Hey everyone' or 'Hello'>",
 "Reasoning": "<Brief explanation of why this subreddit and approach would work>"
 }, 
-(return minimum 2 different approaches/subreddits)
+(return minimum 2 more different posts)
 ]
 ```
 

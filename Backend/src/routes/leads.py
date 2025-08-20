@@ -16,6 +16,27 @@ load_dotenv()
 
 blp = Blueprint('Leads', __name__, description='Lead Operations')
 
+def check_existing_reddit_posts(supabase, user_id, new_leads):
+    """
+    Check for existing Reddit post IDs to prevent duplicate leads.
+    Returns only leads that don't already exist for this user.
+    """
+    if not new_leads:
+        return []
+    
+    # Get existing Reddit post IDs for this user
+    existing_result = supabase.table('leads').select('reddit_post_id').eq('uid', user_id).execute()
+    existing_post_ids = {lead['reddit_post_id'] for lead in existing_result.data if lead.get('reddit_post_id')}
+    
+    # Filter out duplicates
+    unique_leads = []
+    for lead in new_leads:
+        if lead.get('reddit_post_id') and lead['reddit_post_id'] not in existing_post_ids:
+            unique_leads.append(lead)
+    
+    print(f"Found {len(new_leads)} total leads, {len(unique_leads)} are unique (skipped {len(new_leads) - len(unique_leads)} duplicates)")
+    return unique_leads
+
 @blp.route('/lead-generation')
 class LeadGeneration(MethodView):
     @verify_supabase_token
@@ -86,6 +107,7 @@ class LeadGeneration(MethodView):
                 new_post['selftext'] = unformatted_post['selftext']
                 new_post['title'] = unformatted_post['title']
                 new_post['url'] = unformatted_post['url']
+                new_post['reddit_post_id'] = unformatted_post.get('reddit_post_id')  # Add Reddit post ID
                 new_post['score'] = unformatted_post['score']
                 new_post['read'] = False
                 new_post['num_comments'] = unformatted_post['num_comments']
@@ -95,18 +117,23 @@ class LeadGeneration(MethodView):
                 new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                 generated_leads.append(new_post)
 
-        # Save generated leads to the leads table
+        # Check for duplicates before inserting
         user_id = g.current_user['id']
+        unique_leads = check_existing_reddit_posts(supabase, user_id, generated_leads)
+        
+        if not unique_leads:
+            return jsonify({'message': 'No new leads found. All leads already exist.', 'leads': []})
+        
         leads_to_insert = []
 
         # Calculate scheduling intervals using dynamic algorithm
-        base_interval_minutes = 120.0 / len(generated_leads)
+        base_interval_minutes = 120.0 / len(unique_leads)
         base_interval_minutes = max(5.0, min(45.0, base_interval_minutes))  # Min 5 min, max 45 min
         
         scheduled_time = datetime.datetime.now(datetime.timezone.utc)
         time_now = datetime.datetime.now(datetime.timezone.utc)
 
-        for i, lead in enumerate(generated_leads):            
+        for i, lead in enumerate(unique_leads):            
             lead_data = {
                 'id': lead['id'],
                 'uid': user_id,
@@ -114,6 +141,7 @@ class LeadGeneration(MethodView):
                 'selftext': lead['selftext'],
                 'title': lead['title'],
                 'url': lead['url'],
+                'reddit_post_id': lead['reddit_post_id'],  # Include Reddit post ID
                 'score': lead['score'],
                 'read': lead['read'],
                 'num_comments': lead['num_comments'],
@@ -136,11 +164,14 @@ class LeadGeneration(MethodView):
         if leads_to_insert:
             try:
                 supabase.table('leads').insert(leads_to_insert).execute()
-                print(f"Successfully saved {len(leads_to_insert)} leads to database")
+                print(f"Successfully saved {len(leads_to_insert)} unique leads to database")
             except Exception as e:
                 print(f"Error saving leads to database: {e}")
 
-        return jsonify(generated_leads)
+        return jsonify({
+            'message': f'Generated {len(unique_leads)} new leads (skipped {len(generated_leads) - len(unique_leads)} duplicates)',
+            'leads': unique_leads
+        })
     
 
 @blp.route('/get-leads')
@@ -292,6 +323,7 @@ def generate_leads(user_id):
             new_post['selftext'] = unformatted_post['selftext']
             new_post['title'] = unformatted_post['title']
             new_post['url'] = unformatted_post['url']
+            new_post['reddit_post_id'] = unformatted_post.get('reddit_post_id')  # Add Reddit post ID
             new_post['score'] = unformatted_post['score']
             new_post['read'] = False
             new_post['num_comments'] = unformatted_post['num_comments']
@@ -301,21 +333,27 @@ def generate_leads(user_id):
             new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
             generated_leads.append(new_post)
 
-    # Save generated leads to the leads table
+    # Check for duplicates before inserting
     if not generated_leads:
         print(f"No leads generated for user {user_id}")
+        return
+    
+    unique_leads = check_existing_reddit_posts(supabase, user_id, generated_leads)
+    
+    if not unique_leads:
+        print(f"No new leads found for user {user_id}. All leads already exist.")
         return
     
     leads_to_insert = []
 
     # Calculate scheduling intervals using dynamic algorithm
-    base_interval_minutes = 120.0 / len(generated_leads)
+    base_interval_minutes = 120.0 / len(unique_leads)
     base_interval_minutes = max(5.0, min(45.0, base_interval_minutes))  # Min 5 min, max 45 min
     
     scheduled_time = datetime.datetime.now(datetime.timezone.utc)
     time_now = datetime.datetime.now(datetime.timezone.utc)
 
-    for i, lead in enumerate(generated_leads):            
+    for i, lead in enumerate(unique_leads):            
         lead_data = {
             'id': lead['id'],
             'uid': user_id,
@@ -323,6 +361,7 @@ def generate_leads(user_id):
             'selftext': lead['selftext'],
             'title': lead['title'],
             'url': lead['url'],
+            'reddit_post_id': lead['reddit_post_id'],  # Include Reddit post ID
             'score': lead['score'],
             'read': lead['read'],
             'num_comments': lead['num_comments'],
@@ -345,11 +384,11 @@ def generate_leads(user_id):
     if leads_to_insert:
         try:
             supabase.table('leads').insert(leads_to_insert).execute()
-            print(f"Successfully saved {len(leads_to_insert)} leads to database")
+            print(f"Successfully saved {len(leads_to_insert)} unique leads to database for user {user_id}")
         except Exception as e:
             print(f"Error saving leads to database: {e}")
 
-    return jsonify(generated_leads)
+    return jsonify(unique_leads)
 
 @blp.route('/next-lead-search')
 class NextLeadSearch(MethodView):

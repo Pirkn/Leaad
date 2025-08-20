@@ -142,6 +142,7 @@ def lead_posts(subreddits):
                     "comments": post.num_comments,
                     "created": post.created,
                     "url": comment_url,
+                    "reddit_post_id": post.id,  # Add Reddit post ID for deduplication
                     "selftext": post.selftext[:1000] if post.selftext else "No text",
                     "top_comments": comments,
                     "num_comments": post.num_comments,
