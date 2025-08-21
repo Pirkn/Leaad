@@ -19,6 +19,7 @@ COMMENTING STRATEGY (95% Value / up to 5% Mention):
 - Keep the tone casual and natural, not corporate or robotic.
 - Avoid lists, bullet points, or structured marketing-style writing. Each comment must flow as a single piece of advice or perspective.
 - Use personal experience, proven approaches, or examples to build credibility.
+- Always mention the product do not forget.
 - Mentioning the product:
     * Always mention the product as part of a short list of 2–4 tools (e.g., “Some options like {name}, X, Y could work depending on your setup”).
     * Treat all options equally in tone — avoid overpraising or selling.
