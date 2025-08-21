@@ -123,6 +123,29 @@ export const AuthProvider = ({ children }) => {
   const signUp = async (email, password) => {
     const { data, error } = await authService.signUp(email, password);
     if (error) throw error;
+
+    // For email confirmation flow, don't set user or check onboarding status automatically
+    // User will be set and onboarding checked after OTP verification
+    // Only set user if Supabase returns a session (email confirmations disabled)
+    if (data?.session) {
+      // Only set user if immediately authenticated (no email confirmation required)
+      if (data?.user) {
+        setUser(data.user);
+      }
+      // Check onboarding status only if immediately authenticated
+      if (!hasCheckedOnboarding.current) {
+        hasCheckedOnboarding.current = true;
+      }
+      setOnboardingStatusLoading(true);
+      checkOnboardingStatus().catch((err) => {
+        console.error(
+          "Error during onboarding status check after signUp:",
+          err
+        );
+        setOnboardingStatusLoading(false);
+      });
+    }
+
     return data;
   };
 
@@ -134,6 +157,21 @@ export const AuthProvider = ({ children }) => {
     setTimeout(() => {
       karmaService.generateKarmaContent(false); // false = don't force refresh
     }, 1000);
+
+    // Immediately set user so ProtectedRoute doesn't bounce to homepage before onAuthStateChange fires
+    if (data?.user) {
+      setUser(data.user);
+    }
+
+    // Immediately kick off onboarding status check so route guards can show a loader
+    if (!hasCheckedOnboarding.current) {
+      hasCheckedOnboarding.current = true;
+    }
+    setOnboardingStatusLoading(true);
+    checkOnboardingStatus().catch((err) => {
+      console.error("Error during onboarding status check after signIn:", err);
+      setOnboardingStatusLoading(false);
+    });
 
     return data;
   };
@@ -161,6 +199,34 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const verifyOTP = async (email, token) => {
+    try {
+      const { data, error } = await authService.verifyOTP(email, token);
+      if (error) throw error;
+
+      // Set user immediately after successful OTP verification
+      if (data?.user) {
+        setUser(data.user);
+        // Start onboarding status check
+        if (!hasCheckedOnboarding.current) {
+          hasCheckedOnboarding.current = true;
+        }
+        setOnboardingStatusLoading(true);
+        checkOnboardingStatus().catch((err) => {
+          console.error(
+            "Error during onboarding status check after OTP verification:",
+            err
+          );
+          setOnboardingStatusLoading(false);
+        });
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -173,6 +239,7 @@ export const AuthProvider = ({ children }) => {
     resetPassword,
     markOnboardingComplete,
     checkOnboardingStatus,
+    verifyOTP,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -81,6 +81,16 @@ export const authService = {
     return { data, error };
   },
 
+  // Verify OTP
+  async verifyOTP(email, token) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "signup",
+    });
+    return { data, error };
+  },
+
   // Update password
   async updatePassword(newPassword) {
     const { data, error } = await supabase.auth.updateUser({
