@@ -19,7 +19,6 @@ QUALITY FILTERS:
 - Avoid posts where the discussion is already resolved or closed to further value.
 - Maximum 3 selected posts per batch to maintain quality.
 - Minimum 1 selected post per batch.
-- If you are sure that none of the posts has potential return empty array {{"selected_post_ids": []}}
 
 RESPONSE FORMAT:
 Return ONLY the IDs of the selected posts in JSON format:
