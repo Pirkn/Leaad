@@ -221,7 +221,7 @@ class GetLeads(MethodView):
             
             # Only return leads that have reached their scheduled time (drip-feed system)
             try:
-                result = supabase.table('leads').select('id, selftext, title, url, score, read, num_comments, author, subreddit, date, comment').eq('uid', user_id).lte(
+                result = supabase.table('leads').select('id, selftext, title, url, score, read, num_comments, author, subreddit, date, comment, created_at:scheduled_at').eq('uid', user_id).lte(
                     'scheduled_at', current_time.isoformat()
                 ).order('scheduled_at', desc=True).execute()
 
