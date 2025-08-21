@@ -8,7 +8,7 @@ import os
 import datetime
 from src.utils.prompt_generator import generate_product_details_prompt, lead_subreddits_for_product_prompt
 from src.utils.prompt_generator import lead_generation_prompt, lead_generation_prompt_2
-from src.utils.reddit_helpers import lead_posts
+from src.utils.reddit_helpers import list_new_posts_metadata, fetch_comments_for_posts
 from src.utils.models import Model
 import json
 import uuid
@@ -37,10 +37,12 @@ class OnboardingLeadGeneration(MethodView):
             clean_subreddit = subreddit.replace('r/', '') if subreddit.startswith('r/') else subreddit
             subreddits.append(clean_subreddit)        
 
-        unformatted_posts, posts = lead_posts(subreddits)
+        # Phase 1: fetch only lightweight metadata (no comments) to speed up onboarding
+        unformatted_posts, posts = list_new_posts_metadata(subreddits)
         # Process posts in batches of 10
         batch_size = 10
         selected_posts = []
+        selected_indexes = []
         
         for i in range(0, len(posts), batch_size):
             batch = posts[i:i + batch_size]
@@ -54,11 +56,31 @@ class OnboardingLeadGeneration(MethodView):
                 print(post_ids)
                 for post_id in post_ids:
                     selected_posts.append(posts[post_id])
+                    selected_indexes.append(post_id)
             except json.JSONDecodeError as e:
                 print(f"Failed to parse AI response: {e}")
                 print(f"Raw response: {response}")
-        
-        messages = lead_generation_prompt_2(product_data, selected_posts)
+
+        # Phase 2: fetch comments only for shortlisted posts
+        try:
+            selected_reddit_ids = [unformatted_posts[idx]['reddit_post_id'] for idx in selected_indexes]
+            comments_by_post_id = fetch_comments_for_posts(selected_reddit_ids, comments_per_post=3)
+        except Exception as e:
+            print(f"Failed to fetch comments for shortlisted posts: {e}")
+            comments_by_post_id = {}
+
+        # Enrich selected posts with fetched top comments for better final generation context
+        selected_posts_with_comments = []
+        for idx in selected_indexes:
+            try:
+                base = posts[idx]
+                reddit_id = unformatted_posts[idx]['reddit_post_id']
+                enriched = {**base, "top_comments": comments_by_post_id.get(reddit_id, [])}
+                selected_posts_with_comments.append(enriched)
+            except Exception as e:
+                print(f"Error enriching post {idx} with comments: {e}")
+
+        messages = lead_generation_prompt_2(product_data, selected_posts_with_comments)
 
         response = model.gemini_chat_completion(messages)
         response_data = json.loads(response)
@@ -93,6 +115,7 @@ class OnboardingLeadGeneration(MethodView):
                         new_post['author'] = unformatted_post['author']
                         new_post['subreddit'] = unformatted_post['subreddit']
                         new_post['date'] = unformatted_post['date']
+                        new_post['reddit_post_id'] = unformatted_post['reddit_post_id']
                         new_post['created_at'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                         generated_leads.append(new_post)
                     except (ValueError, KeyError, IndexError) as e:
@@ -128,6 +151,7 @@ class OnboardingLeadGeneration(MethodView):
                     'url': lead['url'],
                     'score': lead['score'],
                     'read': lead['read'],
+                    'reddit_post_id': lead['reddit_post_id'],
                     'num_comments': lead['num_comments'],
                     'author': lead['author'],
                     'subreddit': lead['subreddit'],
@@ -154,6 +178,7 @@ class OnboardingLeadGeneration(MethodView):
                     'url': lead['url'],
                     'score': lead['score'],
                     'read': lead['read'],
+                    'reddit_post_id': lead['reddit_post_id'],
                     'num_comments': lead['num_comments'],
                     'author': lead['author'],
                     'subreddit': lead['subreddit'],

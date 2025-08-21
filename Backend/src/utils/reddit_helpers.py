@@ -179,3 +179,83 @@ def lead_posts(subreddits):
         formatted_posts.append(formatted_post)
     
     return post_content, formatted_posts
+
+
+def list_new_posts_metadata(subreddits, limit_per_sub=10):
+    post_content = []
+    formatted_posts = []
+    running_index = 0
+    for subreddit_name in subreddits:
+        try:
+            subreddit = reddit.subreddit(subreddit_name)
+            # Accessing display_name validates existence/permissions
+            display_name = subreddit.display_name
+            print(f"✅ Listing metadata for subreddit: r/{display_name}")
+
+            for post in subreddit.new(limit=limit_per_sub):
+                if post.over_18:
+                    continue
+
+                # Build lightweight structures without fetching comments
+                created_iso_date = datetime.datetime.fromtimestamp(post.created_utc, tz=datetime.timezone.utc).isoformat()
+                comment_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{post.id}/"
+                subreddit_name_clean = str(subreddit_name)
+
+                unformatted = {
+                    "title": post.title,
+                    "score": post.score,
+                    "comments": post.num_comments,
+                    "created": post.created,
+                    "url": comment_url,
+                    "reddit_post_id": post.id,
+                    "selftext": post.selftext[:1000] if getattr(post, "selftext", None) else "No text",
+                    "num_comments": post.num_comments,
+                    "author": post.author.name if post.author else 'deleted',
+                    "subreddit": subreddit_name_clean,
+                    "date": created_iso_date
+                }
+                post_content.append(unformatted)
+
+                formatted = {
+                    "post_id": running_index,
+                    "title": unformatted["title"],
+                    "score": unformatted["score"],
+                    "total_comments": unformatted["comments"],
+                    "url": unformatted["url"],
+                    "content": unformatted["selftext"],
+                }
+                formatted_posts.append(formatted)
+                running_index += 1
+
+        except Exception as e:
+            print(f"❌ Error listing metadata for r/{subreddit_name}: {str(e)}")
+            continue
+
+    return post_content, formatted_posts
+
+
+def fetch_comments_for_posts(reddit_post_ids, comments_per_post=3):
+    results_by_id = {}
+
+    for pid in reddit_post_ids:
+        try:
+            submission = reddit.submission(id=pid)
+            submission.comment_sort = 'top'
+            try:
+                submission.comments.replace_more(limit=0)
+            except Exception:
+                pass
+
+            comments = []
+            for comment in submission.comments[:comments_per_post]:
+                comments.append({
+                    "comment": getattr(comment, "body", ""),
+                    "score": getattr(comment, "score", 0),
+                })
+
+            results_by_id[pid] = comments
+        except Exception as e:
+            print(f"❌ Error fetching comments for {pid}: {str(e)}")
+            results_by_id[pid] = []
+
+    return results_by_id
