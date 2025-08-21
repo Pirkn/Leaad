@@ -10,6 +10,7 @@ from src.utils.prompt_generator import generate_product_details_prompt, lead_sub
 from src.utils.prompt_generator import lead_generation_prompt, lead_generation_prompt_2
 from src.utils.reddit_helpers import list_new_posts_metadata, fetch_comments_for_posts
 from src.utils.models import Model
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import uuid
 import random
@@ -39,27 +40,50 @@ class OnboardingLeadGeneration(MethodView):
 
         # Phase 1: fetch only lightweight metadata (no comments) to speed up onboarding
         unformatted_posts, posts = list_new_posts_metadata(subreddits)
-        # Process posts in batches of 10
+        # Process posts in batches of 10 with parallel AI checks (max 3 concurrent)
         batch_size = 10
         selected_posts = []
         selected_indexes = []
         
-        for i in range(0, len(posts), batch_size):
-            batch = posts[i:i + batch_size]
+        def process_batch(batch_data):
+            batch, batch_start_idx = batch_data
             messages = lead_generation_prompt(product_data, batch)
-
             response = model.gemini_lead_checking(messages)
-
+            
             try:
                 response_data = json.loads(response)
                 post_ids = response_data.get('selected_post_ids', [])
-                print(post_ids)
-                for post_id in post_ids:
-                    selected_posts.append(posts[post_id])
-                    selected_indexes.append(post_id)
+                print(f"Batch starting at index {batch_start_idx}: AI selected {post_ids}")
+                # Adjust post_ids to global indices
+                global_post_ids = [batch_start_idx + pid for pid in post_ids]
+                return global_post_ids
             except json.JSONDecodeError as e:
-                print(f"Failed to parse AI response: {e}")
+                print(f"Failed to parse AI response for batch starting at {batch_start_idx}: {e}")
                 print(f"Raw response: {response}")
+                return []
+        
+        # Prepare batches with their starting indices
+        batches = []
+        for i in range(0, len(posts), batch_size):
+            batch = posts[i:i + batch_size]
+            batches.append((batch, i))
+        
+        # Process batches in parallel with max 3 concurrent workers
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            # Submit all batch processing tasks
+            future_to_batch = {executor.submit(process_batch, batch_data): batch_data for batch_data in batches}
+            
+            # Collect results as they complete
+            for future in as_completed(future_to_batch):
+                batch_data = future_to_batch[future]
+                try:
+                    global_post_ids = future.result()
+                    for post_id in global_post_ids:
+                        if post_id < len(posts):
+                            selected_posts.append(posts[post_id])
+                            selected_indexes.append(post_id)
+                except Exception as e:
+                    print(f"Error processing batch {batch_data[1]}: {e}")
 
         # Phase 2: fetch comments only for shortlisted posts
         try:
