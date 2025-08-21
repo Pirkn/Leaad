@@ -38,10 +38,12 @@ const SignIn = () => {
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      // Clear the message from location state
-      navigate(location.pathname, { replace: true });
     }
-  }, [location, navigate]);
+    if (location.state?.email) {
+      setEmail(location.state.email);
+    }
+    // Do not clear state immediately to avoid losing prefill; it will be replaced on navigation elsewhere
+  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +52,8 @@ const SignIn = () => {
 
     try {
       await signIn(email, password);
-      // Navigation will be handled by the useEffect above
+      // Immediately navigate to dashboard so ProtectedRoute shows loader while onboarding status is checked
+      navigate("/dashboard");
     } catch (error) {
       setError(error.message);
     } finally {

@@ -92,11 +92,10 @@ const SignUp = () => {
 
     try {
       await signUp(formData.email, formData.password);
-      // Show success message and redirect
-      navigate("/signin", {
+      // Redirect to email verification page
+      navigate("/verify-email", {
         state: {
-          message:
-            "Account created successfully! Please check your email to verify your account.",
+          email: formData.email,
         },
       });
     } catch (error) {
