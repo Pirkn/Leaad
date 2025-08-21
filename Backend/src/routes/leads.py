@@ -6,7 +6,7 @@ from src.utils.auth import verify_supabase_token
 from src.utils.prompt_generator import lead_generation_prompt, lead_generation_prompt_2
 from src.utils.models import Model
 from supabase import create_client, Client
-from src.utils.reddit_helpers import lead_posts
+from src.utils.reddit_helpers import list_new_posts_metadata, fetch_comments_for_posts
 import os
 import json
 import uuid
@@ -66,13 +66,15 @@ class LeadGeneration(MethodView):
         product_result = supabase.table('products').select('*').eq('id', product_id).execute()
         product_data = product_result.data[0]
         
-        unformatted_posts, posts = lead_posts(subreddits)
+        # Phase 1: fetch lightweight post metadata only (no comments)
+        unformatted_posts, posts = list_new_posts_metadata(subreddits)
         
         logger.info(f"Processing {len(posts)} posts from {len(subreddits)} subreddits")
 
         # Process posts in batches of 10
         batch_size = 10
         selected_posts = []
+        selected_indexes: List[int] = []
         
         # Create one Model instance to reuse for all batches
         model = Model()
@@ -88,12 +90,32 @@ class LeadGeneration(MethodView):
                 post_ids = response_data.get('selected_post_ids', [])
                 logger.debug(f"AI selected post indices: {post_ids}")
                 for post_id in post_ids:
-                    selected_posts.append(posts[post_id])
+                    if post_id < len(posts):
+                        selected_posts.append(posts[post_id])
+                        selected_indexes.append(post_id)
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse AI response: {e}")
                 logger.debug(f"Raw response: {response}")
         
-        messages = lead_generation_prompt_2(product_data, selected_posts)
+        # Phase 2: fetch comments only for shortlisted posts and enrich selected posts
+        try:
+            selected_reddit_ids = [unformatted_posts[idx]['reddit_post_id'] for idx in selected_indexes]
+            comments_by_post_id = fetch_comments_for_posts(selected_reddit_ids, comments_per_post=3)
+        except Exception as e:
+            logger.error(f"Failed to fetch comments for shortlisted posts: {e}")
+            comments_by_post_id = {}
+
+        selected_posts_with_comments = []
+        for idx in selected_indexes:
+            try:
+                base = posts[idx]
+                reddit_id = unformatted_posts[idx]['reddit_post_id']
+                enriched = {**base, "top_comments": comments_by_post_id.get(reddit_id, [])}
+                selected_posts_with_comments.append(enriched)
+            except Exception as e:
+                logger.error(f"Error enriching post {idx} with comments: {e}")
+
+        messages = lead_generation_prompt_2(product_data, selected_posts_with_comments)
 
         response = model.gemini_chat_completion(messages)
         response_data = json.loads(response)
@@ -416,7 +438,8 @@ def generate_leads(user_id):
         
         # Get posts with error handling
         try:
-            unformatted_posts, posts = lead_posts(subreddits)
+            # Phase 1: fetch lightweight post metadata only (no comments)
+            unformatted_posts, posts = list_new_posts_metadata(subreddits)
         except Exception as e:
             logger.error(f"Error fetching Reddit posts: {e}")
             return {"error": "Failed to fetch Reddit posts", "success": False}
@@ -427,6 +450,7 @@ def generate_leads(user_id):
         # Process posts in batches with configurable size
         batch_size = 10
         selected_posts = []
+        selected_indexes: List[int] = []
         
         # Create one Model instance to reuse for all batches
         model = Model()
@@ -443,6 +467,7 @@ def generate_leads(user_id):
                 for post_id in post_ids:
                     if post_id < len(posts):  # Bounds checking
                         selected_posts.append(posts[post_id])
+                        selected_indexes.append(post_id)
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse AI response: {e}")
                 logger.error(f"Raw response: {response}")
@@ -455,7 +480,25 @@ def generate_leads(user_id):
             logger.warning(f"No posts selected by AI for user {user_id}")
             return {"error": "No suitable posts found", "success": False}
 
-        messages = lead_generation_prompt_2(product_data, selected_posts)
+        # Phase 2: fetch comments only for shortlisted posts and enrich selected posts
+        try:
+            selected_reddit_ids = [unformatted_posts[idx]['reddit_post_id'] for idx in selected_indexes]
+            comments_by_post_id = fetch_comments_for_posts(selected_reddit_ids, comments_per_post=3)
+        except Exception as e:
+            logger.error(f"Failed to fetch comments for shortlisted posts: {e}")
+            comments_by_post_id = {}
+
+        selected_posts_with_comments = []
+        for idx in selected_indexes:
+            try:
+                base = posts[idx]
+                reddit_id = unformatted_posts[idx]['reddit_post_id']
+                enriched = {**base, "top_comments": comments_by_post_id.get(reddit_id, [])}
+                selected_posts_with_comments.append(enriched)
+            except Exception as e:
+                logger.error(f"Error enriching post {idx} with comments: {e}")
+
+        messages = lead_generation_prompt_2(product_data, selected_posts_with_comments)
 
         try:
             response = model.gemini_chat_completion(messages)
