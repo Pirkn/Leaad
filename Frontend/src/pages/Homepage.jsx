@@ -628,6 +628,136 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* Features Overview Section */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white relative">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              className="text-center mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              <motion.div
+                className="inline-flex items-center px-4 py-2 mb-6 bg-gradient-to-r from-amber-50 to-amber-100 text-amber-800 border border-amber-300 rounded-full text-sm font-medium shadow-sm"
+                variants={itemVariants}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Platform Features
+              </motion.div>
+              <motion.h2
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tighter"
+                variants={itemVariants}
+              >
+                What Leaad Delivers
+              </motion.h2>
+              <motion.p
+                className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4 tracking-tight"
+                variants={itemVariants}
+              >
+                From lead discovery to customer conversion, our comprehensive
+                suite has you covered
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              {[
+                {
+                  icon: Target,
+                  title: "Lead Discovery",
+                  description:
+                    "Find the latest leads and create AI-powered responses for them",
+                  features: [
+                    "Real-time Reddit monitoring",
+                    "Intent-based targeting",
+                    "AI response generation",
+                  ],
+                },
+                {
+                  icon: MessageSquare,
+                  title: "Post Generation",
+                  description:
+                    "Create posts based on your product, target audience, and problems solved",
+                  features: [
+                    "AI-powered post creation",
+                    "Product-specific content",
+                    "Audience targeting",
+                  ],
+                },
+                {
+                  icon: TrendingUp,
+                  title: "Viral Templates",
+                  description:
+                    "Access proven templates that drive engagement and shares",
+                  features: [
+                    "Viral template library",
+                    "Proven engagement patterns",
+                    "Easy customization",
+                  ],
+                },
+                {
+                  icon: TrendingUp,
+                  title: "Karma Building",
+                  description:
+                    "Build authentic Reddit presence and credibility before engaging",
+                  features: [
+                    "Comment generation",
+                    "Post generation",
+                    "Community building tools",
+                  ],
+                },
+                {
+                  icon: Shield,
+                  title: "Compliance & Safety",
+                  description:
+                    "Stay within Reddit guidelines while maximizing your reach",
+                  features: [
+                    "Terms compliance",
+                    "Rate limiting",
+                    "Safe engagement practices",
+                  ],
+                },
+              ].map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-300 p-6 shadow-sm hover:shadow-md group"
+                  variants={itemVariants}
+                  whileHover={{ y: -2 }}
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300">
+                      <feature.icon className="w-5 h-5 text-gray-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 tracking-tight">
+                      {feature.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 mb-4 leading-relaxed tracking-tight">
+                    {feature.description}
+                  </p>
+                  <ul className="space-y-2">
+                    {feature.features.map((item, itemIndex) => (
+                      <li
+                        key={itemIndex}
+                        className="flex items-center text-sm text-gray-600"
+                      >
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
         {/* How It Works - Linear-inspired Design (deferred) */}
         {showDeferred && (
           <section
