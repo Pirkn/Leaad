@@ -161,19 +161,26 @@ const Navigation = () => {
           {/* Right column - Buttons */}
           <div className="hidden lg:flex items-center justify-end">
             <div className="flex items-center space-x-3">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                  onClick={() => handleAuthAction("/signin")}
+              {/* Only show ghost button if user is not signed in OR if onboarding is complete */}
+              {(!user || loading || onboardingComplete) && (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {user && !loading ? "Dashboard" : "Log in"}
-                </Button>
-              </motion.div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                    onClick={() => handleAuthAction("/signin")}
+                  >
+                    {user && !loading
+                      ? onboardingComplete
+                        ? "Dashboard"
+                        : "Complete Setup"
+                      : "Log in"}
+                  </Button>
+                </motion.div>
+              )}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -183,7 +190,11 @@ const Navigation = () => {
                   className="px-5 py-2 rounded-md bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
                   onClick={() => handleAuthAction("/signup")}
                 >
-                  {user && !loading ? "Dashboard" : "Get Started"}
+                  {user && !loading
+                    ? onboardingComplete
+                      ? "Dashboard"
+                      : "Complete Setup"
+                    : "Get Started"}
                 </Button>
               </motion.div>
             </div>
@@ -261,16 +272,23 @@ const Navigation = () => {
                   </Button>
 
                   <div className="pt-2 border-t border-gray-200">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                      onClick={() => {
-                        handleAuthAction("/signin");
-                        toggleMobileMenu();
-                      }}
-                    >
-                      {user && !loading ? "Dashboard" : "Log in"}
-                    </Button>
+                    {/* Only show ghost button if user is not signed in OR if onboarding is complete */}
+                    {(!user || loading || onboardingComplete) && (
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        onClick={() => {
+                          handleAuthAction("/signin");
+                          toggleMobileMenu();
+                        }}
+                      >
+                        {user && !loading
+                          ? onboardingComplete
+                            ? "Dashboard"
+                            : "Complete Setup"
+                          : "Log in"}
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       className="w-full mt-2 px-4 py-2 rounded-md bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
@@ -279,7 +297,11 @@ const Navigation = () => {
                         toggleMobileMenu();
                       }}
                     >
-                      {user && !loading ? "Dashboard" : "Get Started"}
+                      {user && !loading
+                        ? onboardingComplete
+                          ? "Dashboard"
+                          : "Complete Setup"
+                        : "Get Started"}
                     </Button>
                   </div>
                 </div>
