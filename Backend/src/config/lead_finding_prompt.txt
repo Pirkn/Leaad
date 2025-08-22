@@ -17,8 +17,9 @@ QUALITY FILTERS:
 - Select only posts where a future comment could provide meaningful help AND naturally reference the product category without looking like an ad.
 - Skip posts that are off-topic, or unrelated to the product’s problem space.
 - Avoid posts where the discussion is already resolved or closed to further value.
-- Maximum 3 selected posts per batch to maintain quality.
-- Minimum 1 selected post per batch.
+- Maximum 6 selected posts
+- Minimum 1 selected posts
+- FALLBACK: If fewer than 1 strong matches, include best available option
 
 RESPONSE FORMAT:
 Return ONLY the IDs of the selected posts in JSON format:
