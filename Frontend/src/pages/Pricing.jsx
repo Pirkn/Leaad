@@ -8,8 +8,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { CircleCheck } from "lucide-react";
 import { CirclePercent } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const Pricing = () => {
+  const navigate = useNavigate();
+  const { user, loading, onboardingComplete } = useAuth();
+
+  const handlePrimaryCta = () => {
+    if (!user || loading) return navigate("/signup");
+    if (onboardingComplete) return navigate("/dashboard");
+    return navigate("/onboarding");
+  };
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -165,8 +176,9 @@ const Pricing = () => {
                 <Button
                   size="lg"
                   className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
+                  onClick={handlePrimaryCta}
                 >
-                  Start Free Trial
+                  {user && !loading ? "Manage Plan" : "Start Free Trial"}
                 </Button>
               </motion.div>
 
@@ -277,8 +289,11 @@ const Pricing = () => {
             customers on Reddit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3">
-              Start Free Trial
+            <Button
+              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3"
+              onClick={handlePrimaryCta}
+            >
+              {user && !loading ? "Manage Plan" : "Start Free Trial"}
             </Button>
           </div>
         </div>

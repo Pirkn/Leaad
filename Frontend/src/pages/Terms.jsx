@@ -39,6 +39,21 @@ const Terms = () => {
             Terms of Service
           </h1>
 
+          {/* Company Information Section */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h2 className="text-lg font-semibold text-blue-900 mb-3">
+              Company Information
+            </h2>
+            <p className="text-blue-800 mb-2">
+              <strong>Company Name:</strong> ESİLAH AV MALZEMELERİ
+            </p>
+            <p className="text-blue-800">
+              Leaad is a digital platform and brand operated by ESİLAH AV
+              MALZEMELERİ, providing AI-powered Reddit lead generation services
+              to businesses and entrepreneurs worldwide.
+            </p>
+          </div>
+
           <div className="prose prose-gray max-w-none">
             <p className="text-gray-600 mb-6">
               <strong>Last updated:</strong>{" "}
