@@ -86,10 +86,10 @@ const Navigation = () => {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-32 relative">
-        <div className="grid grid-cols-3 items-center h-16">
+        <div className="grid grid-cols-3 items-center h-16 gap-4">
           {/* Left column - Logo */}
           <motion.div
-            className="flex items-center space-x-3 cursor-pointer"
+            className="flex items-center space-x-3 cursor-pointer justify-self-start"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={handleLogoClick}
@@ -101,7 +101,7 @@ const Navigation = () => {
           </motion.div>
 
           {/* Center column - Navigation */}
-          <div className="hidden lg:flex items-center justify-center">
+          <div className="hidden lg:flex items-center justify-center justify-self-center">
             <div className="flex items-center space-x-2">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -137,7 +137,7 @@ const Navigation = () => {
                   variant="ghost"
                   size="sm"
                   className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  onClick={() => handleSectionNavigation("pricing")}
+                  onClick={() => navigate("/pricing")}
                 >
                   Pricing
                 </Button>
@@ -155,12 +155,6 @@ const Navigation = () => {
                   FAQ
                 </Button>
               </motion.div>
-            </div>
-          </div>
-
-          {/* Right column - Buttons */}
-          <div className="hidden lg:flex items-center justify-end">
-            <div className="flex items-center space-x-3">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -168,12 +162,38 @@ const Navigation = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                  onClick={() => handleAuthAction("/signin")}
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  onClick={() => navigate("/legal")}
                 >
-                  {user && !loading ? "Dashboard" : "Log in"}
+                  Legal
                 </Button>
               </motion.div>
+            </div>
+          </div>
+
+          {/* Right column - Buttons */}
+          <div className="hidden lg:flex items-center justify-end justify-self-end">
+            <div className="flex items-center space-x-3">
+              {/* Only show ghost button if user is not signed in OR if onboarding is complete */}
+              {(!user || loading || onboardingComplete) && (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                    onClick={() => handleAuthAction("/signin")}
+                  >
+                    {user && !loading
+                      ? onboardingComplete
+                        ? "Dashboard"
+                        : "Complete Setup"
+                      : "Log in"}
+                  </Button>
+                </motion.div>
+              )}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -183,7 +203,11 @@ const Navigation = () => {
                   className="px-5 py-2 rounded-md bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
                   onClick={() => handleAuthAction("/signup")}
                 >
-                  {user && !loading ? "Dashboard" : "Get Started"}
+                  {user && !loading
+                    ? onboardingComplete
+                      ? "Dashboard"
+                      : "Complete Setup"
+                    : "Get Started"}
                 </Button>
               </motion.div>
             </div>
@@ -243,7 +267,7 @@ const Navigation = () => {
                     variant="ghost"
                     className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                     onClick={() => {
-                      handleSectionNavigation("pricing");
+                      navigate("/pricing");
                       toggleMobileMenu();
                     }}
                   >
@@ -259,18 +283,35 @@ const Navigation = () => {
                   >
                     FAQ
                   </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    onClick={() => {
+                      navigate("/legal");
+                      toggleMobileMenu();
+                    }}
+                  >
+                    Legal
+                  </Button>
 
                   <div className="pt-2 border-t border-gray-200">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                      onClick={() => {
-                        handleAuthAction("/signin");
-                        toggleMobileMenu();
-                      }}
-                    >
-                      {user && !loading ? "Dashboard" : "Log in"}
-                    </Button>
+                    {/* Only show ghost button if user is not signed in OR if onboarding is complete */}
+                    {(!user || loading || onboardingComplete) && (
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        onClick={() => {
+                          handleAuthAction("/signin");
+                          toggleMobileMenu();
+                        }}
+                      >
+                        {user && !loading
+                          ? onboardingComplete
+                            ? "Dashboard"
+                            : "Complete Setup"
+                          : "Log in"}
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       className="w-full mt-2 px-4 py-2 rounded-md bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white font-normal"
@@ -279,7 +320,11 @@ const Navigation = () => {
                         toggleMobileMenu();
                       }}
                     >
-                      {user && !loading ? "Dashboard" : "Get Started"}
+                      {user && !loading
+                        ? onboardingComplete
+                          ? "Dashboard"
+                          : "Complete Setup"
+                        : "Get Started"}
                     </Button>
                   </div>
                 </div>

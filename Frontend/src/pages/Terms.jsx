@@ -66,7 +66,25 @@ const Terms = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                2. Description of Service
+                2. Company Information
+              </h2>
+              <p className="text-gray-700 mb-4">
+                Leaad is a digital platform and brand operated by ESİLAH AV
+                MALZEMELERİ, providing AI-powered Reddit lead generation
+                services. Our platform helps businesses and individuals generate
+                leads through Reddit by:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700">
+                <li>Identifying potential customers and leads</li>
+                <li>Analyzing Reddit conversations and buying intent</li>
+                <li>Providing templates and tools for engagement</li>
+                <li>Offering educational resources and guides</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                3. Description of Service
               </h2>
               <p className="text-gray-700 mb-4">
                 Leaad provides an AI-powered platform that helps businesses and
@@ -82,7 +100,7 @@ const Terms = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                3. User Accounts and Registration
+                4. User Accounts and Registration
               </h2>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3">
@@ -160,8 +178,15 @@ const Terms = () => {
                 5.3 Refunds
               </h3>
               <p className="text-gray-700">
-                Refunds are provided according to our refund policy. No refunds
-                for partial months or unused portions of annual plans.
+                Refunds are provided according to our{" "}
+                <a
+                  href="/legal/refund-policy"
+                  className="text-blue-600 hover:underline"
+                >
+                  refund policy
+                </a>
+                . No refunds for partial months or unused portions of annual
+                plans.
               </p>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">
@@ -381,16 +406,22 @@ const Terms = () => {
           <div className="mt-12 pt-8">
             <div className="flex flex-wrap gap-4">
               <Link
-                to="/privacy"
+                to="/legal/privacy"
                 className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Privacy Policy
               </Link>
               <Link
-                to="/delivery-returns"
+                to="/legal/refund-policy"
                 className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Delivery & Returns
+                Refund Policy
+              </Link>
+              <Link
+                to="/legal"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                All Legal Documents
               </Link>
               <Link
                 to="/about"
