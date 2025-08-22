@@ -28,7 +28,9 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import DeliveryReturns from "./pages/DeliveryReturns";
+import RefundPolicy from "./pages/RefundPolicy";
+import Pricing from "./pages/Pricing";
+import Legal from "./pages/Legal";
 import RedditLeadGeneration from "./pages/RedditLeadGeneration";
 import B2BSaaSRedditLeadGen from "./pages/B2BSaaSRedditLeadGen";
 import StartupRedditLeadGen from "./pages/StartupRedditLeadGen";
@@ -85,7 +87,12 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="/delivery-returns" element={<DeliveryReturns />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/legal/terms" element={<Terms />} />
+                <Route path="/legal/privacy" element={<Privacy />} />
+                <Route path="/legal/refund-policy" element={<RefundPolicy />} />
                 <Route path="/guide" element={<Guide />} />
                 <Route
                   path="/reddit-lead-generation"
