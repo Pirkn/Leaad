@@ -169,6 +169,16 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>
                 <a
+                  href="https://www.tiktok.com/@leaad.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  TikTok
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://www.instagram.com/leaad.co"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -187,20 +197,26 @@ export default function Footer() {
                   YouTube
                 </a>
               </li>
-              <li>
-                <a
-                  href="https://www.tiktok.com/@leaad.co"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  TikTok
-                </a>
-              </li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+
+        {/* Company Information Section */}
+        <div className="mt-12 pt-8 border-t border-gray-700">
+          <div className="text-center">
+            <p className="text-gray-400 text-sm mb-2">
+              Leaad is operated by{" "}
+              <span className="font-semibold text-white">
+                ESİLAH AV MALZEMELERİ
+              </span>
+            </p>
+            <p className="text-gray-500 text-xs">
+              Providing AI-powered Reddit lead generation services worldwide
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
           <p>&copy; 2025 Leaad. All rights reserved.</p>
         </div>
       </div>
