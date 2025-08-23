@@ -1169,11 +1169,13 @@ export default function HomePage() {
                     </AccordionTrigger>
                     <AccordionContent className="px-0 pb-0">
                       <p className="text-base text-gray-600 leading-relaxed tracking-tight">
-                        Yes! We offer a completely free plan that includes basic
-                        lead generation features, limited lead discovery, and
-                        access to our core platform. You can start generating
-                        leads immediately without any cost or credit card
-                        required.
+                        Yes! We offer a <strong>3-day free trial</strong> for
+                        our Premium plan that you can cancel anytime before the
+                        trial ends to avoid charges. During the trial period,
+                        you get full access to all features including unlimited
+                        lead generation, AI comments, viral templates, and karma
+                        building tools. Cancel anytime before the deadline - we
+                        won't charge you if you cancel during the trial period.
                       </p>
                     </AccordionContent>
                   </AccordionItem>
@@ -1286,11 +1288,15 @@ export default function HomePage() {
                     </AccordionTrigger>
                     <AccordionContent className="px-0 pb-0">
                       <p className="text-base text-gray-600 leading-relaxed tracking-tight">
-                        Most users start finding qualified leads within the
-                        first 2-6 hours of using Leaad. Results typically
-                        improve significantly after the first week. You'll see
-                        immediate value from our post generator, viral post
-                        templates and karma building tools.
+                        You'll see <strong>instant value</strong> during the
+                        onboarding process where we provide you with{" "}
+                        <strong>2-5 qualified leads immediately</strong>. Our
+                        post generator and viral templates give you instant
+                        access to proven content that drives engagement. Most
+                        users start finding additional qualified leads within
+                        the first 2 hours of using Leaad, with results improving
+                        significantly after the first week as you leverage all
+                        our tools effectively.
                       </p>
                     </AccordionContent>
                   </AccordionItem>
