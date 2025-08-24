@@ -672,7 +672,7 @@ export default function HomePage() {
                   icon: Target,
                   title: "Lead Discovery",
                   description:
-                    "Find the latest leads and create AI-powered responses for them",
+                    "Find high-intent prospects actively seeking solutions like yours",
                   features: [
                     "Real-time Reddit monitoring",
                     "Intent-based targeting",
@@ -683,43 +683,43 @@ export default function HomePage() {
                   icon: MessageSquare,
                   title: "Post Generation",
                   description:
-                    "Create posts based on your product, target audience, and problems solved",
+                    "Create engaging content that converts browsers into buyers",
                   features: [
                     "AI-powered post creation",
-                    "Product-specific content",
-                    "Audience targeting",
+                    "Pain-point focused content",
+                    "Conversion-optimized copy",
                   ],
                 },
                 {
                   icon: TrendingUp,
                   title: "Viral Templates",
                   description:
-                    "Access proven templates that drive engagement and shares",
+                    "Leverage proven formats that consistently drive engagement",
                   features: [
-                    "Viral template library",
-                    "Proven engagement patterns",
-                    "Easy customization",
+                    "Data-backed templates",
+                    "Engagement-optimized structure",
+                    "One-click customization",
                   ],
                 },
                 {
                   icon: TrendingUp,
                   title: "Karma Building",
                   description:
-                    "Build authentic Reddit presence and credibility before engaging",
+                    "Establish credibility and trust before making your pitch",
                   features: [
-                    "Comment generation",
-                    "Post generation",
-                    "Community building tools",
+                    "Smart comment generation",
+                    "Community-focused posts",
+                    "Authentic engagement",
                   ],
                 },
                 {
                   icon: Shield,
                   title: "Compliance & Safety",
                   description:
-                    "Stay within Reddit guidelines while maximizing your reach",
+                    "Scale your outreach without risking account suspension",
                   features: [
-                    "Terms compliance",
-                    "Rate limiting",
+                    "Reddit TOS compliance",
+                    "Smart rate limiting",
                     "Safe engagement practices",
                   ],
                 },
