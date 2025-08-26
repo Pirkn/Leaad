@@ -25,7 +25,7 @@ def create_app():
          supports_credentials=True,
          resources={
              r"/*": {
-                 "origins": ["http://localhost:5173", "http://127.0.0.1:5500", "http://localhost:5500"],
+                 "origins": ["http://localhost:5173","https://localhost:5173", "http://127.0.0.1:5500", "http://localhost:5500"],
                  "methods": ["GET", "POST", "OPTIONS", "PATCH", "DELETE", "PUT"],
                  "allow_headers": ["Content-Type", "Authorization"]
              }
@@ -55,10 +55,12 @@ def create_app():
     from src.routes.reddit import blp as reddit_blp
     from src.routes.leads import blp as leads_blp
     from src.routes.onboarding import blp as onboarding_blp
+    from src.routes.billing import blp as billing_blp
     api.register_blueprint(product_blp)
     api.register_blueprint(reddit_blp)
     api.register_blueprint(leads_blp)
     api.register_blueprint(onboarding_blp)
+    api.register_blueprint(billing_blp)
 
     return app
 
