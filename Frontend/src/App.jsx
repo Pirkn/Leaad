@@ -3,6 +3,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { PostsProvider } from "./contexts/PostsContext";
 import { KarmaProvider } from "./contexts/KarmaContext";
 import { LeadsProvider } from "./contexts/LeadsContext";
+import { BillingProvider } from "./contexts/BillingContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import ScrollToTop from "./components/ScrollToTop";
@@ -38,6 +39,7 @@ import Guide from "./pages/Guide";
 import BestSubredditsLeadGen from "./pages/BestSubredditsLeadGen";
 import RedditBuyingIntentGuide from "./pages/RedditBuyingIntentGuide";
 import RedditReplyTemplates from "./pages/RedditReplyTemplates";
+import Payment from "./pages/Payment";
 import { useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -50,10 +52,11 @@ const RootRedirect = () => {
 function App() {
   return (
     <AuthProvider>
-      <PostsProvider>
-        <LeadsProvider>
-          <KarmaProvider>
-            <Router>
+      <BillingProvider>
+        <PostsProvider>
+          <LeadsProvider>
+            <KarmaProvider>
+              <Router>
               <ScrollToTop />
               <Toaster
                 position="bottom-right"
@@ -118,6 +121,7 @@ function App() {
                   path="/reddit-reply-templates"
                   element={<RedditReplyTemplates />}
                 />
+                <Route path="/payment" element={<Payment />} />
 
                 {/* Protected routes that require onboarding completion */}
                 <Route
@@ -265,6 +269,7 @@ function App() {
           </KarmaProvider>
         </LeadsProvider>
       </PostsProvider>
+      </BillingProvider>
     </AuthProvider>
   );
 }

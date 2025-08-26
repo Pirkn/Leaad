@@ -1,24 +1,72 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SEOHead from "../components/SEOHead";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
-import { Check, Star } from "lucide-react";
+import { Check, Star, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { CircleCheck } from "lucide-react";
 import { CirclePercent } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useBilling } from "../contexts/BillingContext";
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loading, onboardingComplete } = useAuth();
+  const { 
+    subscriptionDetails, 
+    loading: billingLoading, 
+    error: billingError,
+    startCheckout,
+    handleCheckoutSuccess,
+    handleCheckoutCancel
+  } = useBilling();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const handlePrimaryCta = () => {
-    if (!user || loading) return navigate("/signup");
-    if (onboardingComplete) return navigate("/dashboard");
-    return navigate("/onboarding");
+  // Handle checkout success/cancel from URL params
+  useEffect(() => {
+    const subscription = searchParams.get('subscription');
+    const canceled = searchParams.get('canceled');
+    const transactionId = sessionStorage.getItem('paddle_transaction_id');
+
+    if (subscription === 'active' && transactionId) {
+      handleCheckoutSuccess(transactionId);
+    } else if (canceled === 'true') {
+      handleCheckoutCancel();
+    }
+  }, [searchParams, handleCheckoutSuccess, handleCheckoutCancel]);
+
+  const handlePrimaryCta = async () => {
+    if (!user || loading) {
+      return navigate("/signup");
+    }
+
+    if (subscriptionDetails.isActive) {
+      // User has active subscription, redirect to dashboard
+      return navigate("/dashboard");
+    }
+
+    if (!onboardingComplete) {
+      return navigate("/onboarding");
+    }
+
+    // Start checkout process
+    try {
+      setCheckoutLoading(true);
+      await startCheckout({
+        return_url: window.location.origin + '/dashboard',
+        success_url: window.location.origin + '/dashboard?subscription=active',
+        cancel_url: window.location.origin + '/pricing?canceled=true'
+      });
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      // Error will be handled by the billing context
+    } finally {
+      setCheckoutLoading(false);
+    }
   };
 
   const structuredData = {
@@ -85,6 +133,51 @@ const Pricing = () => {
       />
 
       <Navigation />
+
+      {/* Error/Success Messages */}
+      <AnimatePresence>
+        {billingError && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-200 rounded-lg p-4 shadow-lg max-w-md"
+          >
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
+              <span className="text-red-800 text-sm">{billingError}</span>
+            </div>
+          </motion.div>
+        )}
+        
+        {searchParams.get('subscription') === 'active' && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg max-w-md"
+          >
+            <div className="flex items-center">
+              <CircleCheck className="w-5 h-5 text-green-500 mr-2" />
+              <span className="text-green-800 text-sm">Subscription activated successfully!</span>
+            </div>
+          </motion.div>
+        )}
+        
+        {searchParams.get('canceled') === 'true' && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-yellow-50 border border-yellow-200 rounded-lg p-4 shadow-lg max-w-md"
+          >
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 text-yellow-500 mr-2" />
+              <span className="text-yellow-800 text-sm">Checkout was cancelled. You can try again anytime.</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Pricing Cards */}
       <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white relative">
@@ -166,6 +259,13 @@ const Pricing = () => {
                     3‑day free trial
                   </span>
                 </div>
+                {subscriptionDetails.isActive && (
+                  <div className="mt-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-300 border border-green-400/30">
+                      ✓ Active Subscription
+                    </span>
+                  </div>
+                )}
               </div>
 
               <motion.div
@@ -177,8 +277,20 @@ const Pricing = () => {
                   size="lg"
                   className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
                   onClick={handlePrimaryCta}
+                  disabled={checkoutLoading || billingLoading}
                 >
-                  {user && !loading ? "Manage Plan" : "Start Free Trial"}
+                  {checkoutLoading || billingLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : subscriptionDetails.isActive ? (
+                    "Manage Plan"
+                  ) : user && !loading ? (
+                    "Start Free Trial"
+                  ) : (
+                    "Start Free Trial"
+                  )}
                 </Button>
               </motion.div>
 
@@ -292,8 +404,20 @@ const Pricing = () => {
             <Button
               className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3"
               onClick={handlePrimaryCta}
+              disabled={checkoutLoading || billingLoading}
             >
-              {user && !loading ? "Manage Plan" : "Start Free Trial"}
+              {checkoutLoading || billingLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : subscriptionDetails.isActive ? (
+                "Manage Plan"
+              ) : user && !loading ? (
+                "Start Free Trial"
+              ) : (
+                "Start Free Trial"
+              )}
             </Button>
           </div>
         </div>

@@ -87,11 +87,12 @@
       http-equiv="Content-Security-Policy"
       content="
         default-src 'self';
-        script-src 'self' https://www.google-analytics.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        script-src 'self' https://www.google-analytics.com https://cdn.paddle.com https://*.paddle.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.paddle.com https://*.paddle.com;
         font-src 'self' https://fonts.gstatic.com;
         img-src 'self' data: https:;
-        connect-src 'self' http://localhost:5000 https://api.leaad.co https://eagkbdpnrxwxgyhxrrch.supabase.co wss://eagkbdpnrxwxgyhxrrch.supabase.co ws://localhost:*;
+        connect-src 'self' http://localhost:5000 https://api.leaad.co https://eagkbdpnrxwxgyhxrrch.supabase.co wss://eagkbdpnrxwxgyhxrrch.supabase.co ws://localhost:* https://*.paddle.com https://api.paddle.com https://sandbox-api.paddle.com https://checkout-service.paddle.com;
+        frame-src 'self' https://*.paddle.com;
         "
     />
 
