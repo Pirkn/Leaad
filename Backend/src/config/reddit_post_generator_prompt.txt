@@ -56,7 +56,7 @@ Your task is to write **Reddit-style posts** that feel like they're written by a
 ```json
 [
 {
-"r/subreddit": "Subreddit name",
+"Subreddit": "Subreddit name",
 "Title": "<Reddit-style, attention-grabbing but natural title that focuses on value/insight>",
 "Post": "<Body focusing on valuable insight/experience with casual product mentions woven in naturally. Start directly with your main point - NO greetings like 'Hey everyone' or 'Hello'>",
 "Reasoning": "<Brief explanation of why this subreddit and approach would work>"

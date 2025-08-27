@@ -82,7 +82,7 @@ class GenerateRedditPost(MethodView):
             for item in posts_list:
                 if not isinstance(item, dict):
                     continue
-                subreddit_value = item.get('r/subreddit', '') or ''
+                subreddit_value = item.get('Subreddit', '') or ''
                 if isinstance(subreddit_value, str):
                     subreddit_value = subreddit_value.replace('r/', '')
                 post_entry = {

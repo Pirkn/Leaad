@@ -150,7 +150,7 @@ const Pricing = () => {
                 </motion.div>
               </div>
 
-              <div className="mb-6">
+              <div className="mb-">
                 <h3 className="text-2xl font-semibold text-white mb-2">
                   Premium
                 </h3>
@@ -160,11 +160,6 @@ const Pricing = () => {
                 <div className="mb-6">
                   <span className="text-5xl font-bold text-white">$19</span>
                   <span className="text-sm text-gray-400 ml-1">/ month</span>
-                </div>
-                <div>
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20">
-                    3‑day free trial
-                  </span>
                 </div>
               </div>
 
@@ -178,7 +173,7 @@ const Pricing = () => {
                   className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
                   onClick={handlePrimaryCta}
                 >
-                  {user && !loading ? "Manage Plan" : "Start Free Trial"}
+                  {user && !loading ? "Manage Plan" : "Start 3‑day free trial"}
                 </Button>
               </motion.div>
 

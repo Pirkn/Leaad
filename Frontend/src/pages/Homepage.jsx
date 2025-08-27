@@ -23,10 +23,15 @@ import {
   Clock,
   Dumbbell,
   WandSparkles,
+  Check,
 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import LeadDiscoveryGraphic from "../components/LeadDiscoveryGraphic";
+import PostGenerationGraphic from "../components/PostGenerationGraphic";
+import ViralTemplatesGraphic from "../components/ViralTemplatesGraphic";
+import ComplianceGraphic from "../components/ComplianceGraphic";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -630,9 +635,10 @@ export default function HomePage() {
 
         {/* Features Overview Section */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white relative">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-6xl mx-auto">
+            {/* Section Header */}
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-12"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
@@ -646,7 +652,7 @@ export default function HomePage() {
                 Platform Features
               </motion.div>
               <motion.h2
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tighter"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 tracking-tighter"
                 variants={itemVariants}
               >
                 What Leaad Delivers
@@ -660,100 +666,322 @@ export default function HomePage() {
               </motion.p>
             </motion.div>
 
+            {/* Features Grid */}
             <motion.div
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="space-y-6"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
             >
-              {[
-                {
-                  icon: Target,
-                  title: "Lead Discovery",
-                  description:
-                    "Find the latest leads and create AI-powered responses for them",
-                  features: [
-                    "Real-time Reddit monitoring",
-                    "Intent-based targeting",
-                    "AI response generation",
-                  ],
-                },
-                {
-                  icon: MessageSquare,
-                  title: "Post Generation",
-                  description:
-                    "Create posts based on your product, target audience, and problems solved",
-                  features: [
-                    "AI-powered post creation",
-                    "Product-specific content",
-                    "Audience targeting",
-                  ],
-                },
-                {
-                  icon: TrendingUp,
-                  title: "Viral Templates",
-                  description:
-                    "Access proven templates that drive engagement and shares",
-                  features: [
-                    "Viral template library",
-                    "Proven engagement patterns",
-                    "Easy customization",
-                  ],
-                },
-                {
-                  icon: TrendingUp,
-                  title: "Karma Building",
-                  description:
-                    "Build authentic Reddit presence and credibility before engaging",
-                  features: [
-                    "Comment generation",
-                    "Post generation",
-                    "Community building tools",
-                  ],
-                },
-                {
-                  icon: Shield,
-                  title: "Compliance & Safety",
-                  description:
-                    "Stay within Reddit guidelines while maximizing your reach",
-                  features: [
-                    "Terms compliance",
-                    "Rate limiting",
-                    "Safe engagement practices",
-                  ],
-                },
-              ].map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-300 p-6 shadow-sm hover:shadow-md group"
-                  variants={itemVariants}
-                  whileHover={{ y: -2 }}
-                >
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className="w-5 h-5 text-gray-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 tracking-tight">
-                      {feature.title}
+              {/* Feature 1: Lead Discovery */}
+              <motion.div
+                className="bg-white rounded-lg border border-gray-200 overflow-hidden h-80"
+                variants={itemVariants}
+              >
+                <div className="flex items-start h-full">
+                  <div
+                    className="flex-1 p-6 pr-8 h-full flex flex-col justify-start pt-8"
+                    style={{ width: "60%" }}
+                  >
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">
+                      Real-Time Lead Discovery
                     </h3>
-                  </div>
-                  <p className="text-gray-600 mb-4 leading-relaxed tracking-tight">
-                    {feature.description}
-                  </p>
-                  <ul className="space-y-2">
-                    {feature.features.map((item, itemIndex) => (
-                      <li
-                        key={itemIndex}
-                        className="flex items-center text-sm text-gray-600"
+                    <p className="text-gray-600 leading-relaxed mb-5 tracking-tight text-base">
+                      Surface relevant Reddit discussions where people are
+                      talking about problems your product solves. Our AI helps
+                      you spot intent and context so you can join the right
+                      conversations.
+                    </p>
+
+                    {/* Checkmarks */}
+                    <div className="space-y-2.5">
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.1, duration: 0.4 }}
+                        viewport={{ once: true }}
                       >
-                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Track relevant subreddits for high-intent discussions
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Intent-based targeting with sentiment analysis
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          AI response generation tailored to context
+                        </span>
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="flex-shrink-0 p-2 h-full flex items-center"
+                    style={{ width: "40%" }}
+                  >
+                    <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
+                      <LeadDiscoveryGraphic />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Feature 2: Post Generation */}
+              <motion.div
+                className="bg-white rounded-lg border border-gray-200 overflow-hidden h-80"
+                variants={itemVariants}
+              >
+                <div className="flex items-start h-full">
+                  <div
+                    className="flex-1 p-6 pr-8 h-full flex flex-col justify-start pt-8"
+                    style={{ width: "60%" }}
+                  >
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">
+                      Smart Post Generation
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-5 tracking-tight text-base">
+                      Create helpful, native-sounding comments and posts for
+                      Reddit. You keep full control over what gets posted.
+                    </p>
+
+                    {/* Checkmarks */}
+                    <div className="space-y-2.5">
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.1, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          AI-powered post generation that sells
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Pain-point focused content that adds value
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Clear, conversion-minded copy without gimmicks
+                        </span>
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="flex-shrink-0 p-2 h-full flex items-center"
+                    style={{ width: "40%" }}
+                  >
+                    <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
+                      <PostGenerationGraphic />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Feature 3: Viral Templates */}
+              <motion.div
+                className="bg-white rounded-lg border border-gray-200 overflow-hidden h-80"
+                variants={itemVariants}
+              >
+                <div className="flex items-start h-full">
+                  <div
+                    className="flex-1 p-6 pr-8 h-full flex flex-col justify-start pt-8"
+                    style={{ width: "60%" }}
+                  >
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">
+                      Viral Templates
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-5 tracking-tight text-base">
+                      Use proven Reddit-friendly formats designed to spark
+                      discussion and shares—then tailor them to your product and
+                      audience.
+                    </p>
+
+                    {/* Checkmarks */}
+                    <div className="space-y-2.5">
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.1, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Data-backed templates inspired by successful posts
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Engagement-optimized structure for each subreddit
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Easy to customize for your tone and context
+                        </span>
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="flex-shrink-0 p-2 h-full flex items-center"
+                    style={{ width: "40%" }}
+                  >
+                    <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
+                      <ViralTemplatesGraphic />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Feature 4: Compliance & Safety */}
+              <motion.div
+                className="bg-white rounded-lg border border-gray-200 overflow-hidden h-80"
+                variants={itemVariants}
+              >
+                <div className="flex items-start h-full">
+                  <div
+                    className="flex-1 p-6 pr-8 h-full flex flex-col justify-start pt-8"
+                    style={{ width: "60%" }}
+                  >
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">
+                      Compliance & Safety
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-5 tracking-tight text-base">
+                      Stay within Reddit’s rules. We don’t automate posting or
+                      DMs—our tools help you craft TOS-friendly content so your
+                      posts feel natural and compliant.
+                    </p>
+
+                    {/* Checkmarks */}
+                    <div className="space-y-2.5">
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.1, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Guidance to follow Reddit TOS and community norms
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          You control pace and posting—no automated actions
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="flex items-center"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                          <Check className="w-3 h-3 text-gray-500" />
+                        </div>
+                        <span className="text-gray-700 text-base">
+                          Practical tips to keep engagement helpful and
+                          non-spammy
+                        </span>
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="flex-shrink-0 p-2 h-full flex items-center"
+                    style={{ width: "40%" }}
+                  >
+                    <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
+                      <ComplianceGraphic />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </section>
@@ -970,11 +1198,6 @@ export default function HomePage() {
                         / month
                       </span>
                     </div>
-                    <div>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20">
-                        3‑day free trial
-                      </span>
-                    </div>
                   </div>
 
                   <motion.div
@@ -987,7 +1210,9 @@ export default function HomePage() {
                       className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
                       onClick={handlePrimaryCta}
                     >
-                      {user && !loading ? "Manage Plan" : "Start Free Trial"}
+                      {user && !loading
+                        ? "Manage Plan"
+                        : "Start 3‑day free trial"}
                     </Button>
                   </motion.div>
 
