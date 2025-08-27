@@ -28,6 +28,10 @@ import {
 import SEOHead from "../components/SEOHead";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import LeadDiscoveryGraphic from "../components/LeadDiscoveryGraphic";
+import PostGenerationGraphic from "../components/PostGenerationGraphic";
+import ViralTemplatesGraphic from "../components/ViralTemplatesGraphic";
+import ComplianceGraphic from "../components/ComplianceGraphic";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -742,9 +746,7 @@ export default function HomePage() {
                     style={{ width: "40%" }}
                   >
                     <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
-                      <span className="text-gray-500 text-sm font-medium">
-                        Lead Discovery Interface Placeholder
-                      </span>
+                      <LeadDiscoveryGraphic />
                     </div>
                   </div>
                 </div>
@@ -820,9 +822,7 @@ export default function HomePage() {
                     style={{ width: "40%" }}
                   >
                     <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
-                      <span className="text-gray-500 text-sm font-medium">
-                        Post Generation Interface Placeholder
-                      </span>
+                      <PostGenerationGraphic />
                     </div>
                   </div>
                 </div>
@@ -899,9 +899,7 @@ export default function HomePage() {
                     style={{ width: "40%" }}
                   >
                     <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
-                      <span className="text-gray-500 text-sm font-medium">
-                        Viral Templates Interface Placeholder
-                      </span>
+                      <ViralTemplatesGraphic />
                     </div>
                   </div>
                 </div>
@@ -979,9 +977,7 @@ export default function HomePage() {
                     style={{ width: "40%" }}
                   >
                     <div className="bg-white rounded-md border border-gray-200 w-full h-full flex items-center justify-center">
-                      <span className="text-gray-500 text-sm font-medium">
-                        Compliance Dashboard Placeholder
-                      </span>
+                      <ComplianceGraphic />
                     </div>
                   </div>
                 </div>
@@ -1202,11 +1198,6 @@ export default function HomePage() {
                         / month
                       </span>
                     </div>
-                    <div>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20">
-                        3‑day free trial
-                      </span>
-                    </div>
                   </div>
 
                   <motion.div
@@ -1219,7 +1210,9 @@ export default function HomePage() {
                       className="w-full bg-white text-gray-900 hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
                       onClick={handlePrimaryCta}
                     >
-                      {user && !loading ? "Manage Plan" : "Start Free Trial"}
+                      {user && !loading
+                        ? "Manage Plan"
+                        : "Start 3‑day free trial"}
                     </Button>
                   </motion.div>
 
