@@ -46,6 +46,7 @@ function Leads() {
   const [expandedReplies, setExpandedReplies] = useState(new Set());
   const [copiedReplyId, setCopiedReplyId] = useState(null);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // API hooks
   const { data: leads, isLoading, error } = useLeads();
@@ -253,6 +254,27 @@ function Leads() {
         effectiveReadStatus = false;
       } else {
         effectiveReadStatus = lead.read || isOptimisticallyRead;
+      }
+
+      // Apply search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        const titleMatch = (lead.title || "")
+          .toLowerCase()
+          .includes(searchLower);
+        const authorMatch = (lead.author || "")
+          .toLowerCase()
+          .includes(searchLower);
+        const subredditMatch = (lead.subreddit || "")
+          .toLowerCase()
+          .includes(searchLower);
+        const selftextMatch = (lead.selftext || "")
+          .toLowerCase()
+          .includes(searchLower);
+
+        if (!titleMatch && !authorMatch && !subredditMatch && !selftextMatch) {
+          return false;
+        }
       }
 
       // Apply view filter (read/unread)
@@ -498,9 +520,38 @@ function Leads() {
                     <input
                       type="text"
                       placeholder="Search leads..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full min-[500px]:w-48 pl-10 pr-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                     />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm("")}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        title="Clear search"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
+                  {searchTerm && (
+                    <span className="text-sm text-gray-500 px-2 py-1 bg-gray-100 rounded-md">
+                      {sortedLeads.length} result
+                      {sortedLeads.length !== 1 ? "s" : ""}
+                    </span>
+                  )}
 
                   {/* Filter Button with Dropdown */}
                   <div className="relative filter-dropdown">
@@ -890,16 +941,28 @@ function Leads() {
                   <MessageSquare className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {viewFilter === "all"
+                  {searchTerm
+                    ? "No search results found"
+                    : viewFilter === "all"
                     ? "No leads yet"
                     : `No ${viewFilter} leads found`}
                 </h3>
                 <p className="text-gray-500 mb-4 max-w-md mx-auto">
-                  {viewFilter === "all"
+                  {searchTerm
+                    ? `No leads found matching "${searchTerm}". Try adjusting your search terms or filters.`
+                    : viewFilter === "all"
                     ? "We're actively searching Reddit for leads. You'll be notified when we find relevant opportunities."
                     : `No ${viewFilter} leads match your current filters`}
                 </p>
-                {viewFilter !== "all" && (
+                {searchTerm ? (
+                  <Button
+                    onClick={() => setSearchTerm("")}
+                    variant="outline"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    Clear Search
+                  </Button>
+                ) : viewFilter !== "all" ? (
                   <Button
                     onClick={() => {
                       setViewFilter("all");
@@ -911,7 +974,7 @@ function Leads() {
                   >
                     View All Leads
                   </Button>
-                )}
+                ) : null}
               </motion.div>
             )}
           </motion.div>
