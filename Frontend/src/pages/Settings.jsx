@@ -130,6 +130,43 @@ function Settings() {
               </div>
             </motion.div>
 
+            {/* Trial Status Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.25 }}
+              className="bg-white border border-gray-200 rounded-lg p-6"
+            >
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                  Trial Status
+                </h2>
+                <p className="text-gray-600 text-sm">
+                  Your current trial information
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-orange-600" />
+                </div>
+                <div className="flex-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Trial Ends In
+                  </label>
+                  <p className="text-gray-900 text-sm">
+                    <span className="font-semibold text-orange-600">
+                      3 days
+                    </span>{" "}
+                    remaining
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-gray-500">Free Plan</span>
+                </div>
+              </div>
+            </motion.div>
+
             {/* Account Actions Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
