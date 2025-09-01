@@ -30,6 +30,10 @@ def create_app():
                  "allow_headers": ["Content-Type", "Authorization"]
              }
          })
+    
+    # Initialize rate limiter
+    from src.utils.rate_limiter import limiter
+    limiter.init_app(app)
 
     api = Api(app)
 
