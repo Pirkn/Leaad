@@ -3,8 +3,7 @@ import SEOHead from "../components/SEOHead";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
-import { Check, Star } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { CircleCheck } from "lucide-react";
 import { CirclePercent } from "lucide-react";
@@ -87,12 +86,12 @@ const Pricing = () => {
       <Navigation />
 
       {/* Pricing Cards */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white relative">
+      <div className="pt-12 pb-20 px-4 sm:px-6 lg:px-8 bg-white relative">
         {/* Background blend from how it works section */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white to-white pointer-events-none"></div>
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-16 pt-8"
+            className="text-center mb-12 pt-2"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -273,60 +272,56 @@ const Pricing = () => {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="bg-white border-t border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      {/* CTA Section - match homepage gradient/glow */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden mx-auto">
+        <div className="absolute inset-0 bg-black"></div>
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 w-full h-full"
+            style={{
+              background: `
+                radial-gradient(ellipse 900px 400px at 50% 0%, 
+                  rgba(255, 152, 0, 0.4) 0%, 
+                  rgba(255, 193, 7, 0.3) 25%, 
+                  rgba(251, 146, 60, 0.2) 50%, 
+                  rgba(244, 63, 94, 0.1) 75%, 
+                  transparent 100%)
+              `,
+              filter: "contrast(1.2) saturate(1.3)",
+            }}
+          ></div>
+        </div>
+        <div className="absolute inset-0 opacity-20">
+          <div
+            className="absolute inset-0 w-full h-full"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
+              backgroundSize: "200px 200px",
+            }}
+          ></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tighter">
             Ready to Start Generating Leads?
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-300 mb-8">
             Join thousands of businesses already using Leaad to find their next
             customers on Reddit.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Button
-              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3"
+              className="px-8 py-3 bg-white text-gray-900 hover:bg-gray-100 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
               onClick={handlePrimaryCta}
             >
               {user && !loading ? "Manage Plan" : "Start Free Trial"}
             </Button>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Legal Links Section */}
-      <div className="bg-white border-t border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-              Important Legal Information
-            </h3>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-              <a
-                href="/legal/terms"
-                className="hover:text-gray-900 transition-colors"
-              >
-                Terms of Service
-              </a>
-              <a
-                href="/legal/privacy"
-                className="hover:text-gray-900 transition-colors"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="/legal/refund-policy"
-                className="hover:text-gray-900 transition-colors"
-              >
-                Refund Policy
-              </a>
-            </div>
-            <p className="text-xs text-gray-500 mt-4">
-              By using our service, you agree to our terms and policies.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Legal Links Section removed as requested */}
 
       <Footer />
     </div>

@@ -130,12 +130,16 @@ export default function LeadDiscoveryGraphic() {
     <div className="w-full flex items-center justify-center" ref={containerRef}>
       <div className="w-[320px] sm:w-[360px]">
         {/* Header / Progress Row (never fades; shows 0/5 during reset) */}
-        <div className="grid grid-cols-[60%_auto_auto] gap-3 items-center border border-gray-200 rounded-md p-3 bg-white">
+        <motion.div
+          className="grid grid-cols-[60%_auto_auto] gap-3 items-center border border-gray-200 rounded-md p-3 bg-white hover:border-gray-300 transition-colors duration-200"
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
+        >
           {/* Progress Track */}
           <div className="w-full">
             <div className="h-2 rounded-full bg-gray-200 overflow-hidden border border-gray-300/70">
               <motion.div
-                className="h-full bg-gray-800"
+                className="h-full bg-gradient-to-r from-gray-700 to-gray-800"
                 animate={{ width: `${displayProgress * 100}%` }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 style={{ width: `${displayProgress * 100}%` }}
@@ -143,14 +147,14 @@ export default function LeadDiscoveryGraphic() {
             </div>
           </div>
           {/* Step Counter */}
-          <div className="text-[12px] text-gray-500 tabular-nums select-none justify-self-center text-center">
+          <div className="text-[12px] text-gray-500 tabular-nums select-none justify-self-center text-center font-medium">
             {displayCompleted}/{totalSteps}
           </div>
           {/* Completed label */}
-          <div className="text-[12px] text-gray-500 select-none justify-self-center text-center">
+          <div className="text-[12px] text-gray-500 select-none justify-self-center text-center font-medium">
             Completed
           </div>
-        </div>
+        </motion.div>
 
         {/* Steps List (slightly narrower than header). Only dividers between rows. */}
         <div
@@ -201,11 +205,12 @@ export default function LeadDiscoveryGraphic() {
                   {visibleSteps.map(({ label, idx }, mapIndex) => (
                     <motion.div
                       key={label}
-                      className="flex items-center justify-between px-3 py-2 bg-white"
+                      className="flex items-center justify-between px-3 py-2 bg-white hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                       style={{ height: rowHeight || FALLBACK_ROW_H }}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: resetting ? 0 : 1, y: 0 }}
                       exit={{ opacity: 0, y: -24 }}
+                      whileHover={{ x: 2 }}
                       transition={{
                         duration: 0.5,
                         ease: "easeOut",

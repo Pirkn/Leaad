@@ -14,6 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import uuid
 import random
+from src.utils.rate_limiter import limiter, RATE_LIMITS
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ blp = Blueprint('Onboarding', __name__, description='Onboarding Operations')
 @blp.route('/onboarding-lead-generation')
 class OnboardingLeadGeneration(MethodView):
     @verify_supabase_token
+    @limiter.limit(RATE_LIMITS['ONBOARDING_LEAD_GENERATION'])
     def post(self):
         product_data = request.get_json()
 

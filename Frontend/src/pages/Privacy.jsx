@@ -271,7 +271,7 @@ const Privacy = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                16. Delete Your Personal Information
+                13. Delete Your Personal Information
               </h2>
               <p className="text-gray-700 mb-4">
                 You can request deletion of your personal information. We may
@@ -282,7 +282,7 @@ const Privacy = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                17. Disclosures Required by Law
+                14. Disclosures Required by Law
               </h2>
               <p className="text-gray-700 mb-4">
                 We may disclose information when required to comply with
@@ -296,7 +296,7 @@ const Privacy = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                18. Links to Other Websites
+                15. Links to Other Websites
               </h2>
               <p className="text-gray-700">
                 Our services may include links to third‑party sites. We are not
@@ -307,7 +307,7 @@ const Privacy = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                13. Contact Us
+                16. Contact Us
               </h2>
               <p className="text-gray-700 mb-4">
                 If you have any questions about this Privacy Policy or our data
@@ -322,7 +322,7 @@ const Privacy = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                14. Legal Basis for Processing (EU Users)
+                17. Legal Basis for Processing (EU Users)
               </h2>
               <p className="text-gray-700 mb-4">
                 For users in the European Union, our legal basis for processing
@@ -338,7 +338,7 @@ const Privacy = () => {
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                15. California Privacy Rights (CCPA)
+                18. California Privacy Rights (CCPA)
               </h2>
               <p className="text-gray-700 mb-4">
                 California residents have additional rights under the California

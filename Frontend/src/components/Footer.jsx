@@ -201,21 +201,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Company Information Section */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="text-center">
-            <p className="text-gray-400 text-sm mb-2">
-              Leaad is operated by{" "}
-              <span className="font-semibold text-white">
-                ESİLAH AV MALZEMELERİ
-              </span>
-            </p>
-            <p className="text-gray-500 text-xs">
-              Providing AI-powered Reddit lead generation services worldwide
-            </p>
-          </div>
-        </div>
-
         <div className="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
           <p>&copy; 2025 Leaad. All rights reserved.</p>
         </div>

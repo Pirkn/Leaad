@@ -8,7 +8,9 @@ requests==2.32.3
 beautifulsoup4==4.12.3
 tiktoken==0.8.0 
 praw==7.8.1
+flask-limiter
 PyJWT==2.9.0
 Pillow==11.1.0
 google-genai==1.24.0
 httpx>=0.26,<0.29
+flask-limiter

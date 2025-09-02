@@ -10,6 +10,7 @@ from src.utils.models import Model
 from supabase import create_client, Client
 from src.utils.reddit_helpers import get_rising_posts, create_karma_post
 import uuid
+from src.utils.rate_limiter import limiter, RATE_LIMITS
 
 load_dotenv()
 
@@ -18,6 +19,7 @@ blp = Blueprint('Reddit', __name__, description='Reddit Operations')
 @blp.route('/generate-reddit-post')
 class GenerateRedditPost(MethodView):
     @verify_supabase_token
+    @limiter.limit(RATE_LIMITS['POST_GENERATION'])
     def post(self):
         try:
             data = request.get_json()
@@ -143,6 +145,7 @@ class MarkRedditPostAsRead(MethodView):
 @blp.route('/create_karma_comment')
 class CreateKarmaComment(MethodView):
     @verify_supabase_token
+    @limiter.limit(RATE_LIMITS['KARMA_COMMENT_GENERATION'])
     def post(self):
         posts = get_rising_posts()
 
@@ -157,6 +160,7 @@ class CreateKarmaComment(MethodView):
 @blp.route('/create_karma_post')
 class CreateKarmaPost(MethodView):
     @verify_supabase_token
+    @limiter.limit(RATE_LIMITS['KARMA_POST_GENERATION'])
     def post(self):
         try:
             messages, subreddit, webp_base64 = create_karma_post()
