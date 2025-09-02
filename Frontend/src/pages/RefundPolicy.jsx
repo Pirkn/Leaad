@@ -73,7 +73,7 @@ const RefundPolicy = () => {
               </h3>
               <p className="text-gray-700 mb-4">
                 Leaad provides digital services including AI-powered lead
-                generation tools, analytics, and educational resources. These
+                generation tools, post generation tools, and analytics. These
                 services are delivered electronically upon successful payment
                 and account activation.
               </p>
@@ -87,10 +87,10 @@ const RefundPolicy = () => {
               </p>
               <ul className="list-disc pl-6 text-gray-700">
                 <li>Platform dashboard and tools</li>
-                <li>Lead generation templates and resources</li>
-                <li>Analytics and reporting features</li>
-                <li>Educational guides and tutorials</li>
-                <li>Customer support access</li>
+                <li>AI Lead and Post generation tools</li>
+                <li>Viral Template Library</li>
+                <li>Karma Builder</li>
+                <li>Priority support</li>
               </ul>
             </section>
 
@@ -147,7 +147,7 @@ const RefundPolicy = () => {
               <p className="text-gray-700 mb-4">To cancel your subscription:</p>
               <ol className="list-decimal pl-6 text-gray-700 mb-4">
                 <li>Log into your account dashboard</li>
-                <li>Navigate to Billing & Subscription</li>
+                <li>Navigate to Settings</li>
                 <li>Click "Cancel Subscription"</li>
                 <li>Confirm cancellation</li>
                 <li>Receive confirmation email</li>
@@ -223,6 +223,18 @@ const RefundPolicy = () => {
                 <li>
                   General dissatisfaction without specific technical issues
                 </li>
+                <li>
+                  If we determine that you are using our service for illegal
+                  purposes
+                </li>
+                <li>
+                  If we determine that you are using our service for spamming
+                  purposes
+                </li>
+                <li>
+                  If we determine that you are trying to take advantage of our
+                  refund policy
+                </li>
               </ul>
             </section>
 
@@ -245,7 +257,6 @@ const RefundPolicy = () => {
                     leaad.co/contact
                   </a>
                 </li>
-                <li>Live chat: Available during business hours</li>
               </ul>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3">
@@ -258,9 +269,7 @@ const RefundPolicy = () => {
                 <li>Your account email address</li>
                 <li>Subscription plan details</li>
                 <li>Date of purchase</li>
-                <li>
-                  Reason for refund (optional but helpful for improvement)
-                </li>
+                <li>Reason for refund</li>
               </ul>
             </section>
 
@@ -282,8 +291,7 @@ const RefundPolicy = () => {
               </h3>
               <p className="text-gray-700 mb-4">
                 Refunds are issued to the original payment method used for the
-                purchase. If that method is no longer available, we'll work with
-                you to find an alternative refund method.
+                purchase.
               </p>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3">
@@ -383,8 +391,6 @@ const RefundPolicy = () => {
               </p>
               <ul className="list-disc pl-6 text-gray-700 mb-4">
                 <li>Email: support@leaad.co</li>
-                <li>Help center and documentation</li>
-                <li>Educational guides and resources</li>
               </ul>
 
               <h3 className="text-xl font-medium text-gray-900 mb-3">

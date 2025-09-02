@@ -376,10 +376,6 @@ const Terms = () => {
                 will be effective immediately upon posting. Your continued use
                 of the Service constitutes acceptance of the modified Terms.
               </p>
-              <p className="text-gray-700">
-                We will notify you of material changes via email or through the
-                Service.
-              </p>
             </section>
 
             <section className="mb-8">
@@ -411,40 +407,11 @@ const Terms = () => {
                 If you have questions about these Terms, please contact us:
               </p>
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-700 mb-2">
+                <p className="text-gray-700">
                   <strong>Email:</strong> support@leaad.co
                 </p>
               </div>
             </section>
-          </div>
-
-          <div className="mt-12 pt-8">
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/legal/privacy"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                to="/legal/refund-policy"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Refund Policy
-              </Link>
-              <Link
-                to="/legal"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                All Legal Documents
-              </Link>
-              <Link
-                to="/about"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                About Us
-              </Link>
-            </div>
           </div>
 
           {/* Additional Terms merged and paraphrased from external policy */}
@@ -476,43 +443,6 @@ const Terms = () => {
               <li>Reproduce, duplicate, or copy website material</li>
               <li>Redistribute website content</li>
             </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              17. Community Areas and User Comments
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Where the Service allows posting of opinions or other content,
-              submissions reflect the views of the individual users and not of
-              Leaad. We do not pre‑screen all submissions but reserve the right
-              to monitor and remove content that is unlawful, infringing, or
-              violates these Terms.
-            </p>
-            <p className="text-gray-700 mb-2">You confirm that:</p>
-            <ul className="list-disc pl-6 text-gray-700 mb-4">
-              <li>
-                You have all necessary rights and permissions to post your
-                submissions
-              </li>
-              <li>
-                Your submissions do not violate intellectual property or privacy
-                rights of others
-              </li>
-              <li>
-                Your submissions are not defamatory, obscene, or otherwise
-                unlawful
-              </li>
-              <li>
-                You will not use submissions for unsolicited promotions or
-                illegal activities
-              </li>
-            </ul>
-            <p className="text-gray-700">
-              By posting, you grant Leaad a non‑exclusive, worldwide license to
-              use, reproduce, and adapt your submissions as needed to operate
-              the Service.
-            </p>
           </section>
 
           <section className="mb-8">
