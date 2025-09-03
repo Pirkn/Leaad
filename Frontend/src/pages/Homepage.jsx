@@ -332,10 +332,10 @@ export default function HomePage() {
                       className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 pl-5 pr-3 py-2 text-base font-medium rounded-lg flex items-center justify-center"
                       onClick={handlePrimaryCta}
                     >
-                      {user && !loading
-                        ? onboardingComplete
-                          ? "Go to Dashboard"
-                          : "Continue Onboarding"
+                      {!loading && user
+                        ? !onboardingStatusLoading && !onboardingComplete
+                          ? "Continue Onboarding"
+                          : "Go to Dashboard"
                         : "Find your next users"}
                       <ChevronRight className="ml-2 w-4 h-4" />
                     </button>
@@ -1583,10 +1583,10 @@ export default function HomePage() {
                   className="px-8 py-3 bg-white text-gray-900 hover:bg-gray-100 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                   onClick={handlePrimaryCta}
                 >
-                  {user && !loading
-                    ? onboardingComplete
-                      ? "Go to Dashboard"
-                      : "Continue Onboarding"
+                  {!loading && user
+                    ? !onboardingStatusLoading && !onboardingComplete
+                      ? "Continue Onboarding"
+                      : "Go to Dashboard"
                     : "Try it for free"}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </button>
