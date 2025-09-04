@@ -784,26 +784,25 @@ function Posts() {
               </motion.div>
 
               {/* Posts Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <motion.div
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                transition={
+                  shouldAnimate
+                    ? { duration: 0.3, delay: 0.3 }
+                    : { duration: 0 }
+                }
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
                 {sortedPosts.length > 0 ? (
                   sortedPosts.map((post, index) => (
                     <motion.div
                       key={post.id}
-                      initial={
-                        shouldAnimate &&
-                        (filtersChanged ||
-                          shouldAnimateSaveFilter ||
-                          newPostsAdded)
-                          ? { opacity: 0, y: 20 }
-                          : false
-                      }
+                      initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
                       animate={{ opacity: 1, y: 0 }}
                       transition={
-                        shouldAnimate &&
-                        (filtersChanged ||
-                          shouldAnimateSaveFilter ||
-                          newPostsAdded)
-                          ? { duration: 0.2, delay: 0.3 + index * 0.05 }
+                        shouldAnimate
+                          ? { duration: 0.2, delay: 0.05 * index }
                           : { duration: 0 }
                       }
                       className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-sm transition-shadow flex flex-col justify-between"
@@ -920,7 +919,7 @@ function Posts() {
                     ) : null}
                   </motion.div>
                 )}
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </div>
