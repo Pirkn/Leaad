@@ -9,6 +9,12 @@ import { CircleCheck } from "lucide-react";
 import { CirclePercent } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -217,58 +223,238 @@ const Pricing = () => {
             Frequently Asked Questions
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Can I change my plan anytime?
-              </h3>
-              <p className="text-gray-600">
-                Yes! You can upgrade, downgrade, or cancel your subscription at
-                any time. Changes take effect immediately.
-              </p>
-            </div>
+          <Accordion type="single" collapsible className="w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  Can I change my plan anytime?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    Yes! You can upgrade, downgrade, or cancel your subscription
+                    at any time. Changes take effect immediately.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                What happens after my free trial ends?
-              </h3>
-              <p className="text-gray-600">
-                After your 3-day free trial, you'll be charged the monthly
-                subscription fee.{" "}
-                <strong>Cancel anytime before the deadline </strong>
-                to avoid charges. We won't charge you if you cancel during the
-                trial period.
-              </p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  What happens after my free trial ends?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    After your 3-day free trial, you'll be charged the monthly
+                    subscription fee.{" "}
+                    <strong>Cancel anytime before the deadline </strong>
+                    to avoid charges. We won't charge you if you cancel during
+                    the trial period.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Do you offer refunds?
-              </h3>
-              <p className="text-gray-600">
-                Yes! We offer flexible refunds for wrong purchases, service
-                issues, and cases where our service doesn't meet your
-                expectations.{" "}
-                <a
-                  href="/legal/refund-policy"
-                  className="text-blue-600 hover:underline"
-                >
-                  Learn more about our flexible refund policy
-                </a>
-                .
-              </p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  Do you offer refunds?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    We offer refunds for wrong purchases and service issues, but
+                    only within 3 days of purchase.{" "}
+                    <a
+                      href="/legal/refund-policy"
+                      className="text-blue-600 hover:underline"
+                    >
+                      Learn more about our refund policy
+                    </a>
+                    .
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Is there a setup fee?
-              </h3>
-              <p className="text-gray-600">
-                No setup fees! All plans include instant access to our platform.
-                You can start receiving leads immediately after signing up.
-              </p>
-            </div>
-          </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-4">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  Is there a setup fee?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    No setup fees! All plans include instant access to our
+                    platform. You can start receiving leads immediately after
+                    signing up.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-5">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  How quickly can I start seeing results?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    You'll see <strong>instant value</strong> during the
+                    onboarding process where we provide you with{" "}
+                    <strong>2-5 qualified leads immediately</strong>. Most users
+                    start finding additional qualified leads within the first 2
+                    hours of using Leaad, with results improving significantly
+                    after the first week as you leverage all our tools
+                    effectively.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-6">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  Will I get banned from Reddit?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    No, you won't get banned. Leaad operates within Reddit's
+                    guidelines and uses only publicly available data. We don't
+                    automate posting, messaging, or any actions that could
+                    violate terms of service. Our tools are designed for
+                    research and lead discovery, not automation of social media
+                    actions.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-7">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  What types of businesses is this best for?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    Leaad works best for SaaS companies, startups, digital
+                    products, and B2B services. If your target audience actively
+                    discusses problems on Reddit that your product solves,
+                    you'll find high-quality leads. This includes productivity
+                    tools, marketing software, development tools, and niche
+                    solutions.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-8">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  How does the karma builder work?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    Our karma builder generates relevant, helpful comments and
+                    posts that you can use to build authentic Reddit presence.
+                    It helps you establish credibility before engaging with
+                    potential leads, so your marketing efforts feel natural and
+                    trustworthy to the community.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-9">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  Can I cancel my subscription anytime?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    Yes! You can cancel your subscription at any time through
+                    your account dashboard. Your access continues until the end
+                    of your current billing period. No long-term contracts or
+                    cancellation fees.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="border-b border-gray-200 pb-3 mb-3"
+            >
+              <AccordionItem value="item-10">
+                <AccordionTrigger className="px-0 py-2 text-left text-lg font-medium text-gray-900 hover:no-underline">
+                  Do you offer customer support?
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <p className="text-base text-gray-600 leading-relaxed tracking-tight">
+                    Yes! Premium subscribers get priority support via email. We
+                    typically respond within 24 hours during business days. We
+                    also provide comprehensive guides and documentation to help
+                    you get the most out of the platform.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
+          </Accordion>
         </div>
       </div>
 
