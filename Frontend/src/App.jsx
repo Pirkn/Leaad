@@ -6,6 +6,7 @@ import { LeadsProvider } from "./contexts/LeadsContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import ScrollToTop from "./components/ScrollToTop";
+import PageLoader from "./components/PageLoader";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import ViralTemplates from "./pages/ViralTemplates";
@@ -137,7 +138,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <Dashboard />
+                          <PageLoader>
+                            <Dashboard />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -150,7 +153,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <Leads />
+                          <PageLoader>
+                            <Leads />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -163,7 +168,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <ViralTemplates />
+                          <PageLoader>
+                            <ViralTemplates />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -176,7 +183,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <ViralTemplateEdit />
+                          <PageLoader>
+                            <ViralTemplateEdit />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -189,7 +198,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <Products />
+                          <PageLoader>
+                            <Products />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -202,7 +213,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <ProductAnalysis />
+                          <PageLoader>
+                            <ProductAnalysis />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -215,7 +228,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <RedditPosts />
+                          <PageLoader>
+                            <RedditPosts />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -228,7 +243,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <Posts />
+                          <PageLoader>
+                            <Posts />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -241,7 +258,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <Karma />
+                          <PageLoader>
+                            <Karma />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>
@@ -254,7 +273,9 @@ function App() {
                       <div className="flex h-screen bg-gray-50">
                         <Sidebar />
                         <div className="flex-1 overflow-auto">
-                          <Settings />
+                          <PageLoader>
+                            <Settings />
+                          </PageLoader>
                         </div>
                       </div>
                     </ProtectedRoute>

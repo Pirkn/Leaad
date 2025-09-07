@@ -307,8 +307,6 @@ function Leads() {
       const dateA = new Date(a.date || a.created_at);
       const dateB = new Date(b.date || b.created_at);
       return dateA - dateB;
-    } else if (sortBy === "score") {
-      return (b.score || 0) - (a.score || 0);
     }
     return 0;
   });
@@ -647,7 +645,6 @@ function Leads() {
                             >
                               <option value="newest">Newest</option>
                               <option value="oldest">Oldest</option>
-                              <option value="score">Score</option>
                             </select>
                           </div>
 

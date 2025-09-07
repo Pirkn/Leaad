@@ -60,7 +60,6 @@ function ViralTemplates() {
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
-  const [engagementFilter, setEngagementFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
   // Template editing states
@@ -76,10 +75,9 @@ function ViralTemplates() {
   const filteredPosts = useMemo(() => {
     return staticDataService.getViralPostsWithFilters({
       searchTerm,
-      engagementFilter,
       sortBy,
     });
-  }, [searchTerm, engagementFilter, sortBy]);
+  }, [searchTerm, sortBy]);
 
   const handleOpenTemplateModal = (template) => {
     setSelectedTemplate(template);
@@ -123,12 +121,10 @@ function ViralTemplates() {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setEngagementFilter("all");
     setSortBy("newest");
   };
 
-  const hasActiveFilters =
-    searchTerm || engagementFilter !== "all" || sortBy !== "newest";
+  const hasActiveFilters = searchTerm || sortBy !== "newest";
 
   // Helper to open Reddit create post in new tab
   const handleOpenRedditPost = (subreddit) => {
@@ -196,23 +192,6 @@ function ViralTemplates() {
 
             {/* Filters Row */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
-              {/* Engagement Filter */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                  Engagement:
-                </label>
-                <select
-                  value={engagementFilter}
-                  onChange={(e) => setEngagementFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#FF4500] focus:border-[#FF4500] text-sm min-w-0 max-w-32 sm:max-w-40"
-                >
-                  <option value="all">All</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                </select>
-              </div>
-
               {/* Sort By */}
               <div className="flex items-center space-x-2">
                 <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
@@ -229,26 +208,26 @@ function ViralTemplates() {
                   <option value="most-commented">Most Commented</option>
                 </select>
               </div>
-
-              {/* Clear Filters */}
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="px-2 py-1 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors self-start sm:self-center"
-                >
-                  Clear Filters
-                </button>
-              )}
             </div>
           </div>
 
           {/* Results Count */}
-          <div className="mt-3 text-sm text-gray-600">
-            Showing {filteredPosts.length} of {allPosts.length} templates
+          <div className="mt-3 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Showing {filteredPosts.length} of {allPosts.length} templates
+              {hasActiveFilters && (
+                <span className="ml-2 text-[#FF4500] font-medium">
+                  (filtered)
+                </span>
+              )}
+            </div>
             {hasActiveFilters && (
-              <span className="ml-2 text-[#FF4500] font-medium">
-                (filtered)
-              </span>
+              <button
+                onClick={clearFilters}
+                className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
+              >
+                Clear Filters
+              </button>
             )}
           </div>
         </motion.div>

@@ -61,7 +61,6 @@ function Posts() {
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [subredditFilter, setSubredditFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [saveFilter, setSaveFilter] = useState("all"); // "all" or "saved"
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -297,18 +296,6 @@ function Posts() {
       return false;
     }
 
-    // Date filter
-    if (dateFilter !== "all" && post.created_at) {
-      const postDate = new Date(post.created_at);
-      const now = new Date();
-      const diffTime = Math.abs(now - postDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (dateFilter === "today" && diffDays > 1) return false;
-      if (dateFilter === "week" && diffDays > 7) return false;
-      if (dateFilter === "month" && diffDays > 30) return false;
-    }
-
     // Save filter
     if (saveFilter !== "all") {
       const isOptimisticallySaved = optimisticSaves.has(post.id);
@@ -336,8 +323,6 @@ function Posts() {
       return new Date(b.created_at) - new Date(a.created_at);
     } else if (sortBy === "oldest") {
       return new Date(a.created_at) - new Date(b.created_at);
-    } else if (sortBy === "subreddit") {
-      return (a.subreddit || "").localeCompare(b.subreddit || "");
     }
     return 0;
   });
@@ -356,7 +341,6 @@ function Posts() {
     });
     setSearchTerm("");
     setSubredditFilter("all");
-    setDateFilter("all");
     setSortBy("newest");
     setSaveFilter("all");
   };
@@ -364,7 +348,6 @@ function Posts() {
   const hasActiveFilters =
     searchTerm ||
     subredditFilter !== "all" ||
-    dateFilter !== "all" ||
     sortBy !== "newest" ||
     saveFilter !== "all";
 
@@ -425,7 +408,6 @@ function Posts() {
   const [previousFilterState, setPreviousFilterState] = useState({
     saveFilter: "all",
     subredditFilter: "all",
-    dateFilter: "all",
     sortBy: "newest",
   });
 
@@ -445,7 +427,6 @@ function Posts() {
   const filtersChanged =
     previousFilterState.saveFilter !== saveFilter ||
     previousFilterState.subredditFilter !== subredditFilter ||
-    previousFilterState.dateFilter !== dateFilter ||
     previousFilterState.sortBy !== sortBy;
 
   // Always animate when switching between Saved/All views for better UX
@@ -554,7 +535,6 @@ function Posts() {
                         setPreviousFilterState({
                           saveFilter,
                           subredditFilter,
-                          dateFilter,
                           sortBy,
                         });
                         setSaveFilter("all");
@@ -574,7 +554,6 @@ function Posts() {
                         setPreviousFilterState({
                           saveFilter,
                           subredditFilter,
-                          dateFilter,
                           sortBy,
                         });
                         setSaveFilter("saved");
@@ -708,31 +687,6 @@ function Posts() {
                               </select>
                             </div>
 
-                            {/* Date Filter */}
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Posted Date
-                              </label>
-                              <select
-                                value={dateFilter}
-                                onChange={(e) => {
-                                  setPreviousFilterState({
-                                    saveFilter,
-                                    subredditFilter,
-                                    dateFilter,
-                                    sortBy,
-                                  });
-                                  setDateFilter(e.target.value);
-                                }}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                              >
-                                <option value="all">All Time</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                              </select>
-                            </div>
-
                             {/* Sort By */}
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -753,7 +707,6 @@ function Posts() {
                               >
                                 <option value="newest">Newest First</option>
                                 <option value="oldest">Oldest First</option>
-                                <option value="subreddit">By Subreddit</option>
                               </select>
                             </div>
 
@@ -765,7 +718,6 @@ function Posts() {
                               <Button
                                 onClick={() => {
                                   setSubredditFilter("all");
-                                  setDateFilter("all");
                                   setSortBy("newest");
                                   setShowFilterDropdown(false);
                                 }}
@@ -784,26 +736,25 @@ function Posts() {
               </motion.div>
 
               {/* Posts Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <motion.div
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                transition={
+                  shouldAnimate
+                    ? { duration: 0.3, delay: 0.3 }
+                    : { duration: 0 }
+                }
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
                 {sortedPosts.length > 0 ? (
                   sortedPosts.map((post, index) => (
                     <motion.div
                       key={post.id}
-                      initial={
-                        shouldAnimate &&
-                        (filtersChanged ||
-                          shouldAnimateSaveFilter ||
-                          newPostsAdded)
-                          ? { opacity: 0, y: 20 }
-                          : false
-                      }
+                      initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
                       animate={{ opacity: 1, y: 0 }}
                       transition={
-                        shouldAnimate &&
-                        (filtersChanged ||
-                          shouldAnimateSaveFilter ||
-                          newPostsAdded)
-                          ? { duration: 0.2, delay: 0.3 + index * 0.05 }
+                        shouldAnimate
+                          ? { duration: 0.2, delay: 0.05 * index }
                           : { duration: 0 }
                       }
                       className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-sm transition-shadow flex flex-col justify-between"
@@ -920,7 +871,7 @@ function Posts() {
                     ) : null}
                   </motion.div>
                 )}
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </div>
@@ -1031,7 +982,7 @@ function Posts() {
                           value={editedTitle}
                           onChange={(e) => setEditedTitle(e.target.value)}
                           rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none leading-snug"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 focus:border-gray-600 resize-none leading-snug"
                           placeholder="Enter your post title..."
                           style={{ minHeight: "2.5rem", maxHeight: "4.5rem" }}
                         />
@@ -1071,7 +1022,7 @@ function Posts() {
                           value={editedPostText}
                           onChange={(e) => setEditedPostText(e.target.value)}
                           rows={12}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-[#FF4500] resize-none"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 focus:border-gray-600 resize-none"
                           placeholder="Enter your post content..."
                         />
                       </div>

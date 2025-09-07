@@ -174,8 +174,8 @@ const Navigation = () => {
           {/* Right column - Buttons */}
           <div className="hidden lg:flex items-center justify-end justify-self-end">
             <div className="flex items-center space-x-3">
-              {/* Only show ghost button if user is not signed in OR if onboarding is complete */}
-              {(!user || loading || onboardingComplete) && (
+              {/* Hide ghost button when user is authenticated (completed or incomplete onboarding) */}
+              {!(user && !loading) && (
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -295,8 +295,8 @@ const Navigation = () => {
                   </Button>
 
                   <div className="pt-2 border-t border-gray-200">
-                    {/* Only show ghost button if user is not signed in OR if onboarding is complete */}
-                    {(!user || loading || onboardingComplete) && (
+                    {/* Hide ghost button when user is authenticated (completed or incomplete onboarding) */}
+                    {!(user && !loading) && (
                       <Button
                         variant="ghost"
                         className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-100"

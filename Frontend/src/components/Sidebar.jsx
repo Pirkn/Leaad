@@ -85,7 +85,7 @@ function Sidebar() {
         <Link
           to="/leads"
           onClick={handleLinkClick}
-          className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
+          className={`relative flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
             isActive("/leads")
               ? "bg-orange-50 text-orange-700 border border-orange-200"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -97,9 +97,26 @@ function Sidebar() {
           }}
         >
           <Users className="w-5 h-5" strokeWidth={1.5} />
-          <span className="text-sm font-medium">
-            Leads{unseenNewLeadCount > 0 ? ` (${unseenNewLeadCount})` : ""}
-          </span>
+          <span className="text-sm font-medium">Leads</span>
+          {unseenNewLeadCount > 0 && (
+            <motion.span
+              className="absolute right-4 top-1/2 -translate-y-1/2"
+              aria-label="New leads available"
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <span className="w-5 h-5 bg-green-100 border border-green-300 rounded-full shadow-sm flex items-center justify-center">
+                <span className="text-[10px] leading-none font-medium text-green-800">
+                  {unseenNewLeadCount > 99 ? "99+" : unseenNewLeadCount}
+                </span>
+              </span>
+            </motion.span>
+          )}
         </Link>
       </div>
 
@@ -352,7 +369,7 @@ function Sidebar() {
               >
                 <Link
                   to="/leads"
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
+                  className={`relative flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ${
                     isActive("/leads")
                       ? "bg-orange-50 text-orange-700 border border-orange-200"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -364,10 +381,26 @@ function Sidebar() {
                   }}
                 >
                   <Users className="w-5 h-5" strokeWidth={1.5} />
-                  <span className="text-sm font-medium">
-                    Leads
-                    {unseenNewLeadCount > 0 ? ` (${unseenNewLeadCount})` : ""}
-                  </span>
+                  <span className="text-sm font-medium">Leads</span>
+                  {unseenNewLeadCount > 0 && (
+                    <motion.span
+                      className="absolute right-4 top-1/2 -translate-y-1/2"
+                      aria-label="New leads available"
+                      initial={{ scale: 1 }}
+                      animate={{ scale: [1, 1.08, 1] }}
+                      transition={{
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <span className="w-5 h-5 bg-green-100 border border-green-300 rounded-full shadow-sm flex items-center justify-center">
+                        <span className="text-[10px] leading-none font-medium text-green-800">
+                          {unseenNewLeadCount > 99 ? "99+" : unseenNewLeadCount}
+                        </span>
+                      </span>
+                    </motion.span>
+                  )}
                 </Link>
               </motion.div>
 

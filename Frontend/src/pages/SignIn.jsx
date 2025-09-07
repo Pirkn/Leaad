@@ -6,6 +6,30 @@ import { motion } from "framer-motion";
 import logoImage from "/src/assets/logo.png";
 import SEOHead from "../components/SEOHead";
 
+// Animation variants (static) moved outside the component to avoid re-creation on each render
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,7 +76,9 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      await signIn(email, password);
+      const sanitizedEmail = email.trim().toLowerCase();
+      const sanitizedPassword = password;
+      await signIn(sanitizedEmail, sanitizedPassword);
       // Immediately navigate to dashboard so ProtectedRoute shows loader while onboarding status is checked
       navigate("/dashboard");
     } catch (error) {
@@ -73,30 +99,6 @@ const SignIn = () => {
       setError(error.message);
       setGoogleLoading(false);
     }
-  };
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut",
-      },
-    },
   };
 
   return (
@@ -159,6 +161,8 @@ const SignIn = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
+                  role="status"
+                  aria-live="polite"
                 >
                   {successMessage}
                 </motion.div>
@@ -169,6 +173,8 @@ const SignIn = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
+                  role="alert"
+                  aria-live="assertive"
                 >
                   {error}
                 </motion.div>
@@ -183,6 +189,11 @@ const SignIn = () => {
                   className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
+                  aria-label={
+                    googleLoading
+                      ? "Signing in with Google"
+                      : "Sign in with Google"
+                  }
                 >
                   {googleLoading ? (
                     <svg
@@ -293,6 +304,10 @@ const SignIn = () => {
                         setShowPassword(!showPassword);
                       }}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center z-10 pointer-events-auto hover:text-gray-600 transition-colors duration-200"
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                      aria-pressed={showPassword}
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -325,6 +340,8 @@ const SignIn = () => {
                   className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
+                  aria-busy={loading}
+                  aria-label={loading ? "Signing in" : "Sign in"}
                 >
                   {loading ? (
                     <svg
