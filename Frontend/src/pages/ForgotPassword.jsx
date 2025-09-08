@@ -5,6 +5,30 @@ import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import SEOHead from "../components/SEOHead";
 
+// Animation variants (static) moved outside the component to avoid re-creation on each render
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +52,8 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      await resetPassword(email);
+      const sanitizedEmail = email.trim().toLowerCase();
+      await resetPassword(sanitizedEmail);
       setSuccess(true);
     } catch (error) {
       setError(error.message);
@@ -37,29 +62,7 @@ const ForgotPassword = () => {
     }
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut",
-      },
-    },
-  };
+  // (variants moved to module scope)
 
   if (success) {
     return (
@@ -203,6 +206,8 @@ const ForgotPassword = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
+                  role="alert"
+                  aria-live="assertive"
                 >
                   {error}
                 </motion.div>
@@ -235,6 +240,10 @@ const ForgotPassword = () => {
                   className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
+                  aria-busy={loading}
+                  aria-label={
+                    loading ? "Sending reset link" : "Send reset link"
+                  }
                 >
                   {loading ? (
                     <svg

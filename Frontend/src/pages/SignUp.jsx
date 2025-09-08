@@ -5,6 +5,30 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import SEOHead from "../components/SEOHead";
 
+// Animation variants (static) moved outside the component to avoid re-creation on each render
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
 const SignUp = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -118,29 +142,7 @@ const SignUp = () => {
     }
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut",
-      },
-    },
-  };
+  // (variants moved to module scope)
 
   return (
     <>
@@ -202,6 +204,8 @@ const SignUp = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
+                  role="alert"
+                  aria-live="assertive"
                 >
                   {error}
                 </motion.div>
@@ -216,6 +220,11 @@ const SignUp = () => {
                   className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
+                  aria-label={
+                    googleLoading
+                      ? "Signing up with Google"
+                      : "Sign up with Google"
+                  }
                 >
                   {googleLoading ? (
                     <svg
@@ -400,6 +409,8 @@ const SignUp = () => {
                   className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
+                  aria-busy={loading}
+                  aria-label={loading ? "Creating account" : "Create account"}
                 >
                   {loading ? (
                     <svg

@@ -38,8 +38,12 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Sanitize email before any submission logic
+    const sanitizedEmail = formData.email.trim().toLowerCase();
+    const payload = { ...formData, email: sanitizedEmail };
+
     // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(() => resolve(payload), 1500));
 
     setIsSubmitting(false);
     setIsSubmitted(true);
@@ -106,6 +110,8 @@ const Contact = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-green-50 border border-green-200 rounded-lg p-6 text-center"
+                    role="status"
+                    aria-live="polite"
                   >
                     <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-green-800 mb-2">
@@ -198,6 +204,10 @@ const Contact = () => {
                       type="submit"
                       disabled={isSubmitting}
                       className="w-full px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                      aria-busy={isSubmitting}
+                      aria-label={
+                        isSubmitting ? "Sending message" : "Send message"
+                      }
                     >
                       {isSubmitting ? (
                         <>
