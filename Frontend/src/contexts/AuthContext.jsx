@@ -62,11 +62,6 @@ export const AuthProvider = ({ children }) => {
       data: { subscription },
     } = authService.onAuthStateChange(async (event, session) => {
       const newUser = session?.user ?? null;
-      console.log("Auth state change:", {
-        event,
-        newUser: !!newUser,
-        session: !!session,
-      });
       setUser(newUser);
 
       // Don't check onboarding status here - only on initial load
@@ -77,7 +72,6 @@ export const AuthProvider = ({ children }) => {
         }, 1000); // Small delay to ensure user is fully loaded
       } else if (event === "SIGNED_OUT") {
         // User signed out, reset onboarding status only when we're sure they're signed out
-        console.log("User signed out, resetting onboarding status");
         setOnboardingComplete(false);
         setOnboardingStatusLoading(false);
         hasCheckedOnboarding.current = false; // Reset for next sign-in
