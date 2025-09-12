@@ -29,9 +29,7 @@ function ProductAnalysis() {
     try {
       await analyzeMutation.mutateAsync(websiteUrl);
       setShowResults(true);
-    } catch (error) {
-      console.error("Failed to analyze product:", error);
-    }
+    } catch (error) {}
   };
 
   const handleClearResults = () => {
@@ -70,7 +68,6 @@ function ProductAnalysis() {
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
     } catch (error) {
-      console.error("Failed to save product:", error);
       alert(`Failed to save product: ${error.message || "Please try again."}`);
     }
   };

@@ -66,55 +66,16 @@ function Dashboard() {
   const hasProduct = productsResponse?.products?.length > 0;
   const product = productsResponse?.products?.[0];
 
-  // Debug logging
-  console.log("Dashboard Data:", {
-    leads: leads?.length || 0,
-    newlyGeneratedLeads: newlyGeneratedLeads?.length || 0,
-    allLeads: allLeads?.length || 0,
-    posts: posts?.length || 0,
-    newlyGeneratedPosts: newlyGeneratedPosts?.length || 0,
-    allPosts: allPosts?.length || 0,
-    recentLeads: allLeads.slice(0, 3),
-    recentPosts: allPosts.slice(0, 3),
-  });
-
   // Debug individual lead structure
   if (allLeads.length > 0) {
-    console.log("Sample lead structure:", allLeads[0]);
-    console.log("Lead date fields:", {
-      date: allLeads[0].date, // Actual Reddit post date
-      created_at: allLeads[0].created_at, // When lead was generated
-      hasDate: !!allLeads[0].date,
-      hasCreatedAt: !!allLeads[0].created_at,
-    });
-
     // Debug sorting
     const sampleLeads = allLeads.slice(0, 3);
-    console.log(
-      "Sample leads before sorting:",
-      sampleLeads.map((l) => ({
-        id: l.id,
-        date: l.date, // Reddit post date
-        created_at: l.created_at, // Lead generation date
-        finalDate: l.created_at, // Using created_at for sorting
-      }))
-    );
 
     const sortedSample = sampleLeads.sort((a, b) => {
       const dateA = new Date(a.created_at);
       const dateB = new Date(b.created_at);
       return dateB - dateA;
     });
-
-    console.log(
-      "Sample leads after sorting:",
-      sortedSample.map((l) => ({
-        id: l.id,
-        date: l.date, // Reddit post date
-        created_at: l.created_at, // Lead generation date
-        finalDate: l.created_at, // Using created_at for sorting
-      }))
-    );
   }
 
   // Calculate engagement metrics

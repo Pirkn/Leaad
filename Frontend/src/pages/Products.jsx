@@ -110,7 +110,6 @@ function Products() {
       await deleteProductMutation.mutateAsync(productId);
       setShowDeleteModal(null);
     } catch (error) {
-      console.error("Failed to delete product:", error);
       alert(
         `Failed to delete product: ${error.message || "Please try again."}`
       );
@@ -144,14 +143,10 @@ function Products() {
     const formattedUrl = formatUrl(formValues.url);
 
     try {
-      console.log("Starting reanalysis for URL:", formattedUrl);
       const result = await analyzeProductMutation.mutateAsync(formattedUrl);
-      console.log("Analysis result:", result);
 
       // Use the returned values from generate-product-details
       if (result) {
-        console.log("New data received:", result);
-
         // Only update form values - don't save to backend yet
         setFormValues((prev) => ({
           ...prev,
@@ -168,11 +163,9 @@ function Products() {
           icon: <CircleCheck className="w-4 h-4 text-green-600" />,
         });
       } else {
-        console.log("No product_details in result:", result);
         toast("No product details received from analysis", { duration: 2500 });
       }
     } catch (error) {
-      console.error("Reanalysis error:", error);
       toast(error.message || "Failed to reanalyze product", { duration: 2500 });
     }
   };

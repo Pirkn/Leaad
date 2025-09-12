@@ -17,9 +17,7 @@ function Settings() {
   const handleSignOut = async () => {
     try {
       await signOut();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
+    } catch (error) {}
   };
 
   const formatDate = (dateString) => {

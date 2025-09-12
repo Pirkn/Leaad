@@ -35,7 +35,6 @@ function ViralTemplateEdit() {
       setSnackbarMessage("Template copied to clipboard!");
       setSnackbarOpen(true);
     } catch (err) {
-      console.error("Failed to copy to clipboard:", err);
       setSnackbarMessage("Failed to copy to clipboard. Please try again.");
       setSnackbarOpen(true);
     }

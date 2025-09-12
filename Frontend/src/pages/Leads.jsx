@@ -79,7 +79,6 @@ function Leads() {
       try {
         await markAsUnreadMutation.mutateAsync(leadId);
       } catch (error) {
-        console.error("Failed to mark lead as unread:", error);
         // Revert optimistic update on error
         setOptimisticUnreads((prev) => {
           const newSet = new Set(prev);
@@ -126,7 +125,6 @@ function Leads() {
       try {
         await markAsReadMutation.mutateAsync(leadId);
       } catch (error) {
-        console.error("Failed to mark lead as read:", error);
         // Revert optimistic update on error
         setOptimisticReads((prev) => {
           const newSet = new Set(prev);
@@ -184,7 +182,6 @@ function Leads() {
         icon: <Check className="w-4 h-4 text-green-600" />,
       });
     } catch (err) {
-      console.error("Failed to copy reply:", err);
       // Show error toast
       toast("Failed to copy reply. Please try again.", {
         duration: 3000,
@@ -707,7 +704,6 @@ function Leads() {
                             toast("No leads returned.");
                           }
                         } catch (e) {
-                          console.error(e);
                           toast("Failed to generate leads.");
                         }
                       }}

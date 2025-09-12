@@ -121,9 +121,7 @@ function Posts() {
 
           // Add to newly generated posts context - this will make them immediately visible
           addNewlyGeneratedPosts(transformedPosts);
-        } catch (parseError) {
-          console.error("Failed to parse generated posts:", parseError);
-        }
+        } catch (parseError) {}
       }
 
       // Show success toast
@@ -132,7 +130,6 @@ function Posts() {
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
     } catch (error) {
-      console.error("Error generating posts:", error);
     } finally {
       // Clear persistent loading state
       setGeneratingPosts(false);
@@ -169,7 +166,6 @@ function Posts() {
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
     } catch (err) {
-      console.error("Failed to copy to clipboard:", err);
       const errorMessage =
         type === "title"
           ? "Failed to copy title. Please try again."
@@ -210,7 +206,6 @@ function Posts() {
     try {
       await markAsSavedMutation.mutateAsync(postId);
     } catch (error) {
-      console.error("Failed to save post:", error);
       // Revert optimistic update on error
       setOptimisticSaves((prev) => {
         const newSet = new Set(prev);
@@ -243,7 +238,6 @@ function Posts() {
     try {
       await markAsUnsavedMutation.mutateAsync(postId);
     } catch (error) {
-      console.error("Failed to unsave post:", error);
       // Revert optimistic update on error
       setOptimisticUnsaves((prev) => {
         const newSet = new Set(prev);

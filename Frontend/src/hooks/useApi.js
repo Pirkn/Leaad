@@ -58,9 +58,7 @@ export const useGenerateRedditPost = () => {
       // Posts are now handled locally in the component
       // No need to invalidate queries
     },
-    onError: (error, variables, context) => {
-      console.error("Failed to generate Reddit post:", error);
-    },
+    onError: (error, variables, context) => {},
   });
 };
 
@@ -78,9 +76,7 @@ export const useGenerateKarmaComment = () => {
       return apiService.generateKarmaComment();
     },
     retry: false,
-    onError: (error) => {
-      console.error("Failed to generate karma comment:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -96,9 +92,7 @@ export const useGenerateKarmaPost = () => {
       return apiService.generateKarmaPost();
     },
     retry: false,
-    onError: (error) => {
-      console.error("Failed to generate karma post:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -112,9 +106,7 @@ export const useAnalyzeProduct = () => {
       // Update the cache with the new analysis
       queryClient.setQueryData(queryKeys.productAnalysis(websiteUrl), data);
     },
-    onError: (error, websiteUrl, context) => {
-      console.error("Failed to analyze product:", error);
-    },
+    onError: (error, websiteUrl, context) => {},
   });
 };
 
@@ -128,9 +120,7 @@ export const useOnboardingLeadGeneration = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.onboardingLeads, data);
     },
-    onError: (error) => {
-      console.error("Failed to generate onboarding leads:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -138,9 +128,7 @@ export const useOnboardingLeadGeneration = () => {
 export const useOptimisticViralPost = () => {
   return useMutation({
     mutationFn: (productData) => apiService.generateRedditPost(productData),
-    onError: (err, productData, context) => {
-      console.error("Failed to generate optimistic post:", err);
-    },
+    onError: (err, productData, context) => {},
   });
 };
 
@@ -159,7 +147,6 @@ export const useProductAnalysisState = () => {
       await analyzeMutation.mutateAsync(url);
       setWebsiteUrl(url);
     } catch (error) {
-      console.error("Analysis failed:", error);
     } finally {
       setIsAnalyzing(false);
     }
@@ -194,7 +181,6 @@ export const useRedditPostGeneration = () => {
       const result = await generateMutation.mutateAsync(data);
       return result;
     } catch (error) {
-      console.error("Failed to generate post:", error);
       throw error;
     }
   };
@@ -204,7 +190,6 @@ export const useRedditPostGeneration = () => {
       const result = await optimisticMutation.mutateAsync(data);
       return result;
     } catch (error) {
-      console.error("Failed to generate post:", error);
       throw error;
     }
   };
@@ -252,9 +237,7 @@ export const useCreateProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products });
     },
-    onError: (error) => {
-      console.error("Failed to create product:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -298,7 +281,6 @@ export const useUpdateProduct = () => {
       if (context?.previousProducts) {
         queryClient.setQueryData(queryKeys.products, context.previousProducts);
       }
-      console.error("Failed to update product:", err);
     },
     onSettled: () => {
       // Always refetch after error or success to ensure cache consistency
@@ -323,9 +305,7 @@ export const useDeleteProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products });
     },
-    onError: (error) => {
-      console.error("Failed to delete product:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -362,9 +342,7 @@ export const useGenerateLeads = () => {
       // Leads are now handled locally in the component
       // No need to invalidate queries
     },
-    onError: (error) => {
-      console.error("Failed to generate leads:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -380,9 +358,7 @@ export const useMarkLeadAsRead = () => {
       const response = await apiService.markLeadAsRead(leadId);
       return response; // Backend returns updated lead
     },
-    onError: (error) => {
-      console.error("Failed to mark lead as read:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -398,9 +374,7 @@ export const useMarkLeadAsUnread = () => {
       const response = await apiService.markLeadAsUnread(leadId);
       return response; // Backend returns updated lead
     },
-    onError: (error) => {
-      console.error("Failed to mark lead as unread:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -432,9 +406,7 @@ export const useMarkRedditPostAsSaved = () => {
       const response = await apiService.markRedditPostAsSaved(postId);
       return response; // Backend returns updated post
     },
-    onError: (error) => {
-      console.error("Failed to save Reddit post:", error);
-    },
+    onError: (error) => {},
   });
 };
 
@@ -450,8 +422,6 @@ export const useMarkRedditPostAsUnsaved = () => {
       const response = await apiService.markRedditPostAsUnsaved(postId);
       return response; // Backend returns updated post
     },
-    onError: (error) => {
-      console.error("Failed to unsave Reddit post:", error);
-    },
+    onError: (error) => {},
   });
 };

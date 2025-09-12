@@ -162,7 +162,6 @@ function Karma() {
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
     } catch (error) {
-      console.error("Failed to copy image:", error);
       // Fallback: try to copy the image using a different approach
       try {
         const img = new Image();
@@ -185,7 +184,6 @@ function Karma() {
                 icon: <CircleCheck className="w-4 h-4 text-green-600" />,
               });
             } catch (err) {
-              console.error("Failed to copy image blob:", err);
               // Final fallback: copy URL
               navigator.clipboard.writeText(imageUrl);
               toast("Copied to clipboard", {
@@ -197,7 +195,6 @@ function Karma() {
         };
         img.src = imageUrl;
       } catch (fallbackError) {
-        console.error("Fallback image copy failed:", fallbackError);
         // Final fallback: copy URL
         navigator.clipboard.writeText(imageUrl);
         toast("Copied to clipboard", {
@@ -223,9 +220,7 @@ function Karma() {
         duration: 2000,
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
-    } catch (error) {
-      console.error("Failed to generate comment:", error);
-    }
+    } catch (error) {}
   };
 
   const handleGeneratePost = async () => {
@@ -240,9 +235,7 @@ function Karma() {
         duration: 2000,
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
-    } catch (error) {
-      console.error("Failed to generate post:", error);
-    }
+    } catch (error) {}
   };
 
   const handleRefreshComments = async () => {
@@ -261,9 +254,7 @@ function Karma() {
       });
 
       // Note: localStorage is already updated by karmaService.generateComment()
-      console.log("Comment refreshed via karmaService");
     } catch (error) {
-      console.error("Failed to refresh karma comments:", error);
     } finally {
       setIsBackgroundGenerating(false);
       stopKarmaGeneration();
@@ -286,9 +277,7 @@ function Karma() {
       });
 
       // Note: localStorage is already updated by karmaService.generatePost()
-      console.log("Post refreshed via karmaService");
     } catch (error) {
-      console.error("Failed to refresh karma posts:", error);
     } finally {
       setIsBackgroundGenerating(false);
       stopKarmaGeneration();
@@ -451,10 +440,6 @@ function Karma() {
                           try {
                             comments = JSON.parse(generatedComment.response);
                           } catch (e) {
-                            console.error(
-                              "Failed to parse comment response:",
-                              e
-                            );
                             comments = [];
                           }
                         }

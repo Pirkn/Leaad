@@ -186,7 +186,6 @@ export const LeadsProvider = ({ children }) => {
 
         if (error) {
           // eslint-disable-next-line no-console
-          console.error("Failed to hydrate offline leads:", error);
           return;
         }
 
@@ -215,7 +214,6 @@ export const LeadsProvider = ({ children }) => {
         }
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error("Error hydrating offline leads:", e);
       }
     };
 

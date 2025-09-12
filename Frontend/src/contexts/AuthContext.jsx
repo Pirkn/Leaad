@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }) => {
         // Only check onboarding status if user is authenticated and we haven't checked yet
         if (currentUser && !hasCheckedOnboarding.current) {
           hasCheckedOnboarding.current = true;
-          console.log("Checking onboarding status (first time only)");
           await checkOnboardingStatus();
         } else if (!currentUser) {
           // If no user, set onboarding status to false and stop loading
@@ -45,7 +44,6 @@ export const AuthProvider = ({ children }) => {
           setOnboardingStatusLoading(false);
         }
       } catch (error) {
-        console.error("Error getting initial user:", error);
         // If there's an error, assume no user and stop loading
         setUser(null);
         setOnboardingComplete(false);
@@ -90,7 +88,6 @@ export const AuthProvider = ({ children }) => {
       // Handle null status - treat as not completed
       setOnboardingComplete(data.status === true);
     } catch (error) {
-      console.error("Error checking onboarding status:", error);
       // If it's a 404 or network error, assume onboarding is not complete
       setOnboardingComplete(false);
     } finally {
@@ -109,7 +106,6 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       // Revert the optimistic update if the API call fails
       setOnboardingComplete(false);
-      console.error("Error marking onboarding complete:", error);
       throw error;
     }
   };
@@ -132,10 +128,6 @@ export const AuthProvider = ({ children }) => {
       }
       setOnboardingStatusLoading(true);
       checkOnboardingStatus().catch((err) => {
-        console.error(
-          "Error during onboarding status check after signUp:",
-          err
-        );
         setOnboardingStatusLoading(false);
       });
     }
@@ -163,7 +155,6 @@ export const AuthProvider = ({ children }) => {
     }
     setOnboardingStatusLoading(true);
     checkOnboardingStatus().catch((err) => {
-      console.error("Error during onboarding status check after signIn:", err);
       setOnboardingStatusLoading(false);
     });
 
@@ -207,10 +198,6 @@ export const AuthProvider = ({ children }) => {
         }
         setOnboardingStatusLoading(true);
         checkOnboardingStatus().catch((err) => {
-          console.error(
-            "Error during onboarding status check after OTP verification:",
-            err
-          );
           setOnboardingStatusLoading(false);
         });
       }

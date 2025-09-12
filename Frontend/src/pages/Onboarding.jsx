@@ -221,11 +221,9 @@ function Onboarding() {
       createProductMutation
         .mutateAsync(productData)
         .then(() => {
-          console.log("Product created successfully");
           setIsCreatingProduct(false);
         })
         .catch((error) => {
-          console.error("Failed to create product:", error);
           setIsCreatingProduct(false);
         });
     }
@@ -261,7 +259,6 @@ function Onboarding() {
         problem_solved: analysisResult.problem_solved,
       });
     } catch (error) {
-      console.error("Analysis failed:", error);
       // Keep the manual fields open so user can fill them manually if API fails
       alert("Analysis failed. Please fill in the details manually.");
     }
@@ -279,7 +276,6 @@ function Onboarding() {
       // Navigate to dashboard
       navigate("/dashboard");
     } catch (error) {
-      console.error("Failed to complete onboarding:", error);
       alert("Failed to complete onboarding. Please try again.");
     } finally {
       setIsCompletingOnboarding(false);
@@ -291,9 +287,7 @@ function Onboarding() {
       await navigator.clipboard.writeText(replyText);
       setCopiedReplyId(leadId);
       setTimeout(() => setCopiedReplyId(null), 2000);
-    } catch (err) {
-      console.error("Failed to copy reply:", err);
-    }
+    } catch (err) {}
   };
 
   const handleViewReply = (leadId) => {
@@ -378,9 +372,7 @@ function Onboarding() {
                 try {
                   await signOut();
                   navigate("/");
-                } catch (error) {
-                  console.error("Error signing out:", error);
-                }
+                } catch (error) {}
               }}
               variant="ghost"
               size="sm"
