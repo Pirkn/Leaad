@@ -32,15 +32,16 @@ class KarmaService {
           JSON.stringify(commentResult.value)
         );
       } else {
-          commentResult.reason
-        );
+        console.error(commentResult.reason);
       }
 
       if (postResult.status === "fulfilled") {
         localStorage.setItem("karma_post", JSON.stringify(postResult.value));
       } else {
+        console.error(postResult.reason);
       }
     } catch (error) {
+      console.error(error);
     } finally {
       this.isGenerating = false;
     }

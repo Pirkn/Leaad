@@ -445,8 +445,33 @@ function Leads() {
               className="bg-blue-50 border border-blue-200 rounded-lg p-4"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                <div className="relative w-6 h-6 flex items-center justify-center flex-shrink-0">
+                  {/* Radar rings */}
+                  <div
+                    className="absolute inset-0 rounded-full border border-blue-300 opacity-20"
+                    style={{
+                      animation: "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
+                    }}
+                  ></div>
+                  <div
+                    className="absolute inset-0 rounded-full border border-blue-300 opacity-10"
+                    style={{
+                      animationDelay: "1s",
+                      animation: "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
+                    }}
+                  ></div>
+                  <div
+                    className="absolute inset-0 rounded-full border border-blue-300 opacity-5"
+                    style={{
+                      animationDelay: "2s",
+                      animation: "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
+                    }}
+                  ></div>
+
+                  {/* Static center dot */}
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  </div>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-blue-900">

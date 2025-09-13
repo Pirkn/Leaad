@@ -186,7 +186,7 @@ export default function HomePage() {
         description="Generate qualified leads from Reddit with AI. Find people actively seeking solutions like yours, get personalized comments, and convert Reddit discussions into customers. Perfect for SaaS founders and startups."
         keywords="reddit lead generation, SaaS marketing, startup marketing, AI lead generation, reddit marketing, B2B leads, product marketing, customer acquisition, reddit automation, lead finding"
         url="https://leaad.co"
-        preloadImages={[heroBackgroundImage]}
+        preloadImages={[]}
         structuredData={[
           {
             "@context": "https://schema.org",
@@ -707,7 +707,8 @@ export default function HomePage() {
                           <Check className="w-3 h-3 text-gray-500" />
                         </div>
                         <span className="text-gray-700 text-base">
-                          Track relevant subreddits for high-intent discussions
+                          We monitor relevant subreddits for high-intent
+                          discussions
                         </span>
                       </motion.div>
                       <motion.div

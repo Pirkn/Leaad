@@ -170,10 +170,12 @@ const BlogPost = () => {
                   src={post.image}
                   alt={post.title}
                   className="w-full h-64 md:h-80 lg:h-96 object-cover rounded-lg"
-                  onError={(e) =>
-                  }
-                  onLoad={() =>
-                  }
+                  onError={(e) => {
+                    e.target.src = `https://ui-avatars.com/api/?name=${post.title}&background=6366f1&color=fff&size=400`;
+                  }}
+                  onLoad={() => {
+                    // Image loaded successfully
+                  }}
                 />
               </div>
 
@@ -273,7 +275,6 @@ const BlogPost = () => {
                   const otherPosts = allPosts
                     .filter((p) => p.id !== post.id)
                     .slice(0, 2);
-
 
                   return otherPosts.map((otherPost) => (
                     <article
