@@ -21,6 +21,7 @@ const LeadsContext = createContext({
   acknowledgeNewLeads: () => {},
   simulateNewLead: (_partial) => {},
   simulateDemoLead: () => {},
+  newLeadOrder: new Map(),
 });
 
 export const useLeadsContext = () => {
@@ -36,6 +37,7 @@ export const LeadsProvider = ({ children }) => {
   const [newlyGeneratedLeads, setNewlyGeneratedLeads] = useState([]);
   const [newLeadIds, setNewLeadIds] = useState(new Set());
   const [unseenNewLeadCount, setUnseenNewLeadCount] = useState(0);
+  const [newLeadOrder, setNewLeadOrder] = useState(new Map()); // Track order of new leads
   const hasHydratedOffline = useRef(false);
 
   const localStorageKeys = useMemo(() => {
@@ -44,23 +46,6 @@ export const LeadsProvider = ({ children }) => {
       lastSeenAt: `leads:lastSeenAt:${userId}`,
     };
   }, [user]);
-
-  const dedupeById = (incoming) => {
-    return (prev) => {
-      const existing = new Map(prev.map((l) => [l.id, l]));
-      for (const lead of incoming) {
-        if (lead && lead.id != null && !existing.has(lead.id)) {
-          existing.set(lead.id, lead);
-        }
-      }
-      // Keep newest first
-      return Array.from(existing.values()).sort((a, b) => {
-        const aDate = new Date(a.date || a.created_at || 0).getTime();
-        const bDate = new Date(b.date || b.created_at || 0).getTime();
-        return bDate - aDate;
-      });
-    };
-  };
 
   const mapRowToLead = (row) => {
     if (!row) return row;
@@ -82,7 +67,20 @@ export const LeadsProvider = ({ children }) => {
 
   const addNewlyGeneratedLeads = (leads) => {
     if (!Array.isArray(leads) || leads.length === 0) return;
-    setNewlyGeneratedLeads(dedupeById(leads));
+    setNewlyGeneratedLeads((prev) => {
+      const existing = new Map(prev.map((l) => [l.id, l]));
+      for (const lead of leads) {
+        if (lead && lead.id != null) {
+          existing.set(lead.id, lead);
+        }
+      }
+      // Keep newest first
+      return Array.from(existing.values()).sort((a, b) => {
+        const aDate = new Date(a.date || a.created_at || 0).getTime();
+        const bDate = new Date(b.date || b.created_at || 0).getTime();
+        return bDate - aDate;
+      });
+    });
   };
 
   const clearNewlyGeneratedLeads = () => {
@@ -308,6 +306,19 @@ export const LeadsProvider = ({ children }) => {
             leads.forEach((l) => next.add(l.id));
             return next;
           });
+
+          // Track order for offline leads (use their created_at time)
+          setNewLeadOrder((prev) => {
+            const next = new Map(prev);
+            leads.forEach((lead) => {
+              const timestamp = new Date(
+                lead.created_at || lead.date || 0
+              ).getTime();
+              next.set(lead.id, timestamp);
+            });
+            return next;
+          });
+
           setUnseenNewLeadCount((c) => c + leads.length);
 
           toast(
@@ -348,7 +359,25 @@ export const LeadsProvider = ({ children }) => {
             next.add(lead.id);
             return next;
           });
-          setUnseenNewLeadCount((c) => c + 1);
+
+          // Track the order of this new lead
+          setNewLeadOrder((prev) => {
+            const next = new Map(prev);
+            next.set(lead.id, Date.now());
+            return next;
+          });
+
+          // Check if user is currently on the Leads page
+          const isOnLeadsPage = window.location.pathname === "/leads";
+
+          if (isOnLeadsPage) {
+            // If on Leads page, don't increment count and acknowledge immediately
+            acknowledgeNewLeads();
+          } else {
+            // If not on Leads page, increment count for sidebar badge
+            setUnseenNewLeadCount((c) => c + 1);
+          }
+
           toast(
             <div className="flex items-start">
               <CircleCheck className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
@@ -387,6 +416,7 @@ export const LeadsProvider = ({ children }) => {
         acknowledgeNewLeads,
         simulateNewLead,
         simulateDemoLead,
+        newLeadOrder,
       }}
     >
       {children}

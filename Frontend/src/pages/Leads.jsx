@@ -60,6 +60,7 @@ function Leads() {
     acknowledgeNewLeads,
     simulateNewLead,
     addNewlyGeneratedLeads,
+    newLeadOrder,
   } = useLeadsContext();
 
   const products = productsResponse?.products || [];
@@ -221,16 +222,108 @@ function Leads() {
 
   // Combine existing leads with newly generated leads (dedupe by id, new first)
   const allLeads = (() => {
-    const combined = [...(newlyGeneratedLeads || []), ...(leads || [])];
-    const seen = new Set();
-    const unique = [];
-    for (const l of combined) {
-      const id = l?.id;
-      if (id == null || seen.has(id)) continue;
-      seen.add(id);
-      unique.push(l);
+    // Create a map to track all leads by ID, prioritizing newly generated leads
+    const leadMap = new Map();
+
+    // Helper function to get a unique key for deduplication
+    const getLeadKey = (lead) => {
+      // Try multiple possible ID fields for robust deduplication
+      const key = lead?.id || lead?.lead_id || lead?.post_id || lead?.uuid;
+      // Ensure the key is a string for consistent comparison
+      return key ? String(key) : null;
+    };
+
+    // Helper function to check if two leads are the same (for additional deduplication)
+    const areLeadsSame = (lead1, lead2) => {
+      if (!lead1 || !lead2) return false;
+
+      // Check by ID first
+      const key1 = getLeadKey(lead1);
+      const key2 = getLeadKey(lead2);
+      if (key1 && key2 && key1 === key2) return true;
+
+      // Check by Reddit post ID if available
+      if (
+        lead1.reddit_post_id &&
+        lead2.reddit_post_id &&
+        lead1.reddit_post_id === lead2.reddit_post_id
+      )
+        return true;
+
+      // Check by URL if available (normalize URLs for comparison)
+      if (lead1.url && lead2.url) {
+        const url1 = lead1.url.replace(/\/$/, ""); // Remove trailing slash
+        const url2 = lead2.url.replace(/\/$/, "");
+        if (url1 === url2) return true;
+      }
+
+      // Check by title and author as a last resort (for very similar leads)
+      if (lead1.title && lead2.title && lead1.author && lead2.author) {
+        if (lead1.title === lead2.title && lead1.author === lead2.author) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    // First, add all regular leads from API
+    if (leads && Array.isArray(leads)) {
+      leads.forEach((lead) => {
+        const key = getLeadKey(lead);
+        if (key) {
+          leadMap.set(key, lead);
+        }
+      });
     }
-    return unique;
+
+    // Then, add newly generated leads (these will override any duplicates from API)
+    if (newlyGeneratedLeads && Array.isArray(newlyGeneratedLeads)) {
+      newlyGeneratedLeads.forEach((lead) => {
+        const key = getLeadKey(lead);
+        if (key) {
+          // Check if this lead already exists in the map
+          let exists = false;
+          for (const [existingKey, existingLead] of leadMap.entries()) {
+            if (areLeadsSame(lead, existingLead)) {
+              exists = true;
+              // Update with the new lead data (prioritize newly generated)
+              // Use the new lead's key to ensure it gets the proper position
+              leadMap.delete(existingKey);
+              leadMap.set(key, lead);
+              break;
+            }
+          }
+
+          if (!exists) {
+            leadMap.set(key, lead);
+          }
+        }
+      });
+    }
+
+    // Convert back to array and sort by date (newest first)
+    // Prioritize newly generated leads by giving them a higher sort priority
+    return Array.from(leadMap.values()).sort((a, b) => {
+      const aIsNew = isLeadNew(a.id);
+      const bIsNew = isLeadNew(b.id);
+
+      // If one is new and the other isn't, prioritize the new one
+      if (aIsNew && !bIsNew) return -1;
+      if (!aIsNew && bIsNew) return 1;
+
+      // If both are new, sort by the order they were added (most recent first)
+      if (aIsNew && bIsNew) {
+        const aOrder = newLeadOrder.get(a.id) || 0;
+        const bOrder = newLeadOrder.get(b.id) || 0;
+        return bOrder - aOrder; // Higher order number = more recent
+      }
+
+      // If both are not new, sort by date
+      const aDate = new Date(a.date || a.created_at || 0).getTime();
+      const bDate = new Date(b.date || b.created_at || 0).getTime();
+      return bDate - aDate;
+    });
   })();
 
   // Acknowledge new leads when entering this page
