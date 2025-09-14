@@ -307,14 +307,21 @@ export const LeadsProvider = ({ children }) => {
             return next;
           });
 
-          // Track order for offline leads (use their created_at time)
+          // Track order for offline leads (use their created_at time, but ensure proper ordering)
           setNewLeadOrder((prev) => {
             const next = new Map(prev);
-            leads.forEach((lead) => {
-              const timestamp = new Date(
-                lead.created_at || lead.date || 0
-              ).getTime();
-              next.set(lead.id, timestamp);
+            // Sort leads by created_at first to maintain proper order
+            const sortedLeads = leads.sort((a, b) => {
+              const aTime = new Date(a.created_at || a.date || 0).getTime();
+              const bTime = new Date(b.created_at || b.date || 0).getTime();
+              return bTime - aTime; // Newest first
+            });
+
+            // Assign order values starting from current time, going backwards for proper sorting
+            const baseTime = Date.now();
+            sortedLeads.forEach((lead, index) => {
+              // Use baseTime minus index to ensure proper ordering
+              next.set(lead.id, baseTime - index);
             });
             return next;
           });
