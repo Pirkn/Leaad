@@ -187,7 +187,8 @@ function Dashboard() {
         if (aIsNew && bIsNew) {
           const aOrder = newLeadOrder.get(a.id) || 0;
           const bOrder = newLeadOrder.get(b.id) || 0;
-          return bOrder - aOrder; // Higher order number = more recent
+          // Higher order number = more recent (newer leads should come first)
+          return bOrder - aOrder;
         }
 
         // If both are not new, sort by date
