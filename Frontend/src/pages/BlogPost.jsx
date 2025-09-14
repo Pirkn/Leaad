@@ -28,11 +28,8 @@ const BlogPost = () => {
       const foundPost = getBlogPostById(id);
       if (foundPost) {
         setPost(foundPost);
-        console.log("Found post:", foundPost);
-        console.log("Post category:", foundPost.category);
       }
     } catch (error) {
-      console.error("Error loading blog post:", error);
     } finally {
       setIsLoading(false);
     }
@@ -173,12 +170,12 @@ const BlogPost = () => {
                   src={post.image}
                   alt={post.title}
                   className="w-full h-64 md:h-80 lg:h-96 object-cover rounded-lg"
-                  onError={(e) =>
-                    console.error("Image failed to load:", post.image)
-                  }
-                  onLoad={() =>
-                    console.log("Image loaded successfully:", post.image)
-                  }
+                  onError={(e) => {
+                    e.target.src = `https://ui-avatars.com/api/?name=${post.title}&background=6366f1&color=fff&size=400`;
+                  }}
+                  onLoad={() => {
+                    // Image loaded successfully
+                  }}
                 />
               </div>
 
@@ -278,9 +275,6 @@ const BlogPost = () => {
                   const otherPosts = allPosts
                     .filter((p) => p.id !== post.id)
                     .slice(0, 2);
-
-                  console.log("All posts:", allPosts.length);
-                  console.log("Other posts to show:", otherPosts.length);
 
                   return otherPosts.map((otherPost) => (
                     <article

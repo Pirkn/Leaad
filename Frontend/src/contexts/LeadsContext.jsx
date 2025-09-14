@@ -20,6 +20,8 @@ const LeadsContext = createContext({
   unseenNewLeadCount: 0,
   acknowledgeNewLeads: () => {},
   simulateNewLead: (_partial) => {},
+  simulateDemoLead: () => {},
+  newLeadOrder: new Map(),
 });
 
 export const useLeadsContext = () => {
@@ -35,6 +37,7 @@ export const LeadsProvider = ({ children }) => {
   const [newlyGeneratedLeads, setNewlyGeneratedLeads] = useState([]);
   const [newLeadIds, setNewLeadIds] = useState(new Set());
   const [unseenNewLeadCount, setUnseenNewLeadCount] = useState(0);
+  const [newLeadOrder, setNewLeadOrder] = useState(new Map()); // Track order of new leads
   const hasHydratedOffline = useRef(false);
 
   const localStorageKeys = useMemo(() => {
@@ -43,23 +46,6 @@ export const LeadsProvider = ({ children }) => {
       lastSeenAt: `leads:lastSeenAt:${userId}`,
     };
   }, [user]);
-
-  const dedupeById = (incoming) => {
-    return (prev) => {
-      const existing = new Map(prev.map((l) => [l.id, l]));
-      for (const lead of incoming) {
-        if (lead && lead.id != null && !existing.has(lead.id)) {
-          existing.set(lead.id, lead);
-        }
-      }
-      // Keep newest first
-      return Array.from(existing.values()).sort((a, b) => {
-        const aDate = new Date(a.date || a.created_at || 0).getTime();
-        const bDate = new Date(b.date || b.created_at || 0).getTime();
-        return bDate - aDate;
-      });
-    };
-  };
 
   const mapRowToLead = (row) => {
     if (!row) return row;
@@ -81,7 +67,20 @@ export const LeadsProvider = ({ children }) => {
 
   const addNewlyGeneratedLeads = (leads) => {
     if (!Array.isArray(leads) || leads.length === 0) return;
-    setNewlyGeneratedLeads(dedupeById(leads));
+    setNewlyGeneratedLeads((prev) => {
+      const existing = new Map(prev.map((l) => [l.id, l]));
+      for (const lead of leads) {
+        if (lead && lead.id != null) {
+          existing.set(lead.id, lead);
+        }
+      }
+      // Keep newest first
+      return Array.from(existing.values()).sort((a, b) => {
+        const aDate = new Date(a.date || a.created_at || 0).getTime();
+        const bDate = new Date(b.date || b.created_at || 0).getTime();
+        return bDate - aDate;
+      });
+    });
   };
 
   const clearNewlyGeneratedLeads = () => {
@@ -150,6 +149,116 @@ export const LeadsProvider = ({ children }) => {
     );
   };
 
+  const simulateDemoLead = () => {
+    const demoLeads = [
+      {
+        title: "Looking for marketing automation tools for SaaS",
+        author: "startup_founder_23",
+        subreddit: "SaaS",
+        selftext:
+          "We're a B2B SaaS startup and need help with lead generation. Currently doing everything manually but looking to scale. Any recommendations for tools that can help us find and engage with potential customers on Reddit?",
+        url: "https://reddit.com/r/SaaS/comments/example1",
+        score: 12,
+        num_comments: 8,
+        comment:
+          "Hi! We specialize in automated Reddit lead discovery for B2B SaaS companies. Our AI finds relevant discussions and generates personalized responses. Would love to show you how we've helped similar startups scale their outreach. DM me for a demo!",
+      },
+      {
+        title: "Best practices for Reddit marketing in 2024?",
+        author: "marketing_manager_99",
+        subreddit: "marketing",
+        selftext:
+          "Our team is exploring Reddit as a marketing channel but struggling with the manual process of finding relevant posts and crafting responses. What tools or strategies are you all using?",
+        url: "https://reddit.com/r/marketing/comments/example2",
+        score: 25,
+        num_comments: 15,
+        comment:
+          "We've built an AI-powered system that automates Reddit lead discovery and response generation. It finds high-intent discussions and creates personalized replies that actually add value. Happy to share our approach - it's been a game-changer for our lead gen.",
+      },
+      {
+        title: "How do you find potential customers on Reddit?",
+        author: "entrepreneur_2024",
+        subreddit: "entrepreneur",
+        selftext:
+          "I'm launching a new product and Reddit seems like a goldmine for customer discovery, but I'm spending hours manually searching through subreddits. There has to be a better way...",
+        url: "https://reddit.com/r/entrepreneur/comments/example3",
+        score: 18,
+        num_comments: 12,
+        comment:
+          "We use AI to automatically monitor Reddit for relevant discussions and generate contextual responses. It's like having a team member dedicated to Reddit lead gen 24/7. The key is finding posts where people are actively seeking solutions. Want to see how it works?",
+      },
+      {
+        title: "Reddit advertising vs organic engagement - what works?",
+        author: "digital_marketer_1",
+        subreddit: "digitalmarketing",
+        selftext:
+          "We've tried Reddit ads but the ROI isn't great. Thinking about switching to organic engagement but it's so time-consuming to find the right posts and write good responses. Any tools that can help streamline this?",
+        url: "https://reddit.com/r/digitalmarketing/comments/example4",
+        score: 31,
+        num_comments: 22,
+        comment:
+          "Organic engagement definitely works better on Reddit, but you're right about the time investment. We've automated the entire process - our AI finds high-value discussions and crafts responses that feel natural. It's been much more effective than ads for us. Happy to share our setup!",
+      },
+      {
+        title: "Lead generation strategies for B2B companies",
+        author: "b2b_sales_pro",
+        subreddit: "sales",
+        selftext:
+          "What are the most effective lead generation strategies you've used for B2B? We're looking to expand beyond LinkedIn and email outreach. Reddit seems promising but I'm not sure how to approach it systematically.",
+        url: "https://reddit.com/r/sales/comments/example5",
+        score: 14,
+        num_comments: 9,
+        comment:
+          "Reddit is actually one of our top B2B lead sources now. The key is finding discussions where people are actively looking for solutions to problems your product solves. We use AI to monitor relevant subreddits and respond with helpful, non-salesy advice. Happy to walk you through our process!",
+      },
+    ];
+
+    const randomLead = demoLeads[Math.floor(Math.random() * demoLeads.length)];
+    const now = new Date();
+    const id = `demo-${now.getTime()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+    const lead = mapRowToLead({
+      id,
+      title: randomLead.title,
+      author: randomLead.author,
+      subreddit: randomLead.subreddit,
+      selftext: randomLead.selftext,
+      url: randomLead.url,
+      score: randomLead.score,
+      num_comments: randomLead.num_comments,
+      comment: randomLead.comment,
+      read: false,
+      created_at: now.toISOString(),
+      date: now.toISOString(),
+    });
+
+    addNewlyGeneratedLeads([lead]);
+    setNewLeadIds((prev) => {
+      const next = new Set(prev);
+      next.add(lead.id);
+      return next;
+    });
+    setUnseenNewLeadCount((c) => c + 1);
+    toast(
+      <div className="flex items-start">
+        <CircleCheck className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
+        <div>
+          <div className="text-sm font-medium text-gray-900">
+            New lead found!
+          </div>
+          {lead.title && (
+            <div className="text-xs text-gray-700">{lead.title}</div>
+          )}
+        </div>
+      </div>,
+      {
+        duration: 2000,
+      }
+    );
+  };
+
   useEffect(() => {
     if (!user) return;
 
@@ -186,7 +295,6 @@ export const LeadsProvider = ({ children }) => {
 
         if (error) {
           // eslint-disable-next-line no-console
-          console.error("Failed to hydrate offline leads:", error);
           return;
         }
 
@@ -198,6 +306,19 @@ export const LeadsProvider = ({ children }) => {
             leads.forEach((l) => next.add(l.id));
             return next;
           });
+
+          // Track order for offline leads (use their created_at time)
+          setNewLeadOrder((prev) => {
+            const next = new Map(prev);
+            leads.forEach((lead) => {
+              const timestamp = new Date(
+                lead.created_at || lead.date || 0
+              ).getTime();
+              next.set(lead.id, timestamp);
+            });
+            return next;
+          });
+
           setUnseenNewLeadCount((c) => c + leads.length);
 
           toast(
@@ -215,7 +336,6 @@ export const LeadsProvider = ({ children }) => {
         }
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error("Error hydrating offline leads:", e);
       }
     };
 
@@ -239,7 +359,25 @@ export const LeadsProvider = ({ children }) => {
             next.add(lead.id);
             return next;
           });
-          setUnseenNewLeadCount((c) => c + 1);
+
+          // Track the order of this new lead
+          setNewLeadOrder((prev) => {
+            const next = new Map(prev);
+            next.set(lead.id, Date.now());
+            return next;
+          });
+
+          // Check if user is currently on the Leads page
+          const isOnLeadsPage = window.location.pathname === "/leads";
+
+          if (isOnLeadsPage) {
+            // If on Leads page, don't increment count and acknowledge immediately
+            acknowledgeNewLeads();
+          } else {
+            // If not on Leads page, increment count for sidebar badge
+            setUnseenNewLeadCount((c) => c + 1);
+          }
+
           toast(
             <div className="flex items-start">
               <CircleCheck className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
@@ -277,6 +415,8 @@ export const LeadsProvider = ({ children }) => {
         unseenNewLeadCount,
         acknowledgeNewLeads,
         simulateNewLead,
+        simulateDemoLead,
+        newLeadOrder,
       }}
     >
       {children}

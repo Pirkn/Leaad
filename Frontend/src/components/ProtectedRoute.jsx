@@ -6,20 +6,13 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
     useAuth();
   const location = useLocation();
 
-  console.log("ProtectedRoute state:", {
-    user: !!user,
-    loading,
-    onboardingComplete,
-    onboardingStatusLoading,
-    requireOnboarding,
-    pathname: location.pathname,
-  });
+  // Debug logging removed for production
 
   // Show loading only if we're checking authentication status
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
-        <div className="text-center">
+        <div className="text-center" role="status" aria-live="polite">
           <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>
@@ -35,7 +28,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   if (requireOnboarding && onboardingStatusLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
-        <div className="text-center">
+        <div className="text-center" role="status" aria-live="polite">
           <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>

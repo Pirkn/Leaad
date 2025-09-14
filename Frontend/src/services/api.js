@@ -63,7 +63,6 @@ class ApiService {
       if (!response.ok) {
         // Handle authentication errors
         if (response.status === 401) {
-          console.error("Authentication failed - token may be expired");
           // You could trigger a sign-out here if needed
           // await authService.signOut();
         }
@@ -85,10 +84,8 @@ class ApiService {
       return await response.json();
     } catch (error) {
       if (error.name === "AbortError") {
-        console.error("API request timed out");
         throw new Error("Request timed out. Please try again.");
       }
-      console.error("API request failed:", error);
       throw error;
     }
   }

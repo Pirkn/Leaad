@@ -106,7 +106,6 @@ function ViralTemplates() {
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,
       });
     } catch (err) {
-      console.error("Failed to copy to clipboard:", err);
       toast("Failed to copy to clipboard. Please try again.", {
         duration: 2000,
         icon: <CircleCheck className="w-4 h-4 text-green-600" />,

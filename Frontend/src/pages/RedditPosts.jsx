@@ -47,7 +47,6 @@ function RedditPosts() {
           try {
             postsData = JSON.parse(response.response);
           } catch (parseError) {
-            console.error("Failed to parse response:", parseError);
             setError("Failed to parse generated posts");
             return;
           }
@@ -57,7 +56,6 @@ function RedditPosts() {
 
         setGeneratedPosts(postsData);
       } catch (error) {
-        console.error("Failed to generate Reddit posts:", error);
         setError(error.message || "Failed to generate Reddit posts");
       } finally {
         setIsLoading(false);
@@ -81,7 +79,6 @@ function RedditPosts() {
         });
       })
       .catch((err) => {
-        console.error("Failed to copy to clipboard:", err);
         toast("Failed to copy to clipboard", { duration: 2500 });
       });
   };

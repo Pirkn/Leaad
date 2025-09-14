@@ -8,18 +8,15 @@ class KarmaService {
   // Generate karma content in the background
   async generateKarmaContent(forceRefresh = false) {
     if (this.isGenerating) {
-      console.log("Karma content generation already in progress");
       return;
     }
 
     // Check if content already exists and we're not forcing refresh
     if (!forceRefresh && this.hasKarmaContent()) {
-      console.log("Karma content already exists, skipping generation");
       return;
     }
 
     this.isGenerating = true;
-    console.log("Starting karma content generation...");
 
     try {
       // Generate both comment and post in parallel
@@ -34,22 +31,17 @@ class KarmaService {
           "karma_comment",
           JSON.stringify(commentResult.value)
         );
-        console.log("Karma comment generated and stored in bulk generation");
       } else {
-        console.error(
-          "Failed to generate karma comment:",
-          commentResult.reason
-        );
+        console.error(commentResult.reason);
       }
 
       if (postResult.status === "fulfilled") {
         localStorage.setItem("karma_post", JSON.stringify(postResult.value));
-        console.log("Karma post generated and stored in bulk generation");
       } else {
-        console.error("Failed to generate karma post:", postResult.reason);
+        console.error(postResult.reason);
       }
     } catch (error) {
-      console.error("Error in karma generation:", error);
+      console.error(error);
     } finally {
       this.isGenerating = false;
     }
@@ -61,10 +53,8 @@ class KarmaService {
       const result = await apiService.generateKarmaComment();
       // Store the result in localStorage
       localStorage.setItem("karma_comment", JSON.stringify(result));
-      console.log("Comment generated and stored in karmaService");
       return result;
     } catch (error) {
-      console.error("Failed to generate comment:", error);
       throw error;
     }
   }
@@ -75,10 +65,8 @@ class KarmaService {
       const result = await apiService.generateKarmaPost();
       // Store the result in localStorage
       localStorage.setItem("karma_post", JSON.stringify(result));
-      console.log("Post generated and stored in karmaService");
       return result;
     } catch (error) {
-      console.error("Failed to generate post:", error);
       throw error;
     }
   }
@@ -111,10 +99,8 @@ class KarmaService {
   updateStoredKarmaContent(type, content) {
     if (type === "comment") {
       localStorage.setItem("karma_comment", JSON.stringify(content));
-      console.log("Comment manually updated in localStorage");
     } else if (type === "post") {
       localStorage.setItem("karma_post", JSON.stringify(content));
-      console.log("Post manually updated in localStorage");
     }
   }
 }

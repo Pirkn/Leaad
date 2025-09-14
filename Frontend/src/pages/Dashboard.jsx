@@ -50,13 +50,13 @@ function Dashboard() {
   const { data: posts, isLoading: postsLoading } = useRedditPosts();
   const { data: productsResponse, isLoading: productsLoading } = useProducts();
   const { newlyGeneratedPosts } = usePostsContext();
-  const { newlyGeneratedLeads } = useLeadsContext();
+  const { newlyGeneratedLeads, isLeadNew, newLeadOrder } = useLeadsContext();
 
   // Get viral templates count
   const viralTemplates = staticDataService.getViralPosts();
   const viralTemplatesCount = viralTemplates.length;
 
-  // Calculate real metrics
+  // Calculate real metrics (using deduplicated leads)
   const allLeads = [...(leads || []), ...newlyGeneratedLeads];
   const totalLeads = allLeads.length;
   const unreadLeads = allLeads.filter((lead) => !lead.read)?.length || 0;
@@ -66,55 +66,16 @@ function Dashboard() {
   const hasProduct = productsResponse?.products?.length > 0;
   const product = productsResponse?.products?.[0];
 
-  // Debug logging
-  console.log("Dashboard Data:", {
-    leads: leads?.length || 0,
-    newlyGeneratedLeads: newlyGeneratedLeads?.length || 0,
-    allLeads: allLeads?.length || 0,
-    posts: posts?.length || 0,
-    newlyGeneratedPosts: newlyGeneratedPosts?.length || 0,
-    allPosts: allPosts?.length || 0,
-    recentLeads: allLeads.slice(0, 3),
-    recentPosts: allPosts.slice(0, 3),
-  });
-
   // Debug individual lead structure
   if (allLeads.length > 0) {
-    console.log("Sample lead structure:", allLeads[0]);
-    console.log("Lead date fields:", {
-      date: allLeads[0].date, // Actual Reddit post date
-      created_at: allLeads[0].created_at, // When lead was generated
-      hasDate: !!allLeads[0].date,
-      hasCreatedAt: !!allLeads[0].created_at,
-    });
-
     // Debug sorting
     const sampleLeads = allLeads.slice(0, 3);
-    console.log(
-      "Sample leads before sorting:",
-      sampleLeads.map((l) => ({
-        id: l.id,
-        date: l.date, // Reddit post date
-        created_at: l.created_at, // Lead generation date
-        finalDate: l.created_at, // Using created_at for sorting
-      }))
-    );
 
     const sortedSample = sampleLeads.sort((a, b) => {
       const dateA = new Date(a.created_at);
       const dateB = new Date(b.created_at);
       return dateB - dateA;
     });
-
-    console.log(
-      "Sample leads after sorting:",
-      sortedSample.map((l) => ({
-        id: l.id,
-        date: l.date, // Reddit post date
-        created_at: l.created_at, // Lead generation date
-        finalDate: l.created_at, // Using created_at for sorting
-      }))
-    );
   }
 
   // Calculate engagement metrics
@@ -131,15 +92,111 @@ function Dashboard() {
       ? Math.round((totalUpvotes + totalComments) / viralTemplates.length)
       : 0;
 
-  // Get recent activity (last 3 leads and posts, sorted by created_at for leads)
-  const recentLeads =
-    allLeads
+  // Get recent activity (last 3 leads and posts, using same sorting logic as Leads page)
+  const recentLeads = (() => {
+    // Create a map to track all leads by ID, prioritizing newly generated leads
+    const leadMap = new Map();
+
+    // Helper function to get a unique key for deduplication
+    const getLeadKey = (lead) => {
+      const key = lead?.id || lead?.lead_id || lead?.post_id || lead?.uuid;
+      return key ? String(key) : null;
+    };
+
+    // Helper function to check if two leads are the same (for additional deduplication)
+    const areLeadsSame = (lead1, lead2) => {
+      if (!lead1 || !lead2) return false;
+
+      // Check by ID first
+      const key1 = getLeadKey(lead1);
+      const key2 = getLeadKey(lead2);
+      if (key1 && key2 && key1 === key2) return true;
+
+      // Check by Reddit post ID if available
+      if (
+        lead1.reddit_post_id &&
+        lead2.reddit_post_id &&
+        lead1.reddit_post_id === lead2.reddit_post_id
+      )
+        return true;
+
+      // Check by URL if available (normalize URLs for comparison)
+      if (lead1.url && lead2.url) {
+        const url1 = lead1.url.replace(/\/$/, ""); // Remove trailing slash
+        const url2 = lead2.url.replace(/\/$/, "");
+        if (url1 === url2) return true;
+      }
+
+      // Check by title and author as a last resort (for very similar leads)
+      if (lead1.title && lead2.title && lead1.author && lead2.author) {
+        if (lead1.title === lead2.title && lead1.author === lead2.author) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    // First, add all regular leads from API
+    if (leads && Array.isArray(leads)) {
+      leads.forEach((lead) => {
+        const key = getLeadKey(lead);
+        if (key) {
+          leadMap.set(key, lead);
+        }
+      });
+    }
+
+    // Then, add newly generated leads (these will override any duplicates from API)
+    if (newlyGeneratedLeads && Array.isArray(newlyGeneratedLeads)) {
+      newlyGeneratedLeads.forEach((lead) => {
+        const key = getLeadKey(lead);
+        if (key) {
+          // Check if this lead already exists in the map
+          let exists = false;
+          for (const [existingKey, existingLead] of leadMap.entries()) {
+            if (areLeadsSame(lead, existingLead)) {
+              exists = true;
+              // Update with the new lead data (prioritize newly generated)
+              // Use the new lead's key to ensure it gets the proper position
+              leadMap.delete(existingKey);
+              leadMap.set(key, lead);
+              break;
+            }
+          }
+
+          if (!exists) {
+            leadMap.set(key, lead);
+          }
+        }
+      });
+    }
+
+    // Convert back to array and sort by date (newest first)
+    // Prioritize newly generated leads by giving them a higher sort priority
+    return Array.from(leadMap.values())
       .sort((a, b) => {
-        const dateA = new Date(a.date || a.created_at);
-        const dateB = new Date(b.date || b.created_at);
-        return dateB - dateA;
+        const aIsNew = isLeadNew(a.id);
+        const bIsNew = isLeadNew(b.id);
+
+        // If one is new and the other isn't, prioritize the new one
+        if (aIsNew && !bIsNew) return -1;
+        if (!aIsNew && bIsNew) return 1;
+
+        // If both are new, sort by the order they were added (most recent first)
+        if (aIsNew && bIsNew) {
+          const aOrder = newLeadOrder.get(a.id) || 0;
+          const bOrder = newLeadOrder.get(b.id) || 0;
+          return bOrder - aOrder; // Higher order number = more recent
+        }
+
+        // If both are not new, sort by date
+        const aDate = new Date(a.date || a.created_at || 0).getTime();
+        const bDate = new Date(b.date || b.created_at || 0).getTime();
+        return bDate - aDate;
       })
-      .slice(0, 3) || [];
+      .slice(0, 3);
+  })();
   const recentPosts =
     allPosts
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -188,16 +245,6 @@ function Dashboard() {
     } else {
       return date.toLocaleDateString();
     }
-  };
-
-  const isNew = (dateString) => {
-    if (!dateString) return false;
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return false;
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    return diffDays < 1;
   };
 
   return (
@@ -600,7 +647,7 @@ function Dashboard() {
                               <span>
                                 {formatDate(lead.date || lead.created_at)}
                               </span>
-                              {isNew(lead.date || lead.created_at) && (
+                              {isLeadNew(lead.id) && (
                                 <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                   New
                                 </span>
@@ -758,4 +805,5 @@ function Dashboard() {
   );
 }
 
+// Dashboard component with consistent new lead logic
 export default Dashboard;
