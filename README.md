@@ -1,4 +1,4 @@
-## Leaad: Marketing Agent
+## Leaad
 
 A full-stack app for Reddit-focused lead discovery, post generation, and product insights.
 
