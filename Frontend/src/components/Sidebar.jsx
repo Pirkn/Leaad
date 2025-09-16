@@ -21,7 +21,7 @@ import { useLeadsContext } from "../contexts/LeadsContext";
 function Sidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const { unseenNewLeadCount, simulateDemoLead } = useLeadsContext();
+  const { unseenNewLeadCount } = useLeadsContext();
   const [isOpen, setIsOpen] = useState(false);
   const handleSignOut = async () => {
     try {
@@ -198,22 +198,6 @@ function Sidebar() {
           <Settings className="w-5 h-5" strokeWidth={1.5} />
           <span className="text-sm font-medium">Settings</span>
         </Link>
-      </div>
-
-      {/* Invisible Demo Button - Only visible to you */}
-      <div>
-        <button
-          onClick={simulateDemoLead}
-          className="w-full flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 opacity-0 hover:opacity-100"
-          style={{
-            borderWidth: "1px",
-            transition: "border-color 0.2s ease",
-          }}
-          title="Demo Lead Generator (Invisible)"
-        >
-          <div className="w-5 h-5" />
-          <span className="text-sm font-medium">Demo</span>
-        </button>
       </div>
     </div>
   );
@@ -512,26 +496,6 @@ function Sidebar() {
                   <Settings className="w-5 h-5" strokeWidth={1.5} />
                   <span className="text-sm font-medium">Settings</span>
                 </Link>
-              </motion.div>
-
-              {/* Invisible Demo Button - Only visible to you */}
-              <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.3, delay: 1.1 }}
-              >
-                <button
-                  onClick={simulateDemoLead}
-                  className="w-full flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 opacity-0 hover:opacity-100"
-                  style={{
-                    borderWidth: "1px",
-                    transition: "border-color 0.2s ease",
-                  }}
-                  title="Demo Lead Generator (Invisible)"
-                >
-                  <div className="w-5 h-5" />
-                  <span className="text-sm font-medium">Demo</span>
-                </button>
               </motion.div>
             </div>
           </motion.div>
