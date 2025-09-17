@@ -415,7 +415,7 @@ export default function HomePage() {
               </div>
               <motion.img
                 src={macbookImage}
-                alt="Leaad AI Platform Demo"
+                alt="Leaad AI Platform Preview"
                 className="relative z-10 mx-auto max-w-full h-auto"
                 style={{ maxHeight: "1000px" }}
                 decoding="async"
@@ -471,7 +471,7 @@ export default function HomePage() {
                       "Crafted to resonate—not just fill space",
                       "Built to drive replies, clicks, and conversions",
                     ],
-                    demoPlaceholder: "Post Generation Demo",
+                    demoPlaceholder: "Post Generation Preview",
                   },
                   {
                     icon: TrendingUp,
@@ -483,7 +483,7 @@ export default function HomePage() {
                       "Just fill in your product and hit go",
                       "Optimized to be shareable and actionable",
                     ],
-                    demoPlaceholder: "Viral Templates Demo",
+                    demoPlaceholder: "Viral Templates Preview",
                   },
                   {
                     icon: Shield,
@@ -495,7 +495,7 @@ export default function HomePage() {
                       "Avoid low-effort bans and buried posts",
                       "Show up like someone worth listening to",
                     ],
-                    demoPlaceholder: "Karma Builder Demo",
+                    demoPlaceholder: "Karma Builder Preview",
                   },
                   {
                     icon: Zap,
@@ -507,7 +507,7 @@ export default function HomePage() {
                       "Targeted threads you can reply to—or use for messaging",
                       "Find high-intent users before your competitors do",
                     ],
-                    demoPlaceholder: "Lead Engine Demo",
+                    demoPlaceholder: "Lead Engine Preview",
                   },
                 ].map((feature, index) => (
                   <motion.div
@@ -607,7 +607,7 @@ export default function HomePage() {
                           </video>
                         </motion.div>
                       ) : (
-                        // Regular demo placeholder for other features
+                        // Regular preview placeholder for other features
                         <motion.div
                           className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 w-full flex items-center justify-center"
                           style={{ aspectRatio: "16 / 9" }}
@@ -620,7 +620,7 @@ export default function HomePage() {
                               {feature.demoPlaceholder}
                             </p>
                             <p className="text-sm text-gray-400 mt-2">
-                              Demo GIF placeholder
+                              Preview video coming soon
                             </p>
                           </div>
                         </motion.div>
