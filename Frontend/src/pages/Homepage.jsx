@@ -282,6 +282,7 @@ export default function HomePage() {
                 src={heroBackgroundImage}
                 alt=""
                 className="w-full h-full object-cover"
+                aria-hidden="true"
                 decoding="async"
                 width="1920"
                 height="1080"
@@ -389,6 +390,7 @@ export default function HomePage() {
               src={backgroundTextureImage}
               alt=""
               className="w-full h-full object-cover"
+              aria-hidden="true"
               loading="lazy"
               decoding="async"
               width="1920"
