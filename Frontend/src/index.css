@@ -172,10 +172,14 @@
 /* Blog post content styles */
 .blog-content {
   @apply text-gray-700 leading-relaxed;
+  font-size: 18px;
+  line-height: 1.7;
 }
 
 .blog-content h2 {
   @apply text-2xl font-bold text-gray-900 mt-8 mb-4 tracking-tight;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
 }
 
 .blog-content h3 {
@@ -183,16 +187,20 @@
 }
 
 .blog-content p {
-  @apply mb-4 text-gray-700 leading-relaxed;
+  @apply mb-6 text-gray-700 leading-relaxed;
+  font-size: 18px;
+  line-height: 1.7;
 }
 
 .blog-content ul,
 .blog-content ol {
-  @apply mb-4 pl-6;
+  @apply mb-6 pl-6;
 }
 
 .blog-content li {
-  @apply mb-2 text-gray-700;
+  @apply mb-3 text-gray-700;
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .blog-content strong {
@@ -205,10 +213,29 @@
 
 .blog-content a {
   @apply text-blue-600 hover:text-blue-800 underline;
+  transition: color 0.2s ease;
 }
 
 .blog-content blockquote {
-  @apply border-l-4 border-gray-200 pl-4 italic text-gray-600 my-4;
+  @apply border-l-4 border-gray-200 pl-6 pr-4 py-4 italic text-gray-600 my-6;
+  background-color: #f9fafb;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Step boxes styling */
+.blog-content .step-box {
+  @apply bg-gray-50 border-l-4 border-gray-900 pl-6 pr-4 py-4 rounded-r-lg mb-6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.blog-content .step-box h3 {
+  @apply text-lg font-semibold text-gray-900 mb-3 tracking-tight;
+  margin-top: 0;
+}
+
+.blog-content .step-box p {
+  @apply text-gray-700 leading-relaxed;
+  margin-bottom: 0;
 }
 
 /* Line clamp utilities for text truncation */

@@ -68,7 +68,7 @@ const BlogPost = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading article...</p>
+          <p className="text-gray-600">Loading your article...</p>
         </div>
       </div>
     );
@@ -215,8 +215,47 @@ const BlogPost = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               {/* Render plain text content */}
-              <div className="blog-content whitespace-pre-line">
-                {post.content}
+              <div className="blog-content prose prose-lg max-w-none">
+                {post.content.split("\n\n").map((paragraph, index) => {
+                  // Check if paragraph starts with "Step" or contains numbered steps
+                  if (
+                    paragraph.startsWith("Step ") ||
+                    /^\d+\./.test(paragraph.trim())
+                  ) {
+                    return (
+                      <div key={index} className="step-box">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3 tracking-tight">
+                          {paragraph.split("\n")[0]}
+                        </h3>
+                        <p className="text-gray-700 leading-relaxed">
+                          {paragraph.split("\n").slice(1).join("\n")}
+                        </p>
+                      </div>
+                    );
+                  }
+                  // Check if paragraph is a heading (starts with capital letter and ends with colon)
+                  else if (paragraph.endsWith(":") && paragraph.length < 100) {
+                    return (
+                      <h2
+                        key={index}
+                        className="text-2xl font-bold text-gray-900 mb-6 mt-8 tracking-tight"
+                      >
+                        {paragraph.slice(0, -1)}
+                      </h2>
+                    );
+                  }
+                  // Regular paragraphs
+                  else {
+                    return (
+                      <p
+                        key={index}
+                        className="text-gray-700 leading-relaxed mb-6 text-lg"
+                      >
+                        {paragraph}
+                      </p>
+                    );
+                  }
+                })}
               </div>
             </motion.div>
 
