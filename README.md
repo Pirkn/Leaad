@@ -92,4 +92,4 @@ npm run preview
 
 ### License
 
-MIT
+MIT, Check License
