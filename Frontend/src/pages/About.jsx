@@ -94,10 +94,10 @@ function About() {
                   className="text-lg text-gray-600 mb-8 leading-relaxed tracking-tight"
                   variants={itemVariants}
                 >
-                  We're building the future of marketing by combining
-                  cutting-edge AI technology with proven Reddit strategies to
+                  We're revolutionizing lead generation by combining
+                  cutting-edge AI technology with authentic Reddit engagement to
                   help SaaS founders and startups find qualified leads without
-                  the guesswork.
+                  the spam or guesswork.
                 </motion.p>
 
                 <motion.div
@@ -171,7 +171,8 @@ function About() {
               >
                 To democratize lead generation by making AI-powered marketing
                 tools accessible to every entrepreneur, regardless of their
-                technical expertise or budget.
+                technical expertise or budget. We believe authentic community
+                engagement beats traditional advertising every time.
               </motion.p>
             </motion.div>
 

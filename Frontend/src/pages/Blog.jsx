@@ -335,11 +335,12 @@ const Blog = () => {
               className="text-center"
             >
               <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tighter">
-                Get the Latest Reddit Marketing Insights
+                Stay Ahead with Reddit Marketing Insights
               </h2>
               <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
                 Join thousands of SaaS founders and marketers who get our weekly
-                insights on Reddit marketing and lead generation.
+                insights on Reddit marketing, lead generation, and AI-powered
+                growth strategies.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input
