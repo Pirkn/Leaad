@@ -14,6 +14,9 @@ import {
   Twitter,
   Linkedin,
   Facebook,
+  ChevronUp,
+  Eye,
+  Heart,
 } from "lucide-react";
 import { getBlogPostById, getBlogPosts } from "../services/blogService";
 
@@ -22,18 +25,50 @@ const BlogPost = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [viewCount, setViewCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
     try {
       const foundPost = getBlogPostById(id);
       if (foundPost) {
         setPost(foundPost);
+        // Simulate view count (in real app, this would be tracked)
+        setViewCount(Math.floor(Math.random() * 1000) + 500);
+        setLikeCount(Math.floor(Math.random() * 200) + 50);
       }
     } catch (error) {
     } finally {
       setIsLoading(false);
     }
   }, [id]);
+
+  // Scroll tracking for scroll-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    // In real app, this would save to user's bookmarks
+  };
+
+  const handleLike = () => {
+    setLikeCount((prev) => prev + 1);
+    // In real app, this would track likes
+  };
 
   const handleShare = (platform) => {
     const url = window.location.href;
@@ -162,6 +197,14 @@ const BlogPost = () => {
                   <Clock className="w-4 h-4" />
                   <span>{post.readTime}</span>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <Eye className="w-4 h-4" />
+                  <span>{viewCount.toLocaleString()} views</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Heart className="w-4 h-4" />
+                  <span>{likeCount.toLocaleString()} likes</span>
+                </div>
               </div>
 
               {/* Hero Image */}
@@ -181,9 +224,23 @@ const BlogPost = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4">
-                <button className="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                <button
+                  onClick={handleBookmark}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg transition-colors ${
+                    isBookmarked
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-700 border border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
                   <Bookmark className="w-4 h-4 mr-2" />
-                  Save Article
+                  {isBookmarked ? "Saved" : "Save Article"}
+                </button>
+                <button
+                  onClick={handleLike}
+                  className="inline-flex items-center px-4 py-2 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  Like ({likeCount})
                 </button>
                 <button
                   onClick={() => {
@@ -384,6 +441,19 @@ const BlogPost = () => {
         </div>
 
         <Footer />
+
+        {/* Scroll to Top Button */}
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors z-40"
+          >
+            <ChevronUp className="w-5 h-5" />
+          </motion.button>
+        )}
       </div>
     </>
   );

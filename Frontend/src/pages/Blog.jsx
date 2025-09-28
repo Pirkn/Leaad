@@ -104,16 +104,16 @@ const Blog = () => {
         {/* Search and Filter */}
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
               {/* Search */}
-              <div className="relative flex-1 max-w-md">
+              <div className="relative flex-1 max-w-lg">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search articles..."
+                  placeholder="Search articles, topics, or authors..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
 
@@ -122,7 +122,7 @@ const Blog = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="px-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="newest">Newest First</option>
                   <option value="oldest">Oldest First</option>
@@ -133,7 +133,7 @@ const Blog = () => {
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-3 text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200"
                   >
                     Clear Filters
                   </button>
@@ -142,26 +142,45 @@ const Blog = () => {
             </div>
 
             {/* Categories */}
-            <div className="mt-6 flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    selectedCategory === category
-                      ? "bg-gray-900 text-white border-gray-900"
-                      : "text-gray-700 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+            <div className="mt-8">
+              <h3 className="text-sm font-medium text-gray-900 mb-4">
+                Browse by Category
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-4 py-2 text-sm font-medium rounded-full border transition-all duration-200 ${
+                      selectedCategory === category
+                        ? "bg-gray-900 text-white border-gray-900 shadow-sm"
+                        : "text-gray-700 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Results Count */}
-            <div className="mt-4 text-sm text-gray-600">
-              {filteredPosts.length} of {blogPosts.length} articles
-              {hasActiveFilters && " (filtered)"}
+            {/* Results Count and Stats */}
+            <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="text-sm text-gray-600">
+                <span className="font-medium text-gray-900">
+                  {filteredPosts.length}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium text-gray-900">
+                  {blogPosts.length}
+                </span>{" "}
+                articles
+                {hasActiveFilters && " (filtered)"}
+              </div>
+              {hasActiveFilters && (
+                <div className="text-sm text-gray-500">
+                  Showing results for "{searchTerm || selectedCategory}"
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -246,22 +265,23 @@ const Blog = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.1 * index }}
-                    className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
+                    className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-300 cursor-pointer transform hover:-translate-y-2 group"
                     onClick={() => navigate(`/blog/${post.id}`)}
                   >
-                    <div className="relative">
+                    <div className="relative overflow-hidden">
                       <img
                         src={post.image}
                         alt={post.title}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                      <span className="absolute top-4 left-4 px-2 py-1 bg-white text-gray-700 text-xs font-medium rounded">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <span className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full shadow-sm">
                         {post.category}
                       </span>
                     </div>
 
                     <div className="p-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight line-clamp-2">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight line-clamp-2 group-hover:text-gray-700 transition-colors">
                         {post.title}
                       </h3>
                       <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
@@ -271,7 +291,7 @@ const Blog = () => {
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                         <div className="flex items-center space-x-1">
                           <User className="w-4 h-4" />
-                          <span>{post.author}</span>
+                          <span className="font-medium">{post.author}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Clock className="w-4 h-4" />
@@ -279,16 +299,19 @@ const Blog = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <span className="text-sm text-gray-500">
                           {new Date(post.date).toLocaleDateString()}
                         </span>
                         <button
-                          onClick={() => navigate(`/blog/${post.id}`)}
-                          className="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/blog/${post.id}`);
+                          }}
+                          className="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors group-hover:text-gray-900"
                         >
                           Read More
-                          <ArrowRight className="w-4 h-4 ml-1" />
+                          <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                         </button>
                       </div>
                     </div>
