@@ -92,17 +92,17 @@ const Legal = () => {
             >
               <Link
                 to={document.link}
-                className="group bg-white border-2 border-gray-200 rounded-lg p-8 hover:border-gray-900 transition-all duration-300 h-full flex flex-col"
+                className="group bg-white border border-gray-200 rounded-lg p-8 hover:border-gray-300 transition-colors duration-200 h-full flex flex-col"
               >
                 <div className="text-center flex flex-col h-full">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-gray-700">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-gray-800">
                     {document.title}
                   </h3>
                   <p className="text-gray-600 group-hover:text-gray-700">
                     {document.description}
                   </p>
-                  <div className="mt-auto pt-6 text-blue-600 font-medium group-hover:text-blue-700">
-                    Read More →
+                  <div className="mt-auto pt-6 text-gray-700 font-medium group-hover:text-gray-900">
+                    Read more →
                   </div>
                 </div>
               </Link>
@@ -142,7 +142,7 @@ const Legal = () => {
                 contact our support team at{" "}
                 <a
                   href="mailto:support@leaad.co"
-                  className="text-blue-600 hover:underline"
+                  className="text-gray-800 hover:underline"
                 >
                   support@leaad.co
                 </a>

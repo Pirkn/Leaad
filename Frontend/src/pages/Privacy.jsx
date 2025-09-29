@@ -40,14 +40,14 @@ const Privacy = () => {
           </h1>
 
           {/* Company Information Section */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <h2 className="text-lg font-semibold text-blue-900 mb-3">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">
               Company Information
             </h2>
-            <p className="text-blue-800 mb-2">
+            <p className="text-gray-800 mb-2">
               <strong>Company Name:</strong> ESİLAH AV MALZEMELERİ
             </p>
-            <p className="text-blue-800">
+            <p className="text-gray-800">
               Leaad is a digital platform and brand operated by ESİLAH AV
               MALZEMELERİ, providing AI-powered Reddit lead generation services
               to businesses and entrepreneurs worldwide.
@@ -357,25 +357,25 @@ const Privacy = () => {
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/legal/terms"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Terms of Service
               </Link>
               <Link
                 to="/legal/refund-policy"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Refund Policy
               </Link>
               <Link
                 to="/legal"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 All Legal Documents
               </Link>
               <Link
                 to="/about"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 About Us
               </Link>
